@@ -20,8 +20,8 @@ namespace BreadMage2
 
         private BreadMage bMage { get; set; }
         //private FightBoard bFight { get; set; }
-        private Mage myMage { get; set; }
-        private Monster myMonster { get; set; }
+        private clsMage myMage { get; set; }
+        private clsMonster myMonster { get; set; }
         private GameScreen myGameScr;
 
         public engBattle(GameScreen aGameScr)
@@ -84,6 +84,8 @@ namespace BreadMage2
                 MessageBox.Show("It's croutons!");
                 string s = "Nice work, you got " + myGameScr.gMonster.EXP.ToString() + " EXP!";
                 myGameScr.gLog.Add(s);
+
+                //EndCombat(myGameScr.gMonster.monID);
 
                 //give post battle info, item drops before disposing. new pop up window?
                 myGameScr.bFight.Hide();
@@ -149,6 +151,16 @@ namespace BreadMage2
                 string s = "it rustled your jimmies for " + damage.ToString() + " damage!";
                 myGameScr.bFight.AddChatter(s);
             }
+
+        }
+
+        /// <summary>
+        /// Post Combat logic starts here
+        /// </summary>
+        /// <param name="PostCombat"></param>
+        
+        private void EndCombat()
+        {
 
         }
 

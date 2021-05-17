@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
 using System.Data.OleDb;
 
 namespace BreadMage2
 {
-    public class Mage
+    public class clsMage
     {
         //the Mage object, this is the PC
 
@@ -21,7 +22,10 @@ namespace BreadMage2
         public int Def { get; set; }
         public int Location { get; set; }
 
-       public Mage()
+        public DataSet myCombatInv { get; set; }
+        public DataSet myConsumableInv { get; set; }
+
+       public clsMage()
         {
 
             HPmax = 100;

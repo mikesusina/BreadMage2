@@ -17,16 +17,21 @@ namespace BreadMage2
     {
         public MainScreen scrMain;
 
-        public Mage gMage { get; set; }
-        public Monster gMonster { get; set; }
+        public clsMage gMage { get; set; }
+        public clsMonster gMonster { get; set; }
 
         public BreadMage bMage {get; set;}
         public ExtraBoard bExtra { get; set; }
         public FightBoard bFight { get; set; }
         
-        public DataSet gMonsterList { get; set; }
-        public DataSet gCombatInv { get; set; }
-        public DataSet gConsumableInv { get; set; }
+        public List<clsMonster> gMonsterList { get; set; }
+
+        // for item libraries
+        public List<clsConsumable> gConsumableLib { get; set; }
+        public List<clsCombatItem> gCombatLib { get; set; }
+
+        // for player inventory
+        public DataSet gPlayerInv { get; set; }
         
         public Random gRandom { get; set; }
 
@@ -44,11 +49,12 @@ namespace BreadMage2
             //LoadFlag -1 = fresh boot, don't create a mage object yet 
 
             gRandom = new Random();
+            BreadDB BreadNet = new BreadDB();
 
             switch (iLoadFlag)
             {
                 case 0:
-                    Mage gMage = new Mage();
+                    clsMage gMage = new clsMage();
                     // Clear any mage info from the panel first
                     if (pMageZone.Controls != null) { pMageZone.Controls.Clear(); }
                     bMage = new BreadMage(gMage);
@@ -58,6 +64,12 @@ namespace BreadMage2
                     //lbLog.Items.Clear();
                     gLog = new engGLog(lbLog);
                     gLog.Add("Welcome to Bread Mage 2!!!");
+
+                    //load various data from DB
+                    gMonsterList = BreadNet.LoadMonsterList();
+                    gConsumableLib = BreadNet.LoadConsumablesLib();
+                    gCombatLib = BreadNet.LoadCombatLib();
+
 
                     if (pExtraInfo != null) { pExtraInfo.Controls.Clear(); }
                     this.gMage = gMage;
@@ -71,13 +83,10 @@ namespace BreadMage2
                     break;
             }
 
-            //load various data from DB
-            BreadDB BreadNet = new BreadDB();
-            gMonsterList = BreadNet.LoadMonsterTable();
-            gConsumableInv = BreadNet.LoadPlayerInv(1);
-            gCombatInv = BreadNet.LoadPlayerInv(2);
 
-
+            //for implementinvg SaveIDs
+            int iSaveID = 1;
+            gPlayerInv = BreadNet.LoadPlayerInv(iSaveID);
         }
 
 
@@ -94,11 +103,6 @@ namespace BreadMage2
             //close game screen? leave the dead mage but dispose
             bFight.Dispose();
             bExtra.Dispose();
-        }
-
-        private void newGameToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void GameScreen_Load(object sender, EventArgs e)

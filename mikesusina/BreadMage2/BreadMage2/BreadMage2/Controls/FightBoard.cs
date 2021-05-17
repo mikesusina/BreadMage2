@@ -13,8 +13,8 @@ namespace BreadMage2.Controls
 {
     public partial class FightBoard : UserControl
     {
-        private Monster myMonster;
-        private DataSet myMonsterList;
+        private clsMonster myMonster;
+        private List<clsMonster> myMonsterList;
         private engBattle BattleEngine;
         public GameScreen myGameScr { get; set; }
 
@@ -27,23 +27,39 @@ namespace BreadMage2.Controls
             if (myGameScr.gMonsterList is null)
             {
                 BreadDB BreadNet = new BreadDB();
-                myMonsterList = BreadNet.LoadMonsterTable();
+                myMonsterList = BreadNet.LoadMonsterList();
                 myGameScr.gMonsterList = myMonsterList;
             }
-
-            //Get a table of just local monsters
+            else { myMonsterList = myGameScr.gMonsterList; }
+            
+            //Get list of local monsters
+            //grab IDs of local monsters into a list
             // *************handle if locaiton contains no encounters
+            List<clsMonster> locMonsters = new List<clsMonster>();
+            foreach (clsMonster m in myMonsterList)
+            {
+                if (m.Location == myGameScr.gMage.Location)
+                {
+                    locMonsters.Add(m);
+                }
+            }
+
+            //possible work in to make more common or less common encounters? maybe roll a d20 or something and make rare flag on 20?
+            myMonster = locMonsters.ElementAt(myGameScr.gRandom.Next(0, (locMonsters.Count)));
+
+            
+            
+            /*
+             * old:
             string s = "Location = " + myGameScr.gMage.Location;
             DataTable vLocMonster = myGameScr.gMonsterList.Tables[0].Select(s).CopyToDataTable();
-
-            //make it just one random monster
-            //possible work in to make more common or less common encounters? maybe roll a d20 or something and make rare flag on 20?
             s = "MonsterID = " + vLocMonster.Rows[myGameScr.gRandom.Next(0, vLocMonster.Rows.Count)]["MonsterID"];
             vLocMonster = vLocMonster.Select(s).CopyToDataTable();
+            */
 
             txtChatter.Clear();
-            txtChatter.Text = "Look out it's a " + vLocMonster.Rows[0]["MonName"] + "!!!";
-            myMonster = new Monster(vLocMonster);
+            txtChatter.Text = "Look out it's a " + myMonster.MonName + "!!!";
+            //myMonster = new clsMonster(myMonster);
 
             myGameScr = aGameScr;
             myGameScr.gMonster = myMonster;
@@ -82,7 +98,7 @@ namespace BreadMage2.Controls
         }
 
         
-        public Monster GetMonster() { return myMonster; }
+        public clsMonster GetMonster() { return myMonster; }
 
 
         public void UpdateBars(int newHP)

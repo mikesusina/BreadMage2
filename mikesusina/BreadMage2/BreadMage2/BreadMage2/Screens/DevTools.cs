@@ -67,5 +67,30 @@ namespace BreadMage2.Screens
             }
 
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            object o = new object();
+
+            if (Convert.ToInt32(txbLoc.Text) == 8) { o = new clsConsumable(0); }
+            else if (Convert.ToInt32(txbLoc.Text) == 9) { o = new clsCombatItem(0); }
+            tryMethod(o);
+        }
+
+        private void tryMethod(object o)
+        {
+            if (o is clsCombatItem)
+            {
+                MessageBox.Show("Hey this is a combat item");
+            }
+            else if (o is clsConsumable)
+            {
+                MessageBox.Show("Hey this is a consumable item");
+            }
+            else
+            {
+                MessageBox.Show("Hey this is a not identified item");
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ using System.Data;
 
 namespace BreadMage2
 {
-    public class Monster
+    public class clsMonster
     {
         //Monster objec
 
@@ -22,19 +22,28 @@ namespace BreadMage2
         public int MDef { get; set; }
         public int EXP { get; set; }
         public string ImageURL { get; set; }
-        private BreadDB BreadNet;
+        public int Location { get; set; }
+
         public DataTable MonData { get; set; }
+        public DataRow MonRow { get; set; }
         //abilities?
         //drop table?
         //picture url
         //unique chatter? roll to use unique or common?
 
 
-        public Monster(DataTable aMonData)
+        public clsMonster(DataTable aMonData)
         {
             MonData = aMonData;
             ParseMonsterData(MonData);
             
+        }
+
+        public clsMonster(DataRow aMonRow)
+        {
+            MonRow = aMonRow;
+            ParseMonsterDataRow(MonRow);
+
         }
         /*
         private void GetMonster()
@@ -63,10 +72,10 @@ namespace BreadMage2
             // MDEF = 5
             // EXP = 6
             // IMG = 7
+            // Loc = 8
 
             MonName = ds.Rows[0].ItemArray[0].ToString();
             HPmax = Convert.ToInt32(ds.Rows[0]["HP"].ToString());
-//                .ItemArray[1]);
             HP = HPmax;
             PAtk = Convert.ToInt32(ds.Rows[0]["PATK"].ToString());
             MAtk = Convert.ToInt32(ds.Rows[0]["MATK"].ToString());
@@ -74,6 +83,33 @@ namespace BreadMage2
             MDef = Convert.ToInt32(ds.Rows[0]["MDEF"].ToString());
             EXP = Convert.ToInt32(ds.Rows[0]["EXP"].ToString());
             ImageURL = ds.Rows[0]["IMG"].ToString();
+            Location = Convert.ToInt32(ds.Rows[0]["Location"].ToString());
+        }
+
+        private void ParseMonsterDataRow(DataRow dr)
+        {
+            // Monsters.[MonName], Monsters.[HP], Monsters.[PATK], Monsters.[MATK], Monsters.[PDEF], Monsters.[MDEF], Monsters.[EXP], Monsters.[IMG]"
+
+            // ds.Rows[0].ItemArray[i]
+            // MonName = 0
+            // HP = 1
+            // PATK = 2
+            // MATK = 3
+            // PDEF = 4
+            // MDEF = 5
+            // EXP = 6
+            // IMG = 7
+
+            MonName = dr["MonName"].ToString();
+            HPmax = Convert.ToInt32(dr["HP"].ToString());
+            HP = HPmax;
+            PAtk = Convert.ToInt32(dr["PATK"].ToString());
+            MAtk = Convert.ToInt32(dr["MATK"].ToString());
+            PDef = Convert.ToInt32(dr["PDEF"].ToString());
+            MDef = Convert.ToInt32(dr["MDEF"].ToString());
+            EXP = Convert.ToInt32(dr["EXP"].ToString());
+            ImageURL = dr["IMG"].ToString();
+            Location = Convert.ToInt32(dr["Location"].ToString());
         }
 
 

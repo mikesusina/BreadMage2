@@ -73,6 +73,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -85,15 +86,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BreadDB.cs" />
+    <Compile Include="clsConsumable.cs" />
     <Compile Include="Controls\ExtraBoard.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ExtraBoard.Designer.cs">
       <DependentUpon>ExtraBoard.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\QuickBoard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\QuickBoard.Designer.cs">
+      <DependentUpon>QuickBoard.cs</DependentUpon>
+    </Compile>
     <Compile Include="engBattle.cs" />
     <Compile Include="engGLog.cs" />
-    <Compile Include="Monster.cs" />
+    <Compile Include="clsMonster.cs" />
     <Compile Include="Controls\BreadMage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -106,12 +114,13 @@
     <Compile Include="Controls\FightBoard.Designer.cs">
       <DependentUpon>FightBoard.cs</DependentUpon>
     </Compile>
-    <Compile Include="Mage.cs" />
+    <Compile Include="clsMage.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="clsCombatItem.cs" />
     <Compile Include="Screens\CreateScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -154,6 +163,9 @@
     <EmbeddedResource Include="Controls\ExtraBoard.resx">
       <DependentUpon>ExtraBoard.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\QuickBoard.resx">
+      <DependentUpon>QuickBoard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Screens\CreateScreen.resx">
       <DependentUpon>CreateScreen.cs</DependentUpon>
     </EmbeddedResource>
@@ -174,7 +186,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="BreadMage2_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

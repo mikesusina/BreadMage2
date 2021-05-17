@@ -13,9 +13,9 @@ namespace BreadMage2
 {
     public partial class BreadMage : UserControl
     {
-        private Mage thisMage;
+        private clsMage thisMage;
 
-        public BreadMage(Mage aMage)
+        public BreadMage(clsMage aMage)
         {
             InitializeComponent();
             thisMage = aMage;
@@ -49,10 +49,13 @@ namespace BreadMage2
             // constructor values are new current values, gMage is already updated when this is called - just update the bars. 
             // Any negative amounts should have been checked before here
             try
-            { 
-            if (HP != 0) { pbHP.Value = HP; lblHPDisplay.Text = "HP: " + pbHP.Value.ToString() + "/" + pbHP.Maximum.ToString(); }
-            if (MP != 0) { pbMP.Value = MP; }
-            if (SP != 0) { pbSP.Value = SP; }
+            {
+                if (HP != 0 && HP <= pbHP.Maximum) { pbHP.Value = HP; lblHPDisplay.Text = "HP: " + pbHP.Value.ToString() + "/" + pbHP.Maximum.ToString(); }
+                    else if (HP > pbHP.Maximum) { pbHP.Value = pbHP.Maximum; lblHPDisplay.Text = "HP: " + pbHP.Value.ToString() + "/" + pbHP.Maximum.ToString(); }
+                if (MP != 0 && MP <= pbMP.Maximum) { pbMP.Value = MP; }
+                    else if (MP > pbMP.Maximum) { pbMP.Value = pbMP.Maximum; }
+                if (SP != 0 && SP <= pbSP.Maximum) { pbSP.Value = SP; }
+                    else if (SP > pbSP.Maximum) { pbSP.Value = pbSP.Maximum; }
             }
             catch { throw new ArgumentOutOfRangeException(); }
         }
@@ -64,10 +67,11 @@ namespace BreadMage2
 
         public void ZeroHPtag()
         {
-            lblHPDisplay.Text = "HP: 0/" + pbHP.Maximum.ToString();
+            this.lblHPDisplay.Text = "HP: 0/" + pbHP.Maximum.ToString();
+            this.pbHP.Value = 0;
         }
         
-        public Mage GetMage() { return thisMage; }
+        public clsMage GetMage() { return thisMage; }
 
     }
 }

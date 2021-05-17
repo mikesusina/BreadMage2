@@ -44,28 +44,39 @@ namespace BreadMage2
             myConn.Close();
         }
 
-        public DataSet LoadMonster(int aMonID)
+        public List<clsMonster> LoadMonsterList()
         {
             DataSet ds = new DataSet();
-            string msql = "SELECT Monsters.[MonName], Monsters.[HP], Monsters.[PATK], Monsters.[MATK], Monsters.[PDEF], Monsters.[MDEF], Monsters.[EXP], Monsters.[IMG]" +
-            "FROM Monsters" +
-            " WHERE Monsters.[MonsterID] = " + aMonID + ";";
-            myConn = BreadConnect();
-
-            //MessageBox.Show(msql);
-
+            string msql = "SELECT * FROM Monsters;";
             FillDS(msql, ds);
-            return ds;
-        }
 
+            int i = 0;
+            List<clsMonster> MonList = new List<clsMonster>();
+            foreach (DataRow d in ds.Tables[0].Rows)
+            {
+                MonList.Add(new clsMonster(ds.Tables[0].Rows[i]));
+                i++;
+            }
+
+            return MonList;
+        }
+        /*
         public DataSet LoadMonsterTable()
         {
             DataSet ds = new DataSet();
             string msql = "SELECT * FROM Monsters;";
             FillDS(msql, ds);
-            return ds;
-        }
 
+            int i = 0;
+            List<clsMonster> MonList = new List<clsMonster>();
+            foreach (DataRow d in ds.Tables[0].Rows) 
+            {
+                MonList.Add(new clsMonster(ds.Tables[0].Rows[i]));
+            }
+
+                return ds;
+        }
+        */
         public DataSet LoadItemTable()
         {
             DataSet ds = new DataSet();
@@ -75,32 +86,60 @@ namespace BreadMage2
         }
 
 
+        public List<clsConsumable> LoadConsumablesLib()
+        {
+            List<clsConsumable> myList = new List<clsConsumable>();
+            DataSet ds = new DataSet();
+            string msql = "SELECT Items.ID, Consumables.ItemName, Consumables.ImgURL, Consumables.HP, Consumables.MP, Consumables.SP, Consumables.Restore" +
+                           " FROM Items INNER JOIN Consumables ON Items.ID = Consumables.ItemID;";
+            FillDS(msql, ds);
+
+            int i = 0;
+            foreach (DataRow d in ds.Tables[0].Rows)
+            {
+                myList.Add(new clsConsumable(ds.Tables[0].Rows[i]));
+                i++;
+            }
+
+            return myList;
+        }
 
 
-        public DataSet LoadPlayerInv(int iType, int iSaveID = 1)
+        public List<clsCombatItem> LoadCombatLib()
+        {
+            List<clsCombatItem> myList = new List<clsCombatItem>();
+            DataSet ds = new DataSet();
+            string msql = "SELECT Items.ID, CombatItems.ItemName, CombatItems.ImgURL, CombatItems.Damage, CombatItems.DamageType, CombatItems.Debuff, CombatItems.DebuffType, CombatItems.StatEffect" +
+                           " FROM Items INNER JOIN CombatItems ON Items.ID = CombatItems.ItemID;";
+            FillDS(msql, ds);
+
+            int i = 0;
+            foreach (DataRow d in ds.Tables[0].Rows)
+            {
+                myList.Add(new clsCombatItem(ds.Tables[0].Rows[i]));
+                i++;
+            }
+
+            return myList;
+        }
+
+        public DataSet LoadItemLibrary(int iType)
         {
             DataSet ds = new DataSet();
             string msql = "";
 
-            ////
-            //****update this to pick mage ID based on save slot
-            ////
-            ///
             switch (iType)
             {
                 //consumables
                 case 1:
-                    msql = "SELECT Items.ID, Consumables.ItemName, Inventory.Count, Consumables.ImgURL, Consumables.HP, Consumables.MP, Consumables.SP, Consumables.Restore" +
-                                " FROM(Items LEFT JOIN Inventory ON Items.ID = Inventory.ItemID) LEFT JOIN Consumables ON Items.ID = Consumables.ItemID" +
-                                " WHERE Items.ItemType = 1 AND Inventory.MageID = 1;";
+                    msql = "SELECT Items.ID, Consumables.ItemName, Consumables.ImgURL, Consumables.HP, Consumables.MP, Consumables.SP, Consumables.Restore" +
+                           " FROM Items INNER JOIN Consumables ON Items.ID = Consumables.ItemID;";
                     break;
                 //combat inv
                 case 2:
-                    msql = "SELECT Items.ID, CombatItems.ItemName, Inventory.Count, CombatItems.ImgURL, CombatItems.Damage, CombatItems.DamageType, CombatItems.Debuff, CombatItems.DebuffType, CombatItems.StatEffect" +
-                      " FROM(Items LEFT JOIN Inventory ON Items.ID = Inventory.ItemID) LEFT JOIN CombatItems ON Items.ID = CombatItems.ItemID" +
-                      " WHERE Items.ItemType = 2 AND Inventory.MageID = 1;";
+                    msql = "SELECT Items.ID, CombatItems.ItemName, CombatItems.ImgURL, CombatItems.Damage, CombatItems.DamageType, CombatItems.Debuff, CombatItems.DebuffType, CombatItems.StatEffect" +
+                           " FROM Items INNER JOIN CombatItems ON Items.ID = CombatItems.ItemID;";
                     break;
-
                 //equipment
                 case 3:
                     break;
@@ -108,20 +147,19 @@ namespace BreadMage2
                 case 4:
                     break;
             }
-                          
 
-            if (msql != "")
-            {
-                FillDS(msql, ds);
-                /*
-                myConn = BreadConnect();
-                OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
-                myAdap.Fill(ds);
-                myAdap.Dispose();
-                myConn.Close();
-                */
-            }
+            return ds;
 
+        }
+
+
+        public DataSet LoadPlayerInv(int iSaveID = 1)
+        {
+            DataSet ds = new DataSet();
+            string msql = "SELECT Items.ID, IIf(IsNull(Inventory.Count), 0, Inventory.Count)" + 
+                          " FROM Items LEFT JOIN Inventory ON Items.ID = Inventory.ItemID" + 
+                          " WHERE IIf(IsNull(Inventory.MageID), 0, Inventory.MageID) in (" + iSaveID + ", 0);";
+            FillDS(msql, ds);
             return ds;
         }
 
