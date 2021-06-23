@@ -9,7 +9,7 @@ using System.Data;
 
 namespace BreadMage2
 {
-    public class clsConsumable
+    public class clsConsumable : IEquatable<clsConsumable>
     {
         public int itemID { get; set; }
         public string ItemName { get; set; }
@@ -37,7 +37,7 @@ namespace BreadMage2
 
         public clsConsumable(int i)
         {
-
+            itemID = i;
         }
 
         private void ParseConsumableData(DataTable ds)
@@ -68,5 +68,28 @@ namespace BreadMage2
 
 
 
+
+
+        // this is definitely stolen from
+        //docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-5.0
+        //stackoverflow.com/questions/9854917/how-can-i-find-a-specific-element-in-a-listt
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            clsConsumable objAsConsumable = obj as clsConsumable;
+            if (objAsConsumable == null) return false;
+            else return Equals(objAsConsumable);
+        }
+
+        public override int GetHashCode()
+        {
+            return itemID;
+        }
+
+        public bool Equals(clsConsumable other)
+        {
+            if (other == null) return false;
+            return (this.itemID.Equals(other.itemID));
+        }
     }
 }

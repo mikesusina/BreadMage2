@@ -8,7 +8,7 @@ using System.Data;
 
 namespace BreadMage2
 {
-    public class clsMonster
+    public class clsMonster : IEquatable<clsMonster>
     {
         //Monster objec
 
@@ -84,6 +84,7 @@ namespace BreadMage2
             EXP = Convert.ToInt32(ds.Rows[0]["EXP"].ToString());
             ImageURL = ds.Rows[0]["IMG"].ToString();
             Location = Convert.ToInt32(ds.Rows[0]["Location"].ToString());
+            monID = Convert.ToInt32(ds.Rows[0]["MonsterID"].ToString());
         }
 
         private void ParseMonsterDataRow(DataRow dr)
@@ -110,8 +111,31 @@ namespace BreadMage2
             EXP = Convert.ToInt32(dr["EXP"].ToString());
             ImageURL = dr["IMG"].ToString();
             Location = Convert.ToInt32(dr["Location"].ToString());
+            monID = Convert.ToInt32(dr["MonsterID"].ToString());
         }
 
+
+        // this is definitely stolen from
+        //docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-5.0
+        //stackoverflow.com/questions/9854917/how-can-i-find-a-specific-element-in-a-listt
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            clsMonster objAsMonster = obj as clsMonster;
+            if (objAsMonster == null) return false;
+            else return Equals(objAsMonster);
+        }
+
+        public override int GetHashCode()
+        {
+            return monID;
+        }
+
+        public bool Equals(clsMonster other)
+        {
+            if (other == null) return false;
+            return (this.monID.Equals(other.monID));
+        }
 
 
     }

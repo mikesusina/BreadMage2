@@ -18,18 +18,20 @@ namespace BreadMage2
         public BreadDB()
         {
             /* 
-            connString = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source = E:\Repos\mikesusina\homebase\BreadMage2\BreadMage2\Resources\BreadTable.accdb; Persist Security Info = False;";
+            connString = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source = E:\Repositories\mikesusina\BreadMage2\BreadMage2\BreadMage2\Resources\BreadTable.accdb; Persist Security Info = False;";
             OleDbConnection cnn;
             cnn = new OleDbConnection(connString);
 
             if the db is pw protected:
-            Provider = Microsoft.ACE.OLEDB.12.0; Data Source = E:\Repos\mikesusina\homebase\BreadMage2\BreadMage2\Resources\BreadTable.accdb; Jet OLEDB:Database Password = MyDbPassword;
+            Provider = Microsoft.ACE.OLEDB.12.0; Data Source = E:\Repositories\mikesusina\BreadMage2\BreadMage2\BreadMage2\Resources\BreadTable.accdb; Jet OLEDB:Database Password = MyDbPassword;
             */
         }
 
         public OleDbConnection BreadConnect()
         {
-            connString = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source = E:\Repos\mikesusina\homebase\BreadMage2\BreadMage2\Resources\BreadTable.accdb; Persist Security Info = False;";
+            connString = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source = E:\Repositories\mikesusina\BreadMage2\BreadMage2\BreadMage2\Resources\BreadTable.accdb; Persist Security Info = False;";
+            //connString = @"Provider = Microsoft.ACE.OLEDB.12.0; Data Source = |DataDirectory|\BreadTable.accdb; Persist Security Info = False;";
+
             OleDbConnection cnn;
             cnn = new OleDbConnection(connString);
             return cnn;
@@ -40,6 +42,15 @@ namespace BreadMage2
             myConn = BreadConnect();
             OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
             myAdap.Fill(ds);
+            myAdap.Dispose();
+            myConn.Close();
+        }
+
+        private void FillDT(string msql, DataTable dt)
+        {
+            myConn = BreadConnect();
+            OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
+            myAdap.Fill(dt);
             myAdap.Dispose();
             myConn.Close();
         }
@@ -59,6 +70,23 @@ namespace BreadMage2
             }
 
             return MonList;
+        }
+
+        public List<clsChoiceAdventure> LoadChoiceList()
+        {
+            DataSet ds = new DataSet();
+            string msql = "SELECT * FROM ChoiceLib;";
+            FillDS(msql, ds);
+
+            int i = 0;
+            List<clsChoiceAdventure> ChoiceList = new List<clsChoiceAdventure>();
+            foreach (DataRow d in ds.Tables[0].Rows)
+            {
+                ChoiceList.Add(new clsChoiceAdventure(ds.Tables[0].Rows[i]));
+                i++;
+            }
+
+            return ChoiceList;
         }
         /*
         public DataSet LoadMonsterTable()
@@ -153,14 +181,70 @@ namespace BreadMage2
         }
 
 
-        public DataSet LoadPlayerInv(int iSaveID = 1)
+        public DataTable LoadPlayerInv(int iSaveID = 1)
         {
-            DataSet ds = new DataSet();
-            string msql = "SELECT Items.ID, IIf(IsNull(Inventory.Count), 0, Inventory.Count)" + 
+            DataTable dt = new DataTable();
+            string msql = "SELECT Inventory.MageID, Items.ID, IIf(IsNull(Inventory.Count), 0, Inventory.Count) as ItemCount, 0 as StatusFlag" + 
                           " FROM Items LEFT JOIN Inventory ON Items.ID = Inventory.ItemID" + 
                           " WHERE IIf(IsNull(Inventory.MageID), 0, Inventory.MageID) in (" + iSaveID + ", 0);";
-            FillDS(msql, ds);
-            return ds;
+            FillDT(msql, dt);
+            return dt;
+        }
+
+        public void SavePlayerInv(int iSaveID, DataTable dtPInv)
+        {
+
+            /*
+            myConn = BreadConnect();
+            string msql = "SELECT ISNULL(MageID, 0) , ItemID, Count as ItemCount from Inventory " +
+                            "WHERE IIf(IsNull(Inventory.MageID), 0, Inventory.MageID) in (" + iSaveID + ", 0);";
+            OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
+            OleDbCommandBuilder cb = new OleDbCommandBuilder(myAdap);
+            cb.GetUpdateCommand();
+            myAdap.Update(dtPInv);
+            */
+
+            myConn = BreadConnect();
+            try
+            {
+                string msql = "SELECT ISNULL(MageID, 0) as MageID, ItemID, Count from Inventory " +
+                            "WHERE IIf(IsNull(Inventory.MageID), 0, Inventory.MageID) in (" + iSaveID + ", 0);";
+
+                OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
+                OleDbCommand myCmd = new OleDbCommand(msql, myConn);
+                int i = 0;
+                myConn.Open();
+
+
+                foreach (DataRow d in dtPInv.Rows)
+                {
+                    if (Convert.ToInt32(dtPInv.Rows[i]["StatusFlag"]) == 2)
+                    {
+                        myCmd.CommandText = "UPDATE [INVENTORY] set [Count] = @Count " +
+                                                "WHERE [MageID] = " + iSaveID + " AND [ItemID] = @ItemID";
+                        myCmd.Parameters.AddWithValue("@Count", Convert.ToInt32(dtPInv.Rows[i]["ItemCount"].ToString()));
+                        myCmd.Parameters.AddWithValue("@ItemID", Convert.ToInt32(dtPInv.Rows[i]["ID"].ToString()));
+                        myCmd.ExecuteNonQuery();
+                    }
+                    else if (Convert.ToInt32(dtPInv.Rows[i]["StatusFlag"]) == 1)
+                    {
+                        myCmd.CommandText = "INSERT INTO [INVENTORY] Values (" + iSaveID + ", @ItemID, @Count)";
+                        myCmd.Parameters.AddWithValue("@Count", Convert.ToInt32(dtPInv.Rows[i]["ItemCount"].ToString()));
+                        myCmd.Parameters.AddWithValue("@ItemID", Convert.ToInt32(dtPInv.Rows[i]["ID"].ToString()));
+                        myCmd.ExecuteNonQuery();
+                    }
+                    i++;
+                }
+                myCmd.Dispose();
+                myConn.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Can not open connection ! ");
+            }
+
+
+
         }
 
 

@@ -7,7 +7,7 @@ using System.Data;
 
 namespace BreadMage2.Screens
 {
-    public class clsCombatItem
+    public class clsCombatItem : IEquatable<clsCombatItem>
     {
         public int itemID { get; set; }
         public string ItemName { get; set; }
@@ -66,6 +66,30 @@ namespace BreadMage2.Screens
             StatEffect = Convert.ToInt32(dr["StatEffect"].ToString());
             ImageURL = dr["ImgURL"].ToString();
 
+        }
+
+
+
+        // this is definitely stolen from
+        //docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-5.0
+        //stackoverflow.com/questions/9854917/how-can-i-find-a-specific-element-in-a-listt
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            clsCombatItem objAsCombat = obj as clsCombatItem;
+            if (objAsCombat == null) return false;
+            else return Equals(objAsCombat);
+        }
+
+        public override int GetHashCode()
+        {
+            return itemID;
+        }
+
+        public bool Equals(clsCombatItem other)
+        {
+            if (other == null) return false;
+            return (this.itemID.Equals(other.itemID));
         }
     }
 }

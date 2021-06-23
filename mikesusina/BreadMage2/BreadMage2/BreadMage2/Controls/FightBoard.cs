@@ -33,13 +33,13 @@ namespace BreadMage2.Controls
             else { myMonsterList = myGameScr.gMonsterList; }
             
             //Get list of local monsters
-            //grab IDs of local monsters into a list
             // *************handle if locaiton contains no encounters
             List<clsMonster> locMonsters = new List<clsMonster>();
             foreach (clsMonster m in myMonsterList)
             {
                 if (m.Location == myGameScr.gMage.Location)
                 {
+                    m.HP = m.HPmax;
                     locMonsters.Add(m);
                 }
             }
@@ -48,14 +48,35 @@ namespace BreadMage2.Controls
             myMonster = locMonsters.ElementAt(myGameScr.gRandom.Next(0, (locMonsters.Count)));
 
             
-            
-            /*
-             * old:
-            string s = "Location = " + myGameScr.gMage.Location;
-            DataTable vLocMonster = myGameScr.gMonsterList.Tables[0].Select(s).CopyToDataTable();
-            s = "MonsterID = " + vLocMonster.Rows[myGameScr.gRandom.Next(0, vLocMonster.Rows.Count)]["MonsterID"];
-            vLocMonster = vLocMonster.Select(s).CopyToDataTable();
-            */
+            txtChatter.Clear();
+            txtChatter.Text = "Look out it's a " + myMonster.MonName + "!!!";
+            //myMonster = new clsMonster(myMonster);
+
+            myGameScr = aGameScr;
+            myGameScr.gMonster = myMonster;
+            myGameScr.bFight = this;
+            Load_Fight();
+        }
+
+
+        //for loading in a fight with a specific monster instead of using location pool:
+        public FightBoard(GameScreen aGameScr, int anID)
+        {
+            InitializeComponent();
+            myGameScr = aGameScr;
+            // if the local full monster set is empty load it
+            if (myGameScr.gMonsterList is null)
+            {
+                BreadDB BreadNet = new BreadDB();
+                myMonsterList = BreadNet.LoadMonsterList();
+                myGameScr.gMonsterList = myMonsterList;
+            }
+            else { myMonsterList = myGameScr.gMonsterList; }
+
+            if (myGameScr.gMonsterList.Exists(x => x.monID == anID))
+            {
+                myMonster = myGameScr.gMonsterList.Find(x => x.monID == anID);
+            }
 
             txtChatter.Clear();
             txtChatter.Text = "Look out it's a " + myMonster.MonName + "!!!";
@@ -66,16 +87,7 @@ namespace BreadMage2.Controls
             myGameScr.bFight = this;
             Load_Fight();
         }
-        /*
-        public FightBoard(GameScreen myGameScr, Monster aMonster)
-        {
-            InitializeComponent();
 
-            myMonster = aMonster;
-            myMage = aMage;
-            Load_Fight();
-        }
-        */
         private void Load_Fight()
         {
 
@@ -92,7 +104,9 @@ namespace BreadMage2.Controls
             pbMonster.Show();
 
             //Set Bars
+            //just in case, reset the monster HP to full
             //pbMonHP.Minimum = 0;
+            myMonster.HP = myMonster.HPmax;
             pbMonHP.Maximum = myMonster.HPmax;
             pbMonHP.Value = myMonster.HP;
         }

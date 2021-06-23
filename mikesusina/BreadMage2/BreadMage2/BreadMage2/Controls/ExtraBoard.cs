@@ -34,25 +34,33 @@ namespace BreadMage2
 
             //noncombat
 
-            //combat
-            if (this.Parent.Parent.Controls["pArea"].Controls["FightBoard"] == null)
+            if (textBox1.Text == "test")
             {
-
-                Control FightZone = new Control();
-                bFight = new FightBoard(myGameScr);
-                FightZone = this.Parent.Parent.Controls["pArea"];
-                FightZone.Controls.Add(bFight);
-                myGameScr.bFight = bFight;
-                bFight.Show();
-                //FightZone.Controls["FightBoard"].Show();
-
+                Form ChoiceScreen = new ChoiceScreen(myGameScr, myGameScr.gChoiceList.Find(x => x.AdvID == 1));
+                myGameScr.Hide();
+                ChoiceScreen.Show();
             }
-            else { MessageBox.Show("Hey there's something there!"); }
+            else
+            {
+                //combat
+                if (this.Parent.Parent.Controls["pArea"].Controls["FightBoard"] == null)
+                {
 
+                    Control FightZone = new Control();
+                    bFight = new FightBoard(myGameScr);
+                    FightZone = this.Parent.Parent.Controls["pArea"];
+                    FightZone.Controls.Add(bFight);
+                    myGameScr.bFight = bFight;
+                    bFight.Show();
+                    //FightZone.Controls["FightBoard"].Show();
+
+                }
+                else { MessageBox.Show("Hey there's something there!"); }
+            }
         }
 
 
-        //removing a control [fightboard] from the area panel:
+        //DevTools
         private void button1_Click(object sender, EventArgs e)
         {
             DevTools myform = new DevTools(myGameScr);
@@ -83,9 +91,17 @@ namespace BreadMage2
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (myGameScr.gPlayerInv != null)
+            if (myGameScr.GetPlayerInv() != null)
             {
-
+                int i = 0;
+                string s = "";
+                DataTable dt = myGameScr.GetPlayerInv();
+                foreach (DataRow d in dt.Rows)
+                {
+                    s += "ID: " + d[0].ToString() + "  Count: " + d[1].ToString() + Environment.NewLine;
+                    i++;
+                }
+                MessageBox.Show(s);
             }
         }
     }

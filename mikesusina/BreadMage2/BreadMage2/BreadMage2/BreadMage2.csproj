@@ -86,7 +86,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BreadDB.cs" />
+    <Compile Include="clsChoiceAdventure.cs" />
     <Compile Include="clsConsumable.cs" />
+    <Compile Include="Controls\ChoiceBoard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ChoiceBoard.Designer.cs">
+      <DependentUpon>ChoiceBoard.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ExtraBoard.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -121,6 +128,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="clsCombatItem.cs" />
+    <Compile Include="Screens\ChoiceScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Screens\ChoiceScreen.Designer.cs">
+      <DependentUpon>ChoiceScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Screens\CreateScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -157,6 +170,9 @@
     <EmbeddedResource Include="Controls\BreadMage.resx">
       <DependentUpon>BreadMage.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ChoiceBoard.resx">
+      <DependentUpon>ChoiceBoard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\FightBoard.resx">
       <DependentUpon>FightBoard.cs</DependentUpon>
     </EmbeddedResource>
@@ -165,6 +181,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\QuickBoard.resx">
       <DependentUpon>QuickBoard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Screens\ChoiceScreen.resx">
+      <DependentUpon>ChoiceScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Screens\CreateScreen.resx">
       <DependentUpon>CreateScreen.cs</DependentUpon>
@@ -237,6 +256,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Images\Items\butter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mouse.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

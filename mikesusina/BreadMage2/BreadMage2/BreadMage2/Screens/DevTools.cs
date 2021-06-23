@@ -92,5 +92,58 @@ namespace BreadMage2.Screens
                 MessageBox.Show("Hey this is a not identified item");
             }
         }
+
+        private void btnQuickSlots_Click(object sender, EventArgs e)
+        {
+            if (tbAmount != null && tbItemID != null && int.TryParse(tbAmount.Text, out int outnum) == true 
+                    && int.TryParse(tbItemID.Text, out int outnum2) == true)
+            {
+                if (myGameScr != null && myGameScr.Controls["pQuickBoard"].Controls["QuickBoard"] != null)
+                {
+                    myGameScr.gMage.AddItem(Convert.ToInt32(tbItemID.Text.ToString()), Convert.ToInt32(tbAmount.Text.ToString()));
+                }
+            }
+                
+                    
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //checking gMage Inventory status
+            if (myGameScr.gMage != null)
+            {
+
+                string s = "okay + ";
+                foreach (DataRow r in myGameScr.gMage.myInv.Rows)
+                {
+                    s = s + Environment.NewLine + "ItemID: " + r[1].ToString() + " Count: " +  r[2].ToString();
+                }
+                MessageBox.Show(s);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (myGameScr.gMage != null)
+            {
+                BreadDB BN = new BreadDB();
+                BN.SavePlayerInv(myGameScr.gMage.SaveID, myGameScr.gMage.myInv);
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            //checking ChoiceAdventure status
+            if (myGameScr.gChoiceList != null)
+            {
+
+                string s = "okay";
+                foreach (clsChoiceAdventure a in myGameScr.gChoiceList)
+                {
+                    s += Environment.NewLine + a.AdvText;
+                }
+                tbDisplay.Text = s;
+            }
+        }
     }
 }

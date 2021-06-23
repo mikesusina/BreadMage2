@@ -32,7 +32,7 @@
             this.lbLog = new System.Windows.Forms.ListBox();
             this.pArea = new System.Windows.Forms.Panel();
             this.pExtraInfo = new System.Windows.Forms.Panel();
-            this.pMacros = new System.Windows.Forms.Panel();
+            this.pQuickBoard = new System.Windows.Forms.Panel();
             this.pSB = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
@@ -69,13 +69,13 @@
             this.pExtraInfo.Size = new System.Drawing.Size(250, 350);
             this.pExtraInfo.TabIndex = 7;
             // 
-            // pMacros
+            // pQuickBoard
             // 
-            this.pMacros.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pMacros.Location = new System.Drawing.Point(740, 374);
-            this.pMacros.Name = "pMacros";
-            this.pMacros.Size = new System.Drawing.Size(350, 134);
-            this.pMacros.TabIndex = 8;
+            this.pQuickBoard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pQuickBoard.Location = new System.Drawing.Point(740, 374);
+            this.pQuickBoard.Name = "pQuickBoard";
+            this.pQuickBoard.Size = new System.Drawing.Size(350, 134);
+            this.pQuickBoard.TabIndex = 8;
             // 
             // pSB
             // 
@@ -91,7 +91,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1104, 521);
             this.Controls.Add(this.pSB);
-            this.Controls.Add(this.pMacros);
+            this.Controls.Add(this.pQuickBoard);
             this.Controls.Add(this.pExtraInfo);
             this.Controls.Add(this.pArea);
             this.Controls.Add(this.lbLog);
@@ -110,7 +110,7 @@
         private System.Windows.Forms.ListBox lbLog;
         private System.Windows.Forms.Panel pArea;
         private System.Windows.Forms.Panel pExtraInfo;
-        private System.Windows.Forms.Panel pMacros;
+        private System.Windows.Forms.Panel pQuickBoard;
         private System.Windows.Forms.Panel pSB;
     }
 }
