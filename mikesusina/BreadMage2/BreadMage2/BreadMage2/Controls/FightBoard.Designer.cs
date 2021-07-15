@@ -36,20 +36,22 @@
             this.pbMonHP = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this.txtChatter = new System.Windows.Forms.TextBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbMonster)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // pbMonster
             // 
-            this.pbMonster.Location = new System.Drawing.Point(125, 10);
+            this.pbMonster.Location = new System.Drawing.Point(150, 37);
             this.pbMonster.Name = "pbMonster";
-            this.pbMonster.Size = new System.Drawing.Size(100, 100);
+            this.pbMonster.Size = new System.Drawing.Size(150, 150);
             this.pbMonster.TabIndex = 0;
             this.pbMonster.TabStop = false;
             // 
             // btnAttack
             // 
-            this.btnAttack.Location = new System.Drawing.Point(52, 136);
+            this.btnAttack.Location = new System.Drawing.Point(100, 243);
             this.btnAttack.Name = "btnAttack";
             this.btnAttack.Size = new System.Drawing.Size(75, 23);
             this.btnAttack.TabIndex = 1;
@@ -59,7 +61,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(52, 165);
+            this.button2.Location = new System.Drawing.Point(100, 272);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 2;
@@ -68,7 +70,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(227, 136);
+            this.button3.Location = new System.Drawing.Point(275, 243);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 3;
@@ -77,7 +79,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(227, 165);
+            this.button4.Location = new System.Drawing.Point(275, 272);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 4;
@@ -88,7 +90,7 @@
             // 
             this.pbMonHP.BackColor = System.Drawing.SystemColors.Control;
             this.pbMonHP.ForeColor = System.Drawing.Color.Red;
-            this.pbMonHP.Location = new System.Drawing.Point(115, 115);
+            this.pbMonHP.Location = new System.Drawing.Point(165, 221);
             this.pbMonHP.Name = "pbMonHP";
             this.pbMonHP.Size = new System.Drawing.Size(120, 15);
             this.pbMonHP.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -107,18 +109,30 @@
             // 
             this.txtChatter.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.txtChatter.BackColor = System.Drawing.Color.Black;
+            this.txtChatter.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtChatter.ForeColor = System.Drawing.Color.Lime;
-            this.txtChatter.Location = new System.Drawing.Point(25, 194);
+            this.txtChatter.Location = new System.Drawing.Point(12, 301);
             this.txtChatter.Multiline = true;
             this.txtChatter.Name = "txtChatter";
             this.txtChatter.ReadOnly = true;
-            this.txtChatter.Size = new System.Drawing.Size(300, 147);
+            this.txtChatter.Size = new System.Drawing.Size(418, 147);
             this.txtChatter.TabIndex = 8;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Enabled = false;
+            this.pictureBox1.Location = new System.Drawing.Point(125, 10);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(200, 200);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Visible = false;
             // 
             // FightBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.txtChatter);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pbMonHP);
@@ -128,8 +142,9 @@
             this.Controls.Add(this.btnAttack);
             this.Controls.Add(this.pbMonster);
             this.Name = "FightBoard";
-            this.Size = new System.Drawing.Size(350, 350);
+            this.Size = new System.Drawing.Size(450, 585);
             ((System.ComponentModel.ISupportInitialize)(this.pbMonster)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -145,5 +160,6 @@
         public System.Windows.Forms.ProgressBar pbMonHP;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtChatter;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

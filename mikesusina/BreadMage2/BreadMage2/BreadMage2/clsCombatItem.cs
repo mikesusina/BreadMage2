@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 
-namespace BreadMage2.Screens
+namespace BreadMage2
 {
     public class clsCombatItem : IEquatable<clsCombatItem>
     {
@@ -32,10 +32,6 @@ namespace BreadMage2.Screens
             ItemRow = aItemRow;
             ParseCombatItemDataRow(ItemRow);
         }
-        public clsCombatItem(int i)
-        {
-            
-        }
 
 
         private void ParseCombatItemData(DataTable ds)
@@ -43,7 +39,7 @@ namespace BreadMage2.Screens
             //Items.ID, CombatItems.ItemName, CombatItems.ImgURL, CombatItems.Damage, CombatItems.DamageType, CombatItems.Debuff, CombatItems.DebuffType, CombatItems.StatEffect
 
 
-            itemID = Convert.ToInt32(ds.Rows[0].ItemArray[0].ToString());
+            itemID = Convert.ToInt32(ds.Rows[0]["ID"].ToString());
             ItemName = ds.Rows[0]["ItemName"].ToString();
             Damage = Convert.ToInt32(ds.Rows[0]["Damage"].ToString());
             DamageType = Convert.ToInt32(ds.Rows[0]["DamageType"].ToString());
@@ -57,7 +53,7 @@ namespace BreadMage2.Screens
         {
             //Items.ID, CombatItems.ItemName, CombatItems.ImgURL, CombatItems.Damage, CombatItems.DamageType, CombatItems.Debuff, CombatItems.DebuffType, CombatItems.StatEffect
 
-            itemID = Convert.ToInt32(dr.ItemArray[0].ToString());
+            itemID = Convert.ToInt32(dr["ID"].ToString());
             ItemName = dr["ItemName"].ToString();
             Damage = Convert.ToInt32(dr["Damage"].ToString());
             DamageType = Convert.ToInt32(dr["DamageType"].ToString());

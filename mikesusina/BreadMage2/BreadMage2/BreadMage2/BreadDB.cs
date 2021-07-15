@@ -240,7 +240,7 @@ namespace BreadMage2
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Can not open connection ! ");
+                MessageBox.Show("Inventory save failed! ");
             }
 
 

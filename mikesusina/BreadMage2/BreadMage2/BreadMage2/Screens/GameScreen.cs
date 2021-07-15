@@ -24,6 +24,7 @@ namespace BreadMage2
         public ExtraBoard bExtra { get; set; }
         public FightBoard bFight { get; set; }
         public QuickBoard bQuick { get; set; }
+        public ChoiceBoard bChoice { get; set; }
         
         public List<clsMonster> gMonsterList { get; set; }
 
@@ -36,6 +37,7 @@ namespace BreadMage2
 
         public engGLog gLog { get; set; }
 
+        public bool gLock { get; set; }
 
         
 
@@ -50,6 +52,7 @@ namespace BreadMage2
             gConsumableLib = aConsumableLib;
             gCombatLib = aCombatLib;
             gChoiceList = aChoiceLib;
+            gLock = false;
 
             //LoadFlag 0  = new game
             //LoadFlag N  = load game (N will be save game ID)
@@ -169,29 +172,59 @@ namespace BreadMage2
             { }
         }
 
-        public void ChoiceFight(int anID)
+        public string GetItemName(int anID)
         {
-            if (this.Controls["pArea"].Controls["FightBoard"] == null)
+            string s = "";
+            if (gConsumableLib.Exists(x => x.itemID == anID))
             {
-                try
-                {
-                    Control FightZone = new Control();
-                    bFight = new FightBoard(this, anID);
-                    Controls["pArea"].Controls.Add(bFight);
-                    bFight.Show();
+                clsConsumable o = gConsumableLib.Find(x => x.itemID == anID);
+                s = o.ItemName;
+            }
+            else if (gCombatLib.Exists(x => x.itemID == anID))
+            {
+                clsCombatItem o = gCombatLib.Find(x => x.itemID == anID);
+                s = o.ItemName;
+            }
+            return s;
+        }
 
-                    //FightZone = Controls["pArea"];
-                    //FightZone.Controls.Add(bFight);
-                    //bFight = bFight;
-                }
-                catch (ArgumentException e)
-                {
-                    throw e;
-                }
-
+        public void ChoiceChain(clsChoiceAdventure anAdv)
+        {
+            this.Controls["pArea"].Controls.Clear();
+            try
+            {
+                Control ChoiceZone = new Control();
+                bChoice = new ChoiceBoard(this, anAdv);
+                Controls["pArea"].Controls.Add(bChoice);
+                gLock = true;
+                bChoice.Show();
+            }
+            catch (ArgumentException e)
+            {
+                throw e;
             }
         }
 
+        public void ChoiceFight(int anID)
+        {
+            this.Controls["pArea"].Controls.Clear();
+            try
+            {
+                Control FightZone = new Control();
+                bFight = new FightBoard(this, anID);
+                Controls["pArea"].Controls.Add(bFight);
+                gLock = true;
+                bFight.Show();
+
+                //FightZone = Controls["pArea"];
+                //FightZone.Controls.Add(bFight);
+                //bFight = bFight;
+            }
+            catch (ArgumentException e)
+            {
+                throw e;
+            }
+        }
 
         public void GameOver()
         {

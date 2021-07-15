@@ -39,7 +39,7 @@
             // btnWander
             // 
             this.btnWander.Font = new System.Drawing.Font("Trebuchet MS", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnWander.Location = new System.Drawing.Point(61, 14);
+            this.btnWander.Location = new System.Drawing.Point(10, 14);
             this.btnWander.Name = "btnWander";
             this.btnWander.Size = new System.Drawing.Size(127, 44);
             this.btnWander.TabIndex = 0;
@@ -49,7 +49,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(3, 322);
+            this.button1.Location = new System.Drawing.Point(3, 422);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(58, 25);
             this.button1.TabIndex = 1;
@@ -76,16 +76,16 @@
             // 
             // btnItems
             // 
-            this.btnItems.Location = new System.Drawing.Point(61, 81);
+            this.btnItems.Location = new System.Drawing.Point(10, 64);
             this.btnItems.Name = "btnItems";
-            this.btnItems.Size = new System.Drawing.Size(146, 49);
+            this.btnItems.Size = new System.Drawing.Size(127, 49);
             this.btnItems.TabIndex = 4;
             this.btnItems.Text = "Items";
             this.btnItems.UseVisualStyleBackColor = true;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(98, 304);
+            this.button3.Location = new System.Drawing.Point(65, 255);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(53, 32);
             this.button3.TabIndex = 6;
@@ -104,7 +104,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnWander);
             this.Name = "ExtraBoard";
-            this.Size = new System.Drawing.Size(250, 350);
+            this.Size = new System.Drawing.Size(150, 450);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -68,7 +68,7 @@
             this.Controls.Add(this.btnQS1);
             this.Controls.Add(this.pbQS1);
             this.Name = "QuickBoard";
-            this.Size = new System.Drawing.Size(350, 134);
+            this.Size = new System.Drawing.Size(250, 333);
             ((System.ComponentModel.ISupportInitialize)(this.pbQS1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

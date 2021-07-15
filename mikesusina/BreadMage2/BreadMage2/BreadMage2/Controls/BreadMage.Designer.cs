@@ -42,7 +42,7 @@
             // 
             this.pbHP.BackColor = System.Drawing.SystemColors.Control;
             this.pbHP.ForeColor = System.Drawing.Color.Red;
-            this.pbHP.Location = new System.Drawing.Point(55, 116);
+            this.pbHP.Location = new System.Drawing.Point(114, 218);
             this.pbHP.Name = "pbHP";
             this.pbHP.Size = new System.Drawing.Size(120, 13);
             this.pbHP.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -52,7 +52,7 @@
             // 
             this.pbMP.BackColor = System.Drawing.SystemColors.Control;
             this.pbMP.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.pbMP.Location = new System.Drawing.Point(55, 140);
+            this.pbMP.Location = new System.Drawing.Point(114, 242);
             this.pbMP.Name = "pbMP";
             this.pbMP.Size = new System.Drawing.Size(120, 15);
             this.pbMP.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -63,7 +63,7 @@
             this.pbSP.BackColor = System.Drawing.SystemColors.Control;
             this.pbSP.Cursor = System.Windows.Forms.Cursors.Default;
             this.pbSP.ForeColor = System.Drawing.Color.Lime;
-            this.pbSP.Location = new System.Drawing.Point(55, 166);
+            this.pbSP.Location = new System.Drawing.Point(114, 268);
             this.pbSP.Name = "pbSP";
             this.pbSP.Size = new System.Drawing.Size(120, 15);
             this.pbSP.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -71,16 +71,16 @@
             // 
             // pbMage
             // 
-            this.pbMage.Location = new System.Drawing.Point(75, 10);
+            this.pbMage.Location = new System.Drawing.Point(100, 22);
             this.pbMage.Name = "pbMage";
-            this.pbMage.Size = new System.Drawing.Size(100, 100);
+            this.pbMage.Size = new System.Drawing.Size(150, 150);
             this.pbMage.TabIndex = 0;
             this.pbMage.TabStop = false;
             // 
             // lblHPDisplay
             // 
             this.lblHPDisplay.AutoSize = true;
-            this.lblHPDisplay.Location = new System.Drawing.Point(181, 116);
+            this.lblHPDisplay.Location = new System.Drawing.Point(240, 218);
             this.lblHPDisplay.Name = "lblHPDisplay";
             this.lblHPDisplay.Size = new System.Drawing.Size(36, 13);
             this.lblHPDisplay.TabIndex = 4;
@@ -89,7 +89,7 @@
             // lblMPDisplay
             // 
             this.lblMPDisplay.AutoSize = true;
-            this.lblMPDisplay.Location = new System.Drawing.Point(181, 141);
+            this.lblMPDisplay.Location = new System.Drawing.Point(240, 243);
             this.lblMPDisplay.Name = "lblMPDisplay";
             this.lblMPDisplay.Size = new System.Drawing.Size(23, 13);
             this.lblMPDisplay.TabIndex = 5;
@@ -98,7 +98,7 @@
             // lblSPDisplay
             // 
             this.lblSPDisplay.AutoSize = true;
-            this.lblSPDisplay.Location = new System.Drawing.Point(181, 166);
+            this.lblSPDisplay.Location = new System.Drawing.Point(240, 268);
             this.lblSPDisplay.Name = "lblSPDisplay";
             this.lblSPDisplay.Size = new System.Drawing.Size(21, 13);
             this.lblSPDisplay.TabIndex = 6;
@@ -116,7 +116,7 @@
             this.Controls.Add(this.pbHP);
             this.Controls.Add(this.pbMage);
             this.Name = "BreadMage";
-            this.Size = new System.Drawing.Size(250, 350);
+            this.Size = new System.Drawing.Size(350, 450);
             ((System.ComponentModel.ISupportInitialize)(this.pbMage)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

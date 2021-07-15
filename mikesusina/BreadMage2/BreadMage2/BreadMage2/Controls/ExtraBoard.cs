@@ -17,6 +17,7 @@ namespace BreadMage2
 
         public BreadMage bMage { get; set; }
         public FightBoard bFight { get; set; }
+        public ChoiceBoard bChoice { get; set; }
         public GameScreen myGameScr { get; set; }
 
         public ExtraBoard(GameScreen aGameScr)
@@ -33,30 +34,30 @@ namespace BreadMage2
             //run logic on chosing a result
 
             //noncombat
-
-            if (textBox1.Text == "test")
+            if (myGameScr.gLock == false)
             {
-                Form ChoiceScreen = new ChoiceScreen(myGameScr, myGameScr.gChoiceList.Find(x => x.AdvID == 1));
-                myGameScr.Hide();
-                ChoiceScreen.Show();
-            }
-            else
-            {
-                //combat
-                if (this.Parent.Parent.Controls["pArea"].Controls["FightBoard"] == null)
+                if (textBox1.Text == "test")
                 {
-
+                    Control ChoiceZone = new Control();
+                    bChoice = new ChoiceBoard(myGameScr, myGameScr.gChoiceList.Find(x => x.AdvID == 1));
+                    myGameScr.Controls["pArea"].Controls.Add(bChoice);
+                    myGameScr.gLock = true;
+                    bChoice.Show();
+                }
+                else
+                {
+                    //combat
                     Control FightZone = new Control();
                     bFight = new FightBoard(myGameScr);
                     FightZone = this.Parent.Parent.Controls["pArea"];
                     FightZone.Controls.Add(bFight);
                     myGameScr.bFight = bFight;
+                    myGameScr.gLock = true;
                     bFight.Show();
                     //FightZone.Controls["FightBoard"].Show();
-
                 }
-                else { MessageBox.Show("Hey there's something there!"); }
             }
+            else { MessageBox.Show("Hey there's something there!"); }
         }
 
 

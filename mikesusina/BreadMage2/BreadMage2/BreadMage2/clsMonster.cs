@@ -21,13 +21,19 @@ namespace BreadMage2
         public int PDef { get; set; }
         public int MDef { get; set; }
         public int EXP { get; set; }
+        public string sDropData { get; set; }
+        public string sRawChatter { get; set; }
         public string ImageURL { get; set; }
         public int Location { get; set; }
+
+        public List<String> ChatterList { get; set; }
+
 
         public DataTable MonData { get; set; }
         public DataRow MonRow { get; set; }
         //abilities?
         //drop table?
+        public  DataTable DropList { get; set; }
         //picture url
         //unique chatter? roll to use unique or common?
 
@@ -36,6 +42,7 @@ namespace BreadMage2
         {
             MonData = aMonData;
             ParseMonsterData(MonData);
+            InitializeMonster();
             
         }
 
@@ -43,7 +50,7 @@ namespace BreadMage2
         {
             MonRow = aMonRow;
             ParseMonsterDataRow(MonRow);
-
+            InitializeMonster();
         }
         /*
         private void GetMonster()
@@ -85,6 +92,8 @@ namespace BreadMage2
             ImageURL = ds.Rows[0]["IMG"].ToString();
             Location = Convert.ToInt32(ds.Rows[0]["Location"].ToString());
             monID = Convert.ToInt32(ds.Rows[0]["MonsterID"].ToString());
+            sRawChatter = ds.Rows[0]["Chatter"].ToString();
+            sDropData = ds.Rows[0]["Drops"].ToString();
         }
 
         private void ParseMonsterDataRow(DataRow dr)
@@ -112,7 +121,60 @@ namespace BreadMage2
             ImageURL = dr["IMG"].ToString();
             Location = Convert.ToInt32(dr["Location"].ToString());
             monID = Convert.ToInt32(dr["MonsterID"].ToString());
+            sRawChatter = dr["Chatter"].ToString();
+            sDropData = dr["Drops"].ToString();
         }
+
+
+        private void InitializeMonster()
+        {
+
+            //set chatter list
+            ChatterList = new List<string>();
+            string s = sRawChatter;
+
+            while (s.IndexOf("|") > 0)
+            {
+                string temp = s.Substring(0, s.IndexOf("|"));
+                ChatterList.Add(temp);
+                s = s.Substring(s.IndexOf("|") + 1);
+            }
+            ChatterList.Add(s);
+
+            // set the drop table
+            DropList = new DataTable();
+            DropList.Columns.Add("ID");
+            DropList.Columns.Add("Rate");
+
+            if (sDropData != null && sDropData != "")
+            {
+                string t = sDropData;
+                while (t.IndexOf("|") > 0)
+                {
+                    //every item drop will have an ID and a [drop] Rate (out of 100%), monsters can drop multiple items
+                    //take all info for one item:
+                    string temp = t.Substring(0, t.IndexOf("|"));
+                    AddItemToDropTable(temp);
+                    t = t.Substring(t.IndexOf("|") + 1);
+                }
+                AddItemToDropTable(t);
+            }
+
+        }
+
+
+        private void AddItemToDropTable(string s)
+        {
+            int tID = 0;
+            int tRate = 0;
+            tID = Convert.ToInt32(s.Substring(s.IndexOf("ID=") + 3, s.IndexOf("RT") - 3));
+            tRate = Convert.ToInt32(s.Substring(s.IndexOf("RT=") + 3));
+            DropList.Rows.Add(new Object[]{
+                                    tID,
+                                    tRate});
+        }
+
+
 
 
         // this is definitely stolen from

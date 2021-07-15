@@ -18,8 +18,8 @@ namespace BreadMage2.Controls
         public BreadMage bMage { get; set; }
         public FightBoard bFight { get; set; }
         public GameScreen myGameScr { get; set; }
-        private List<int> QuickItemIDs;
-        private List<int> QuickSpellIDs;
+        //private List<int> QuickItemIDs;
+        //private List<int> QuickSpellIDs;
 
         private int iSlot1;
         private int iSlot2;

@@ -88,6 +88,9 @@
     <Compile Include="BreadDB.cs" />
     <Compile Include="clsChoiceAdventure.cs" />
     <Compile Include="clsConsumable.cs" />
+    <Compile Include="clsEquipment.cs" />
+    <Compile Include="clsMageEffect.cs" />
+    <Compile Include="clsMageStats.cs" />
     <Compile Include="Controls\ChoiceBoard.cs">
       <SubType>UserControl</SubType>
     </Compile>

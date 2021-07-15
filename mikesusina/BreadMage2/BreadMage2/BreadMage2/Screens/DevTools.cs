@@ -70,11 +70,14 @@ namespace BreadMage2.Screens
 
         private void button1_Click(object sender, EventArgs e)
         {
+
+            /* 
             object o = new object();
 
             if (Convert.ToInt32(txbLoc.Text) == 8) { o = new clsConsumable(0); }
             else if (Convert.ToInt32(txbLoc.Text) == 9) { o = new clsCombatItem(0); }
             tryMethod(o);
+           
         }
 
         private void tryMethod(object o)
@@ -91,6 +94,7 @@ namespace BreadMage2.Screens
             {
                 MessageBox.Show("Hey this is a not identified item");
             }
+         */
         }
 
         private void btnQuickSlots_Click(object sender, EventArgs e)
@@ -144,6 +148,19 @@ namespace BreadMage2.Screens
                 }
                 tbDisplay.Text = s;
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            string s = txbLoc.Text;
+
+            int tID = 0;
+            int tRate = 0;
+            tID = Convert.ToInt32(s.Substring(s.IndexOf("ID=") + 3, s.IndexOf("RT") - 3));
+            tRate = Convert.ToInt32(s.Substring(s.IndexOf("RT=") + 3));
+
+            string t = "ID = " + tID.ToString() + Environment.NewLine + "RT = " + tRate.ToString();
+            MessageBox.Show(t);
         }
     }
 }

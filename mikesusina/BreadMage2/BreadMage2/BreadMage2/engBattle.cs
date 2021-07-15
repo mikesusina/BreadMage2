@@ -64,7 +64,7 @@ namespace BreadMage2
             switch (AtkType)
             {
 
-                case 1:
+                case 1: // regular attack
                     bdamage = MageWeaponAttack();
                     break;
                 case 2:
@@ -73,7 +73,7 @@ namespace BreadMage2
                 case 3:
                     break;
                 default:
-                    bdamage = myMage.Atk - myMonster.PDef;
+                    bdamage = myMage.PAtk() - myMonster.PDef;
                     myMonster.HP = myMonster.HP - bdamage;
                     myGameScr.bFight.UpdateBars(myMonster.HP);
                     break;
@@ -81,15 +81,7 @@ namespace BreadMage2
 
             if (myGameScr.gMonster.HP <= 0)
             {
-                MessageBox.Show("It's croutons!");
-                string s = "Nice work, you got " + myGameScr.gMonster.EXP.ToString() + " EXP!";
-                myGameScr.gLog.Add(s);
-
-                //EndCombat(myGameScr.gMonster.monID);
-
-                //give post battle info, item drops before disposing. new pop up window?
-                myGameScr.bFight.Hide();
-                myGameScr.bFight.Dispose();
+                EndCombat();
             }
             else
             {
@@ -103,8 +95,8 @@ namespace BreadMage2
 
         private int MageWeaponAttack()
         {
-            int damage = myGameScr.gMage.Atk - myGameScr.gMonster.PDef;
-            myGameScr.gMonster.HP = myGameScr.gMonster.HP - damage;
+            int damage = myGameScr.gMage.PAtk() - myGameScr.gMonster.PDef;
+            myGameScr.gMonster.HP -= damage;
             myGameScr.bFight.UpdateBars(myGameScr.gMonster.HP);
             return damage;
         }
@@ -128,39 +120,111 @@ namespace BreadMage2
 
         private void MonsterAttack(int AtkType = 1)
         {
+
+            int bdamage = 0;
+
             //potential moves:
             // attack
             // defend
             // ability (if available? all monsters have at least one?)
             // ideas: monster healing, adding DoT attacks? enrage
 
-            //placeholder
-            //notes - peep the build in ability to manipulate all mage bars at once - HP, MP, SP
 
-            //
 
-            /* using global object */
-            int damage = myGameScr.gMonster.PAtk - myGameScr.gMage.Def;
-            myGameScr.gMage.HP = myGameScr.gMage.HP - damage;
+            //placeholder - utilizing m and p attack
+            int i = myGameScr.gRandom.Next(2);
+            if (i == 0) { AtkType = 1; }
+            else { AtkType = 2; }
+
+            switch (AtkType)
+            {
+                case 1: //patk
+                    bdamage = MonsterPAttack();
+                    break;
+                case 2: //matk
+                    bdamage = MonsterMAttack();
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+            }
+
 
             if (myGameScr.gMage.HP <= 0)
             { myGameScr.GameOver(); }
+            else if (bdamage <= 0)
+            {
+                string s = "Your incredible ";
+                switch (AtkType)
+                {
+                    case 1: //patk
+                        s += "might";
+                        break;
+                    case 2: //matk
+                        s += "resistence";
+                        break;
+                }
+                s += " shrugs off their attack.";
+                myGameScr.bFight.AddChatter(s);
+            }
             else
             {
+                //ability to manipulate all mage bars at once - HP, MP, SP - update to new value
                 myGameScr.bMage.UpdateBars(myGameScr.gMage.HP, 0, 0);
-                string s = "it rustled your jimmies for " + damage.ToString() + " damage!";
+                string s = "";
+                if (AtkType == 1) { s = "it rustled your jimmies for " + bdamage.ToString() + " damage!"; }
+                else { s = "it magically singes you for " + bdamage.ToString() + " damage!"; }
                 myGameScr.bFight.AddChatter(s);
             }
 
         }
 
+        private int MonsterPAttack()
+        {
+            int damage = myGameScr.gMonster.PAtk - myGameScr.gMage.Def();
+            if (damage > 0 )
+            {
+                myGameScr.gMage.HP = myGameScr.gMage.HP - damage;
+            }
+            else { damage = 0; }
+            return damage;
+        }
+
+        private int MonsterMAttack()
+        {
+            int damage = myGameScr.gMonster.MAtk - myGameScr.gMage.Res();
+            if (damage > 0)
+            {
+                myGameScr.gMage.HP = myGameScr.gMage.HP - damage;
+            }
+            else { damage = 0; }
+            return damage;
+        }
+
+
         /// <summary>
         /// Post Combat logic starts here
         /// </summary>
         /// <param name="PostCombat"></param>
-        
+
         private void EndCombat()
         {
+            MessageBox.Show("It's croutons!");
+            string s = "Nice work, you got " + myGameScr.gMonster.EXP.ToString() + " EXP!";
+            myGameScr.gLog.Add(s);
+
+            myGameScr.gMage.TickBuffs();
+
+            
+
+            //give post battle info, item drops before disposing. new pop up window?
+            myGameScr.gLock = false;
+            myGameScr.bFight.Hide();
+            myGameScr.bFight.Dispose();
+
 
         }
 

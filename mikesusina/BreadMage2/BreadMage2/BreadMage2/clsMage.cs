@@ -12,6 +12,9 @@ namespace BreadMage2
     public class clsMage
     {
         //the Mage object, this is the PC
+        public clsMageStats Stats { get; set; }
+        public List<clsMageEffect> StatEffects { get; set; }
+
 
         public int HP { get; set; }
         public int HPmax { get; set; }
@@ -19,8 +22,6 @@ namespace BreadMage2
         public int MPmax { get; set; }
         public int SP { get; set; }
         public int SPmax { get; set; }
-        public int Atk { get; set; }
-        public int Def { get; set; }
         public int Location { get; set; }
         public int SaveID { get; set; }
         public Action RefreshInvNumbers;
@@ -29,6 +30,9 @@ namespace BreadMage2
 
         public List<clsConsumable> myConsumableLib { get; set; }
         public List<clsCombatItem> myCombatLib { get; set; }
+        public List<clsEquipment> myEquipList { get; set; }
+
+        //public list<clsBuff> myBuffList {get;set;}
 
 
         public List<int> myQuickIDs { get; set; }
@@ -42,8 +46,7 @@ namespace BreadMage2
             MP = MPmax;
             SPmax = 100;
             SP = SPmax;
-            Atk = 10;
-            Def = 2;
+
             Location = 1;
             myQuickIDs = new List<int>();
             myInv = new DataTable();
@@ -86,6 +89,47 @@ namespace BreadMage2
             
         }
 
+        public void TickBuffs()
+        {
+            int iFlag = 0;
+            if(StatEffects != null && StatEffects.Count > 0 )
+            {
+                foreach (clsMageEffect e in StatEffects)
+                {
+                    e.Tick();
+                    if (e.iTimer == 0)
+                    {
+                        StatEffects.Remove(e);
+                        iFlag = 1;
+                    }
+                }
+                if (iFlag == 1)
+                {
+                    Stats.SetBuffedStats(myEquipList, StatEffects);
+                }
+            }
+        }
+
+        public int PAtk()
+        {
+            return Stats.PAtk();
+        }
+
+        public int MAtk()
+        {
+            return Stats.MAtk();
+        }
+
+        public int Def()
+        {
+            return Stats.Def();
+        }
+
+        public int Res()
+        {
+            return Stats.Res();
+        }
+
         public int GetItemCount(int anItemID)
         {
             string searchExpression = "ID = " + anItemID;
@@ -97,6 +141,14 @@ namespace BreadMage2
             }
             else { return 0; }
             
+        }
+
+        private void SetEquipStats()
+        {
+            if(myEquipList != null && myEquipList.Count() > 0)
+            {
+                Stats.SetBuffedStats(myEquipList, StatEffects);
+            }
         }
 
     }

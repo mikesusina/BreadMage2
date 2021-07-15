@@ -97,6 +97,7 @@ namespace BreadMage2.Controls
             //remember to unlock/lock quick spells/items when combat starts and ends
 
             //load image
+            //TODO: in boss encounter, flip picture boxes
             //pbMonster.Image = Properties.Resources.[URL];
             object o = Properties.Resources.ResourceManager.GetObject(myGameScr.gMonster.ImageURL);
             if (o is Image) { pbMonster.Image = o as Image; }

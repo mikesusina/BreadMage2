@@ -14,6 +14,12 @@ namespace BreadMage2.Screens
 {
     public partial class ChoiceScreen : Form
     {
+        /// 
+        /// 
+        /// Currently this form is not in use! replaced with a custom control!
+        /// 
+        /// 
+
 
         public GameScreen sGameScreen { get; set; }
         public clsChoiceAdventure cChoice { get; set; }
@@ -139,7 +145,7 @@ namespace BreadMage2.Screens
                         break;
                     case "ADV": // chain adventure
                         bChainFlag = true;
-                        advID = Convert.ToInt32(s.Substring(4));
+                        advID = Convert.ToInt32(s.Substring(5));
                         break;
                     default:
                         break;

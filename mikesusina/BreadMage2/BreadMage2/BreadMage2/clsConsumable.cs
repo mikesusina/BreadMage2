@@ -35,16 +35,11 @@ namespace BreadMage2
             ParseConsumableDataRow(ItemRow);
         }
 
-        public clsConsumable(int i)
-        {
-            itemID = i;
-        }
-
         private void ParseConsumableData(DataTable ds)
         {
             //  Items.ID, Consumables.ItemName, Consumables.ImgURL, Consumables.HP, Consumables.MP, Consumables.SP, Consumables.Restore
 
-            itemID = Convert.ToInt32(ds.Rows[0].ItemArray[0].ToString());
+            itemID = Convert.ToInt32(ds.Rows[0]["ID"].ToString());
             ItemName = ds.Rows[0]["ItemName"].ToString();
             HP = Convert.ToInt32(ds.Rows[0]["HP"].ToString());
             MP = Convert.ToInt32(ds.Rows[0]["HP"].ToString());
