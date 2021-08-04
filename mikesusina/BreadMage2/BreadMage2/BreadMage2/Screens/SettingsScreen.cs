@@ -73,7 +73,8 @@ namespace BreadMage2.Screens
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Can not open connection ! ");
+                string s = "Can not open connection ! "+ Environment.NewLine + Environment.NewLine + "exception: " + ex.InnerException.ToString();
+                MessageBox.Show(s);
             }
         /*
 

@@ -19,18 +19,18 @@ namespace BreadMage2
 
         public clsMage gMage { get; set; }
         public clsMonster gMonster { get; set; }
+        public clsMonster gChatBot { get; set; } //for holding some universal chatterbox values to sprinkle in with specific ones
 
-        public BreadMage bMage {get; set;}
+        public BreadMage bMage { get; set; }
         public ExtraBoard bExtra { get; set; }
         public FightBoard bFight { get; set; }
         public QuickBoard bQuick { get; set; }
         public ChoiceBoard bChoice { get; set; }
-        
+
         public List<clsMonster> gMonsterList { get; set; }
 
         // for libraries
-        public List<clsConsumable> gConsumableLib { get; set; }
-        public List<clsCombatItem> gCombatLib { get; set; }
+        public List<clsUniqueItem> gItemBook { get; set; }
         public List<clsChoiceAdventure> gChoiceList { get; set; }
 
         public Random gRandom { get; set; }
@@ -41,7 +41,7 @@ namespace BreadMage2
 
         
 
-        public GameScreen(MainScreen scrMainScreen, int iLoadFlag, List<clsMonster> aMonsterList, List<clsConsumable> aConsumableLib, List<clsCombatItem> aCombatLib, List<clsChoiceAdventure> aChoiceLib)
+        public GameScreen(MainScreen scrMainScreen, int iLoadFlag, List<clsMonster> aMonsterList, List<clsUniqueItem> aItemBook, List<clsChoiceAdventure> aChoiceLib)
         {
             InitializeComponent();
             scrMain = scrMainScreen;
@@ -49,8 +49,7 @@ namespace BreadMage2
 
 
             gMonsterList = aMonsterList;
-            gConsumableLib = aConsumableLib;
-            gCombatLib = aCombatLib;
+            gItemBook = aItemBook;
             gChoiceList = aChoiceLib;
             gLock = false;
 
@@ -85,19 +84,20 @@ namespace BreadMage2
 
 
 
-                if (gMonsterList is null || gCombatLib is null || gConsumableLib is null || gChoiceList is null)
+                if (gMonsterList is null || gItemBook is null || gChoiceList is null)
                 {
                     //load various data from DB
                     //hopefully this is in memory already from program boot
                     gMonsterList = BreadNet.LoadMonsterList();
-                    gConsumableLib = BreadNet.LoadConsumablesLib();
-                    gCombatLib = BreadNet.LoadCombatLib();
+                    gItemBook = BreadNet.LoadUniqueItemsList();
                     gChoiceList = BreadNet.LoadChoiceList();
-                    gMage.myConsumableLib = gConsumableLib;
-                    gMage.myCombatLib = gCombatLib;
-                    
+                    gMage.myItemBook = gItemBook;
                 }
 
+                if (gChatBot is null)
+                {
+                    if (gMonsterList.Exists(x => x.monID == 7)) { gChatBot = gMonsterList.Find(x => x.monID == 7); }
+                }
 
 
                 //boards
@@ -122,13 +122,12 @@ namespace BreadMage2
                 clsMage gMage = new clsMage();
                 // Clear any mage info from the panel first
                 if (pMageZone.Controls != null) { pMageZone.Controls.Clear(); }
+                gMage.myInv = BreadNet.LoadPlayerInv(1);
+                gMage.myStatEffects = BreadNet.LoadMageEffectsList(1);
+                gMage.SaveID = 1;
+
                 bMage = new BreadMage(gMage);
                 pMageZone.Controls.Add(bMage);
-
-                gMage.SaveID = 1;
-                gMage.myInv = BreadNet.LoadPlayerInv(1);
-
-
                 bMage.Show();
                 // clear the Log
                 //lbLog.Items.Clear();
@@ -140,19 +139,20 @@ namespace BreadMage2
 
 
 
-                if (gMonsterList is null || gCombatLib is null || gConsumableLib is null || gChoiceList is null)
+                if (gMonsterList is null || gItemBook is null || gChoiceList is null)
                 {
                     //load various data from DB
                     //hopefully this is in memory already from program boot
                     gMonsterList = BreadNet.LoadMonsterList();
-                    gConsumableLib = BreadNet.LoadConsumablesLib();
-                    gCombatLib = BreadNet.LoadCombatLib();
+                    gItemBook = BreadNet.LoadUniqueItemsList();
                     gChoiceList = BreadNet.LoadChoiceList();
-                    gMage.myConsumableLib = gConsumableLib;
-                    gMage.myCombatLib = gCombatLib;
-
+                    gMage.myItemBook = gItemBook;
                 }
 
+                if (gChatBot is null)
+                {
+                    if (gMonsterList.Exists(x => x.monID == 7)) { gChatBot = gMonsterList.Find(x => x.monID == 7); }
+                }
 
 
                 //boards
@@ -175,14 +175,9 @@ namespace BreadMage2
         public string GetItemName(int anID)
         {
             string s = "";
-            if (gConsumableLib.Exists(x => x.itemID == anID))
+            if (gItemBook.Exists(x => x.itemID == anID))
             {
-                clsConsumable o = gConsumableLib.Find(x => x.itemID == anID);
-                s = o.ItemName;
-            }
-            else if (gCombatLib.Exists(x => x.itemID == anID))
-            {
-                clsCombatItem o = gCombatLib.Find(x => x.itemID == anID);
+                clsUniqueItem o = gItemBook.Find(x => x.itemID == anID);
                 s = o.ItemName;
             }
             return s;
@@ -193,7 +188,6 @@ namespace BreadMage2
             this.Controls["pArea"].Controls.Clear();
             try
             {
-                Control ChoiceZone = new Control();
                 bChoice = new ChoiceBoard(this, anAdv);
                 Controls["pArea"].Controls.Add(bChoice);
                 gLock = true;
@@ -241,7 +235,7 @@ namespace BreadMage2
             bExtra.Dispose();
         }
 
-        public DataTable GetPlayerInv()
+        public List<clsItem> GetPlayerInv()
         {
             return gMage.myInv;
         }

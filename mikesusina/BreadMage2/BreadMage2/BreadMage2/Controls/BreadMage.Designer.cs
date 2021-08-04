@@ -34,7 +34,7 @@
             this.pbMage = new System.Windows.Forms.PictureBox();
             this.lblHPDisplay = new System.Windows.Forms.Label();
             this.lblMPDisplay = new System.Windows.Forms.Label();
-            this.lblSPDisplay = new System.Windows.Forms.Label();
+            this.lblMoldCount = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbMage)).BeginInit();
             this.SuspendLayout();
             // 
@@ -95,20 +95,20 @@
             this.lblMPDisplay.TabIndex = 5;
             this.lblMPDisplay.Text = "MP";
             // 
-            // lblSPDisplay
+            // lblMoldCount
             // 
-            this.lblSPDisplay.AutoSize = true;
-            this.lblSPDisplay.Location = new System.Drawing.Point(240, 268);
-            this.lblSPDisplay.Name = "lblSPDisplay";
-            this.lblSPDisplay.Size = new System.Drawing.Size(21, 13);
-            this.lblSPDisplay.TabIndex = 6;
-            this.lblSPDisplay.Text = "SP";
+            this.lblMoldCount.AutoSize = true;
+            this.lblMoldCount.Location = new System.Drawing.Point(240, 268);
+            this.lblMoldCount.Name = "lblMoldCount";
+            this.lblMoldCount.Size = new System.Drawing.Size(30, 13);
+            this.lblMoldCount.TabIndex = 6;
+            this.lblMoldCount.Text = "Mold";
             // 
             // BreadMage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.lblSPDisplay);
+            this.Controls.Add(this.lblMoldCount);
             this.Controls.Add(this.lblMPDisplay);
             this.Controls.Add(this.lblHPDisplay);
             this.Controls.Add(this.pbSP);
@@ -131,6 +131,6 @@
         public System.Windows.Forms.ProgressBar pbSP;
         private System.Windows.Forms.Label lblHPDisplay;
         private System.Windows.Forms.Label lblMPDisplay;
-        private System.Windows.Forms.Label lblSPDisplay;
+        private System.Windows.Forms.Label lblMoldCount;
     }
 }

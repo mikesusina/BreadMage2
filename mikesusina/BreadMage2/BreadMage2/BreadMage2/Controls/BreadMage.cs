@@ -38,26 +38,42 @@ namespace BreadMage2
             pbMP.Minimum = 0;
             pbMP.Maximum = thisMage.MPmax;
             pbMP.Value = thisMage.MP;
+
+            string s = "HP: " + thisMage.HP.ToString() + "/" + thisMage.HPmax.ToString();
+            lblHPDisplay.Text = s;
+
+            s = "Mold: " + thisMage.MoldCount().ToString() + Environment.NewLine + "Timer: " + thisMage.MoldTimer().ToString();
+            lblMoldCount.Text = s;
+
+            //this may get reused
             pbSP.Minimum = 0;
-            pbSP.Maximum = thisMage.SPmax;
-            pbSP.Value = thisMage.SP;
+            pbSP.Maximum = 100;
+            pbSP.Value = 0;
 
         }
 
-        public void UpdateBars(int HP, int MP, int SP)
+        public void UpdateBars(clsMage aMage)
         {
-            // constructor values are new current values, gMage is already updated when this is called - just update the bars. 
-            // Any negative amounts should have been checked before here
+            thisMage = aMage;
+            SetBars();
+            
+            /*
             try
             {
+                if (aMage.HP != pbHP.Value) { Set pbHP.Value! = aMage.HP }
+
+
                 if (HP != 0 && HP <= pbHP.Maximum) { pbHP.Value = HP; lblHPDisplay.Text = "HP: " + pbHP.Value.ToString() + "/" + pbHP.Maximum.ToString(); }
                     else if (HP > pbHP.Maximum) { pbHP.Value = pbHP.Maximum; lblHPDisplay.Text = "HP: " + pbHP.Value.ToString() + "/" + pbHP.Maximum.ToString(); }
                 if (MP != 0 && MP <= pbMP.Maximum) { pbMP.Value = MP; }
                     else if (MP > pbMP.Maximum) { pbMP.Value = pbMP.Maximum; }
+                
                 if (SP != 0 && SP <= pbSP.Maximum) { pbSP.Value = SP; }
                     else if (SP > pbSP.Maximum) { pbSP.Value = pbSP.Maximum; }
+                
             }
             catch { throw new ArgumentOutOfRangeException(); }
+            */
         }
 
         public void GameOverImage()
