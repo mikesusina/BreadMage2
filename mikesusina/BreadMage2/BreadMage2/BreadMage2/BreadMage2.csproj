@@ -87,10 +87,12 @@
   <ItemGroup>
     <Compile Include="BreadDB.cs" />
     <Compile Include="clsChoiceAdventure.cs" />
-    <Compile Include="clsConsumable.cs" />
     <Compile Include="clsEquipment.cs" />
+    <Compile Include="clsItem.cs" />
     <Compile Include="clsMageEffect.cs" />
     <Compile Include="clsMageStats.cs" />
+    <Compile Include="clsTest.cs" />
+    <Compile Include="clsUniqueItem.cs" />
     <Compile Include="Controls\ChoiceBoard.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -130,7 +132,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="clsCombatItem.cs" />
     <Compile Include="Screens\ChoiceScreen.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -53,8 +53,8 @@ namespace BreadMage2.Screens
             {
                 myGameScr.gMage.HP = myGameScr.gMage.HPmax;
                 myGameScr.gMage.MP = myGameScr.gMage.MPmax;
-                myGameScr.gMage.SP = myGameScr.gMage.SPmax;
-                myGameScr.bMage.UpdateBars(myGameScr.gMage.HP, myGameScr.gMage.MP, myGameScr.gMage.SP);
+                //myGameScr.gMage.SP = myGameScr.gMage.SPmax;
+                myGameScr.bMage.UpdateBars(myGameScr.gMage);
 
 
             }
@@ -63,7 +63,7 @@ namespace BreadMage2.Screens
 
                 int i = myGameScr.gMage.HP + (Convert.ToInt32(txbHeal.Text));
                 myGameScr.gMage.HP = i;
-                myGameScr.bMage.UpdateBars(i, 0, 0);
+                myGameScr.bMage.UpdateBars(myGameScr.gMage);
             }
 
         }
@@ -71,30 +71,7 @@ namespace BreadMage2.Screens
         private void button1_Click(object sender, EventArgs e)
         {
 
-            /* 
-            object o = new object();
-
-            if (Convert.ToInt32(txbLoc.Text) == 8) { o = new clsConsumable(0); }
-            else if (Convert.ToInt32(txbLoc.Text) == 9) { o = new clsCombatItem(0); }
-            tryMethod(o);
-           
-        }
-
-        private void tryMethod(object o)
-        {
-            if (o is clsCombatItem)
-            {
-                MessageBox.Show("Hey this is a combat item");
-            }
-            else if (o is clsConsumable)
-            {
-                MessageBox.Show("Hey this is a consumable item");
-            }
-            else
-            {
-                MessageBox.Show("Hey this is a not identified item");
-            }
-         */
+        
         }
 
         private void btnQuickSlots_Click(object sender, EventArgs e)
@@ -116,13 +93,14 @@ namespace BreadMage2.Screens
             //checking gMage Inventory status
             if (myGameScr.gMage != null)
             {
-
+                /*
                 string s = "okay + ";
                 foreach (DataRow r in myGameScr.gMage.myInv.Rows)
                 {
                     s = s + Environment.NewLine + "ItemID: " + r[1].ToString() + " Count: " +  r[2].ToString();
                 }
                 MessageBox.Show(s);
+                */
             }
         }
 
@@ -132,22 +110,15 @@ namespace BreadMage2.Screens
             {
                 BreadDB BN = new BreadDB();
                 BN.SavePlayerInv(myGameScr.gMage.SaveID, myGameScr.gMage.myInv);
+                BN.SaveMageEffectList(myGameScr.gMage.SaveID, myGameScr.gMage.myStatEffects);
             }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            //checking ChoiceAdventure status
-            if (myGameScr.gChoiceList != null)
-            {
-
-                string s = "okay";
-                foreach (clsChoiceAdventure a in myGameScr.gChoiceList)
-                {
-                    s += Environment.NewLine + a.AdvText;
-                }
-                tbDisplay.Text = s;
-            }
+            //testing XML stuff
+            BreadDB bnet = new BreadDB();
+            bnet.a(myGameScr.gMage);
         }
 
         private void button5_Click(object sender, EventArgs e)

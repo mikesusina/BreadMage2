@@ -38,7 +38,6 @@ namespace BreadMage2
             {
                 if (textBox1.Text == "test")
                 {
-                    Control ChoiceZone = new Control();
                     bChoice = new ChoiceBoard(myGameScr, myGameScr.gChoiceList.Find(x => x.AdvID == 1));
                     myGameScr.Controls["pArea"].Controls.Add(bChoice);
                     myGameScr.gLock = true;
@@ -92,18 +91,27 @@ namespace BreadMage2
 
         private void button3_Click(object sender, EventArgs e)
         {
+
+            if (myGameScr.gMage != null)
+            {
+                BreadDB BN = new BreadDB();
+                BN.SavePlayerInv(myGameScr.gMage.SaveID, myGameScr.gMage.myInv);
+                BN.SaveMageEffectList(myGameScr.gMage.SaveID, myGameScr.gMage.myStatEffects);
+            }
+            /*
             if (myGameScr.GetPlayerInv() != null)
             {
                 int i = 0;
                 string s = "";
-                DataTable dt = myGameScr.GetPlayerInv();
-                foreach (DataRow d in dt.Rows)
+                List<clsItem> dt = myGameScr.GetPlayerInv();
+                foreach (clsItem d in dt)
                 {
-                    s += "ID: " + d[0].ToString() + "  Count: " + d[1].ToString() + Environment.NewLine;
+                    s += "ID: " + d.iIDType.ToString() + "  Count: " + d.iCount.ToString() + Environment.NewLine;
                     i++;
                 }
                 MessageBox.Show(s);
             }
+            */
         }
     }
 }

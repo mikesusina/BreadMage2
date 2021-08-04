@@ -19,8 +19,7 @@ namespace BreadMage2.Screens
 
 
         // for item libraries - avoid pulling too much game data, but this should increase new and load game performance 
-        public List<clsConsumable> mConsumableLib { get; set; }
-        public List<clsCombatItem> mCombatLib { get; set; }
+        public List<clsUniqueItem> mItemBook { get; set; }
         public List<clsChoiceAdventure> mChoiceLib { get; set; }
 
         public List<clsMonster> mMonsterList { get; set; }
@@ -31,11 +30,10 @@ namespace BreadMage2.Screens
 
             BreadDB breadConn = new BreadDB();
             mMonsterList = breadConn.LoadMonsterList();
-            mConsumableLib = breadConn.LoadConsumablesLib();
-            mCombatLib = breadConn.LoadCombatLib();
+            mItemBook = breadConn.LoadUniqueItemsList();
             mChoiceLib = breadConn.LoadChoiceList();
 
-            scrGame = new GameScreen(this, -1, mMonsterList, mConsumableLib, mCombatLib, mChoiceLib);
+            scrGame = new GameScreen(this, -1, mMonsterList, mItemBook, mChoiceLib);
             scrSettings = new SettingsScreen(this);
             scrGame.MdiParent = this;
             scrSettings.MdiParent = this;
@@ -59,18 +57,8 @@ namespace BreadMage2.Screens
             if (scrGame != null)
             {
                 scrGame.Close();
-                scrGame = new GameScreen(this, 0, mMonsterList, mConsumableLib, mCombatLib, mChoiceLib);
+                scrGame = new GameScreen(this, 0, mMonsterList, mItemBook, mChoiceLib);
                 scrGame.MdiParent = this;
-
-                /*
-                //maybe not needed? Mage class needed libraries for item count updates, but worked around without them. Will they be necessary?
-                scrGame.gConsumableLib = mConsumableLib;
-                scrGame.gCombatLib = mCombatLib;
-                scrGame.gMonsterList = mMonsterList;
-
-                scrGame.gMage.myConsumableLib = mConsumableLib;
-                scrGame.gMage.myCombatLib = mCombatLib;
-                */
             }
             Point p = new Point(65, 10);
             scrGame.Show();
@@ -84,7 +72,7 @@ namespace BreadMage2.Screens
             if (scrGame != null)
             {
                 scrGame.Close();
-                scrGame = new GameScreen(this, 1, mMonsterList, mConsumableLib, mCombatLib, mChoiceLib);
+                scrGame = new GameScreen(this, 1, mMonsterList, mItemBook, mChoiceLib);
                 scrGame.MdiParent = this;
             }
             Point p = new Point(65, 10);

@@ -12,24 +12,22 @@ namespace BreadMage2
     public class clsMage
     {
         //the Mage object, this is the PC
-        public clsMageStats Stats { get; set; }
-        public List<clsMageEffect> StatEffects { get; set; }
+        public clsMageStats Stats { get; set; } = new clsMageStats();
+        public List<clsMageEffect> myStatEffects { get; set; } = new List<clsMageEffect>();
 
 
         public int HP { get; set; }
         public int HPmax { get; set; }
         public int MP { get; set; }
         public int MPmax { get; set; }
-        public int SP { get; set; }
-        public int SPmax { get; set; }
-        public int Location { get; set; }
+        public int Location { get; set; } = 1;
         public int SaveID { get; set; }
         public Action RefreshInvNumbers;
 
-        public DataTable myInv { get; set; }
+        //public DataTable myInv { get; set; }
+        public List<clsItem> myInv { get; set; }
 
-        public List<clsConsumable> myConsumableLib { get; set; }
-        public List<clsCombatItem> myCombatLib { get; set; }
+        public List<clsUniqueItem> myItemBook { get; set; }
         public List<clsEquipment> myEquipList { get; set; }
 
         //public list<clsBuff> myBuffList {get;set;}
@@ -44,11 +42,10 @@ namespace BreadMage2
             HP = HPmax;
             MPmax = 100;
             MP = MPmax;
-            SPmax = 100;
-            SP = SPmax;
 
             Location = 1;
             myQuickIDs = new List<int>();
+            /*
             myInv = new DataTable();
             myInv.Columns.Add("MageID");
             myInv.Columns.Add("ID");
@@ -57,10 +54,26 @@ namespace BreadMage2
             //Status flag is for DB cooperation - 0 = DB fresh info/ignore update, 1 = new row, 2 = updated count
             myInv.Columns.Add("StatusFlag");
             myInv.Columns["StatusFlag"].DefaultValue = 0;
+
+            
+            Stats = new clsMageStats();
+            myStatEffects = new List<clsMageEffect>();
+            myInv = new List<clsItem>();
+            */
+
         }
 
         public void AddItem(int anID, int anAmount)
         {
+            int i = 0;
+            foreach (clsItem e in myInv)
+            {
+                if (e.iIDType == anID) { e.AddItem(anAmount);  i = 1; }
+            }
+            if (i == 0) { myInv.Add(new clsItem(anID, anAmount)); }
+            this.RefreshInvNumbers();
+
+            /* OLD SYSTEM
             int i = 0;
             bool b = false;
             foreach (DataRow d in this.myInv.Rows)
@@ -87,27 +100,84 @@ namespace BreadMage2
                                     1});
             }
             
+            */
+        }
+
+        public void AddEffect(string aType, int aValue, int aTimer)
+        {
+            int iFlag = 0;
+            foreach (clsMageEffect e in myStatEffects)
+            {
+                if (e.sType == aType)
+                {
+                    if (e.sType == "MP" || e.sType == "ZC" || e.sType == "PP")
+                    {
+                        e.iValue += aValue;
+                        if (e.iTimer < aTimer) { e.iTimer = aTimer;  }
+                        iFlag = 1;
+                    }
+                    else if (e.iValue < aValue)
+                    {
+                        e.iValue = aValue;
+                        e.iTimer += aTimer;
+                        iFlag = 1;
+                    }
+                }
+            }
+            if (iFlag == 0) { myStatEffects.Add(new clsMageEffect(aType, aValue, aTimer)); }
+        }
+
+        public void RemoveEffect (string aType)
+        {
+            foreach (clsMageEffect e in myStatEffects)
+            {
+                if (e.sType == aType) { myStatEffects.Remove(e); }
+            }
         }
 
         public void TickBuffs()
         {
             int iFlag = 0;
-            if(StatEffects != null && StatEffects.Count > 0 )
+            if(myStatEffects != null && myStatEffects.Count > 0 )
             {
-                foreach (clsMageEffect e in StatEffects)
+                foreach (clsMageEffect e in myStatEffects)
                 {
-                    e.Tick();
-                    if (e.iTimer == 0)
+                    e.iTimer -= 1;
+                    if (e.iTimer <= 0)
                     {
-                        StatEffects.Remove(e);
+                        myStatEffects.Remove(e);
                         iFlag = 1;
                     }
                 }
                 if (iFlag == 1)
                 {
-                    Stats.SetBuffedStats(myEquipList, StatEffects);
+                    Stats.SetBuffedStats(myEquipList, myStatEffects);
                 }
             }
+        }
+
+        public int TickMagePoison()
+        {
+            int damage = 0;
+            foreach (clsMageEffect e in myStatEffects)
+            {
+                if (e.sType == "MP") 
+                {
+                    int iTick = 1;
+                    if (e.iValue > 2)
+                    {
+                        iTick = (int)(Math.Ceiling(Convert.ToDouble(e.iValue))) / 2;
+                    }
+                    damage = 3 * iTick;
+                    e.iValue -= iTick;
+                    if (e.iValue <= 0)
+                    {
+                        myStatEffects.Remove(e);
+                        break;
+                    }
+                }
+            }
+            return damage;
         }
 
         public int PAtk()
@@ -130,8 +200,55 @@ namespace BreadMage2
             return Stats.Res();
         }
 
+        public int MoldCount()
+        {
+            int i = 0;
+            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "MP") { return e.iValue; } }
+            return i;
+        }
+        public int MoldTimer()
+        {
+            int i = 0;
+            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "MP") { return e.iTimer; } }
+            return i;
+        }
+
+        public int ZestCount()
+        {
+            int i = 0;
+            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "ZC") { return e.iValue; } }
+            return i;
+        }
+        public int ZestTimer()
+        {
+            int i = 0;
+            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "ZC") { return e.iTimer; } }
+            return i;
+        }
+        /*
+        public int PinataCount()
+        {
+            int i = 0;
+            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "PP") { return e.iValue; } }
+            return i;
+        }
+        public int PinataTimer()
+        {
+            int i = 0;
+            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "PP") { return e.iTimer; } }
+            return i;
+        }
+        */
+
         public int GetItemCount(int anItemID)
         {
+            foreach (clsItem e in myInv)
+            {
+                if (anItemID == e.iIDType) { return e.iCount; }
+            }
+            return 0;
+
+            /* OLD SYSTEM
             string searchExpression = "ID = " + anItemID;
             if (myInv != null && myInv.Rows.Count > 0)
             {
@@ -140,14 +257,26 @@ namespace BreadMage2
                 else { return 0; }
             }
             else { return 0; }
-            
+            */
+        }
+
+        public bool hasQuickAttack()
+        {
+            if (myStatEffects is null) { return false; }
+            else { return myStatEffects.Exists(x => x.sType.Contains("QA")); }
+        }
+
+        public bool isStunned()
+        {
+            if (myStatEffects is null) { return false; }
+            else { return myStatEffects.Exists(x => x.sType.Contains("SS")); }
         }
 
         private void SetEquipStats()
         {
             if(myEquipList != null && myEquipList.Count() > 0)
             {
-                Stats.SetBuffedStats(myEquipList, StatEffects);
+                Stats.SetBuffedStats(myEquipList, myStatEffects);
             }
         }
 

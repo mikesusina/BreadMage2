@@ -36,6 +36,22 @@ namespace BreadMage2.Controls
 
         private void LoadBoard()
         {
+
+            /* here's my pitch for this
+             * make a screen to "create" a quick slot
+             * like, choose spell or item, then pick tiers and elements
+             * no need to update numbers
+             * allow user to name it themselves, default to spell/item name
+             * generate these as a class - like property for type, tier, element, etc... 
+             * "quicklist" is a list of these classes
+             *  save them in XML
+             *  
+             *  now in the board just send command to gamescreen to throw in a bFight method using the quickslot class, gets decoded in the engBattle
+             *
+             * 
+             * /
+
+
             //need to load in saved spells/items - row/rows on save file for spell/item ID?
             //procedurally generate the buttons rather than hard coded? 
             // ***this seems problematic for attaching action to buttons, I don't feel comfortable with this idea, though I know it's possible
@@ -43,7 +59,7 @@ namespace BreadMage2.Controls
             //loop - if item count > 1 AND item matches a quick use slot, create OR fill the next available slot in the board
             //restrict number of items to save
 
-
+            /* START ALL COMMENT - this definitely needs reworking
 
 
             //for testing/building:
@@ -87,7 +103,7 @@ namespace BreadMage2.Controls
                     Console.WriteLine("found quick ID: " + QuickID + " a " + anewItem.ItemName);
                 }
             }
-                   
+                  END ALL COMMENT */
         }
 
         private void AddSlot(object anItem)

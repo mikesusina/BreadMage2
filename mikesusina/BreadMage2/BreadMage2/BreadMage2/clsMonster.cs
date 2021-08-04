@@ -12,170 +12,198 @@ namespace BreadMage2
     {
         //Monster objec
 
-        public int monID { get; set; }
-        public string MonName { get; set; }
-        public int HP { get; set; }
-        public int HPmax { get; set; }
-        public int PAtk { get; set; }
-        public int MAtk { get; set; }
-        public int PDef { get; set; }
-        public int MDef { get; set; }
-        public int EXP { get; set; }
-        public string sDropData { get; set; }
-        public string sRawChatter { get; set; }
-        public string ImageURL { get; set; }
-        public int Location { get; set; }
+        public int monID { get; set; } = 7;
+        public string MonName { get; set; } = "Chatter Box";
+        public int HP { get; set; } = 1;
+        public int HPmax { get; set; } = 1;
+        public int PAtk { get; set; } = 1;
+        public int MAtk { get; set; } = 1;
+        public int PDef { get; set; } = 1;
+        public int MDef { get; set; } = 1;
+        public int EXP { get; set; } = 0;
+        public int MoldCount { get; set; } = 0;
+        public int ZestCount { get; set; } = 0;
+        public int PinataCount { get; set; } = 0;
+        public string ImageURL { get; set; } = "BreadMage2";
+        public int Location { get; set; } = 1;
+
+        private DataTable rawChatter;
+
+        public List<String> PAKChatterList { get; set; } = new List<string>(); //p atk
+        public List<String> MAKChatterList { get; set; } = new List<string>(); //m atk
+        public List<String> EAKChatterList { get; set; } = new List<string>(); //effect attack
+        public List<String> MISChatterList { get; set; } = new List<string>(); //miss
+        public List<String> DEFChatterList { get; set; } = new List<string>(); //defend
 
         public List<String> ChatterList { get; set; }
 
 
-        public DataTable MonData { get; set; }
-        public DataRow MonRow { get; set; }
-        //abilities?
-        //drop table?
+        public List<String> EffTypeList { get; set; }
+
         public  DataTable DropList { get; set; }
-        //picture url
+
         //unique chatter? roll to use unique or common?
 
 
-        public clsMonster(DataTable aMonData)
+        public clsMonster(DataTable aMonData, DataTable someChatter)
         {
-            MonData = aMonData;
-            ParseMonsterData(MonData);
-            InitializeMonster();
-            
+            rawChatter = someChatter;
+            ParseMonsterData(aMonData);
+            RefreshMonster();
         }
 
-        public clsMonster(DataRow aMonRow)
+        public clsMonster(DataRow aMonRow, DataTable someChatter)
         {
-            MonRow = aMonRow;
-            ParseMonsterDataRow(MonRow);
-            InitializeMonster();
+            rawChatter = someChatter;
+            ParseMonsterDataRow(aMonRow);
+            RefreshMonster();
         }
-        /*
-        private void GetMonster()
-        {
 
-            //generate/open connection
-            //load query result into dataset
-            //use method to populate stats
-            DataSet ds = new DataSet();
-            BreadNet = new BreadDB();
-            MonData = BreadNet.LoadMonster(monID);
-            ParseMonsterData(MonData);
-
-        }
-        */
+        //These should be coming straight from the full Monsters table
         private void ParseMonsterData(DataTable ds)
         {
-            // Monsters.[MonName], Monsters.[HP], Monsters.[PATK], Monsters.[MATK], Monsters.[PDEF], Monsters.[MDEF], Monsters.[EXP], Monsters.[IMG]"
-
-            // ds.Rows[0].ItemArray[i]
-            // MonName = 0
-            // HP = 1
-            // PATK = 2
-            // MATK = 3
-            // PDEF = 4
-            // MDEF = 5
-            // EXP = 6
-            // IMG = 7
-            // Loc = 8
-
             MonName = ds.Rows[0].ItemArray[0].ToString();
-            HPmax = Convert.ToInt32(ds.Rows[0]["HP"].ToString());
+            HPmax = cInt(ds.Rows[0]["HP"].ToString());
             HP = HPmax;
-            PAtk = Convert.ToInt32(ds.Rows[0]["PATK"].ToString());
-            MAtk = Convert.ToInt32(ds.Rows[0]["MATK"].ToString());
-            PDef = Convert.ToInt32(ds.Rows[0]["PDEF"].ToString());
-            MDef = Convert.ToInt32(ds.Rows[0]["MDEF"].ToString());
-            EXP = Convert.ToInt32(ds.Rows[0]["EXP"].ToString());
+            PAtk = cInt(ds.Rows[0]["PATK"].ToString());
+            MAtk = cInt(ds.Rows[0]["MATK"].ToString());
+            PDef = cInt(ds.Rows[0]["PDEF"].ToString());
+            MDef = cInt(ds.Rows[0]["MDEF"].ToString());
+            EXP = cInt(ds.Rows[0]["EXP"].ToString());
             ImageURL = ds.Rows[0]["IMG"].ToString();
-            Location = Convert.ToInt32(ds.Rows[0]["Location"].ToString());
-            monID = Convert.ToInt32(ds.Rows[0]["MonsterID"].ToString());
-            sRawChatter = ds.Rows[0]["Chatter"].ToString();
-            sDropData = ds.Rows[0]["Drops"].ToString();
+            Location = cInt(ds.Rows[0]["Location"].ToString());
+            monID = cInt(ds.Rows[0]["MonsterID"].ToString());
+            MakeDropTable(ds.Rows[0]["Drops"].ToString());
+            MakeEffectList(ds.Rows[0]["EffType"].ToString());
+
+            MakeChatterList(rawChatter);
         }
 
         private void ParseMonsterDataRow(DataRow dr)
         {
-            // Monsters.[MonName], Monsters.[HP], Monsters.[PATK], Monsters.[MATK], Monsters.[PDEF], Monsters.[MDEF], Monsters.[EXP], Monsters.[IMG]"
-
-            // ds.Rows[0].ItemArray[i]
-            // MonName = 0
-            // HP = 1
-            // PATK = 2
-            // MATK = 3
-            // PDEF = 4
-            // MDEF = 5
-            // EXP = 6
-            // IMG = 7
-
             MonName = dr["MonName"].ToString();
-            HPmax = Convert.ToInt32(dr["HP"].ToString());
+            HPmax = cInt(dr["HP"].ToString());
             HP = HPmax;
-            PAtk = Convert.ToInt32(dr["PATK"].ToString());
-            MAtk = Convert.ToInt32(dr["MATK"].ToString());
-            PDef = Convert.ToInt32(dr["PDEF"].ToString());
-            MDef = Convert.ToInt32(dr["MDEF"].ToString());
-            EXP = Convert.ToInt32(dr["EXP"].ToString());
+            PAtk = cInt(dr["PATK"].ToString());
+            MAtk = cInt(dr["MATK"].ToString());
+            PDef = cInt(dr["PDEF"].ToString());
+            MDef = cInt(dr["MDEF"].ToString());
+            EXP = cInt(dr["EXP"].ToString());
             ImageURL = dr["IMG"].ToString();
-            Location = Convert.ToInt32(dr["Location"].ToString());
-            monID = Convert.ToInt32(dr["MonsterID"].ToString());
-            sRawChatter = dr["Chatter"].ToString();
-            sDropData = dr["Drops"].ToString();
+            Location = cInt(dr["Location"].ToString());
+            monID = cInt(dr["MonsterID"].ToString());
+            MakeDropTable(dr["Drops"].ToString());
+            MakeEffectList(dr["EffType"].ToString());
+
+
+            MakeChatterList(rawChatter);
+        }
+
+        public void RefreshMonster()
+        {
+            //the monsters in the library get their stats goofed around
+            HP = HPmax;
+            MoldCount = 0;
+            ZestCount = 0;
+            PinataCount = 0;
+        }
+
+        public int TickMonPoison()
+        {
+            int damage = 0;
+            int iTick = 1;
+
+            if (MoldCount > 2)
+            {
+                iTick = (int)(Math.Ceiling(Convert.ToDouble(MoldCount))) / 2;
+            }
+            damage = 2 * iTick;
+            MoldCount -= iTick;
+            if (MoldCount < 0) { MoldCount = 0; }
+
+            return damage;
         }
 
 
-        private void InitializeMonster()
+        private void MakeChatterList(DataTable rawChatter)
         {
-
-            //set chatter list
-            ChatterList = new List<string>();
-            string s = sRawChatter;
-
-            while (s.IndexOf("|") > 0)
+            foreach (DataRow r in rawChatter.Rows)
             {
-                string temp = s.Substring(0, s.IndexOf("|"));
-                ChatterList.Add(temp);
-                s = s.Substring(s.IndexOf("|") + 1);
+                if (cInt(r["MonsterID"].ToString()) == monID)
+                {
+                    if (cInt(r["ChatType"].ToString()) == 1) { PAKChatterList.Add(r["Chatter"].ToString()); }
+                    else if (cInt(r["ChatType"].ToString()) == 2) { MAKChatterList.Add(r["Chatter"].ToString()); }
+                    else if (cInt(r["ChatType"].ToString()) == 3) { MISChatterList.Add(r["Chatter"].ToString()); }
+                    else if (cInt(r["ChatType"].ToString()) == 4) { DEFChatterList.Add(r["Chatter"].ToString()); }
+                    else if (cInt(r["ChatType"].ToString()) == 5) { EAKChatterList.Add(r["Chatter"].ToString()); }
+                    //else if (cInt(r["ChatType"].ToString()) == 6) { }
+                }
             }
-            ChatterList.Add(s);
+        }
 
-            // set the drop table
+        private void MakeDropTable(string rawData)
+        {
             DropList = new DataTable();
             DropList.Columns.Add("ID");
             DropList.Columns.Add("Rate");
 
-            if (sDropData != null && sDropData != "")
+            if (rawData != null && rawData != "")
             {
-                string t = sDropData;
+                string t = rawData;
                 while (t.IndexOf("|") > 0)
                 {
                     //every item drop will have an ID and a [drop] Rate (out of 100%), monsters can drop multiple items
                     //take all info for one item:
+
+                    /* this isn't working right now - it doesn't bring the rate to the below function 
+                     * idk how to make sure how to account for multiple items plus variable ID lengths yet 
                     string temp = t.Substring(0, t.IndexOf("|"));
                     AddItemToDropTable(temp);
                     t = t.Substring(t.IndexOf("|") + 1);
+                    */
+                    AddItemToDropTable(t);
+                    t = "";
                 }
-                AddItemToDropTable(t);
+                //AddItemToDropTable(t);
             }
-
         }
-
 
         private void AddItemToDropTable(string s)
         {
             int tID = 0;
             int tRate = 0;
-            tID = Convert.ToInt32(s.Substring(s.IndexOf("ID=") + 3, s.IndexOf("RT") - 3));
+            tID = Convert.ToInt32(s.Substring(s.IndexOf("ID=") + 3, s.IndexOf("RT") - 4));
             tRate = Convert.ToInt32(s.Substring(s.IndexOf("RT=") + 3));
             DropList.Rows.Add(new Object[]{
                                     tID,
                                     tRate});
         }
 
+        private void MakeEffectList(string rawEffects)
+        {
+            EffTypeList = new List<string>();
+            string s = rawEffects;
+
+            while (s.IndexOf("|") > 0)
+            {
+                string temp = s.Substring(0, s.IndexOf("|"));
+                EffTypeList.Add(temp);
+                s = s.Substring(s.IndexOf("|") + 1);
+            }
+            EffTypeList.Add(s);
+        }
+
+        
 
 
+        private int cInt(string s)
+        {
+            try
+            {
+                return Convert.ToInt32(s);
+            }
+            catch { return 0; }
+        }
 
         // this is definitely stolen from
         //docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-5.0

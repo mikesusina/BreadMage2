@@ -7,6 +7,7 @@ using BreadMage2.Screens;
 using System.Data.OleDb;
 using System.Windows.Forms;
 using System.Data;
+using System.Xml;
 
 namespace BreadMage2
 {
@@ -61,11 +62,15 @@ namespace BreadMage2
             string msql = "SELECT * FROM Monsters;";
             FillDS(msql, ds);
 
+            DataTable rawChatter = new DataTable();
+            msql = "SELECT * FROM MonsterChatter;";
+            FillDT(msql, rawChatter);
+
             int i = 0;
             List<clsMonster> MonList = new List<clsMonster>();
             foreach (DataRow d in ds.Tables[0].Rows)
             {
-                MonList.Add(new clsMonster(ds.Tables[0].Rows[i]));
+                MonList.Add(new clsMonster(ds.Tables[0].Rows[i], rawChatter));
                 i++;
             }
 
@@ -88,122 +93,75 @@ namespace BreadMage2
 
             return ChoiceList;
         }
-        /*
-        public DataSet LoadMonsterTable()
+
+        public List<clsUniqueItem> LoadUniqueItemsList()
         {
+            List<clsUniqueItem> myList = new List<clsUniqueItem>();
             DataSet ds = new DataSet();
-            string msql = "SELECT * FROM Monsters;";
-            FillDS(msql, ds);
-
-            int i = 0;
-            List<clsMonster> MonList = new List<clsMonster>();
-            foreach (DataRow d in ds.Tables[0].Rows) 
-            {
-                MonList.Add(new clsMonster(ds.Tables[0].Rows[i]));
-            }
-
-                return ds;
-        }
-        */
-        public DataSet LoadItemTable()
-        {
-            DataSet ds = new DataSet();
-            string msql = "SELECT * FROM Items;";
-            FillDS(msql, ds);
-            return ds;
-        }
-
-
-        public List<clsConsumable> LoadConsumablesLib()
-        {
-            List<clsConsumable> myList = new List<clsConsumable>();
-            DataSet ds = new DataSet();
-            string msql = "SELECT Items.ID, Consumables.ItemName, Consumables.ImgURL, Consumables.HP, Consumables.MP, Consumables.SP, Consumables.Restore" +
-                           " FROM Items INNER JOIN Consumables ON Items.ID = Consumables.ItemID;";
+            string msql = "SELECT * FROM ItemBook;";
             FillDS(msql, ds);
 
             int i = 0;
             foreach (DataRow d in ds.Tables[0].Rows)
             {
-                myList.Add(new clsConsumable(ds.Tables[0].Rows[i]));
+                myList.Add(new clsUniqueItem(ds.Tables[0].Rows[i]));
                 i++;
             }
 
             return myList;
         }
 
-
-        public List<clsCombatItem> LoadCombatLib()
+        public List<clsItem> LoadPlayerInv(int aSaveID = 1)
         {
-            List<clsCombatItem> myList = new List<clsCombatItem>();
-            DataSet ds = new DataSet();
-            string msql = "SELECT Items.ID, CombatItems.ItemName, CombatItems.ImgURL, CombatItems.Damage, CombatItems.DamageType, CombatItems.Debuff, CombatItems.DebuffType, CombatItems.StatEffect" +
-                           " FROM Items INNER JOIN CombatItems ON Items.ID = CombatItems.ItemID;";
-            FillDS(msql, ds);
 
-            int i = 0;
-            foreach (DataRow d in ds.Tables[0].Rows)
-            {
-                myList.Add(new clsCombatItem(ds.Tables[0].Rows[i]));
-                i++;
-            }
-
-            return myList;
-        }
-
-        public DataSet LoadItemLibrary(int iType)
-        {
-            DataSet ds = new DataSet();
-            string msql = "";
-
-            switch (iType)
-            {
-                //consumables
-                case 1:
-                    msql = "SELECT Items.ID, Consumables.ItemName, Consumables.ImgURL, Consumables.HP, Consumables.MP, Consumables.SP, Consumables.Restore" +
-                           " FROM Items INNER JOIN Consumables ON Items.ID = Consumables.ItemID;";
-                    break;
-                //combat inv
-                case 2:
-                    msql = "SELECT Items.ID, CombatItems.ItemName, CombatItems.ImgURL, CombatItems.Damage, CombatItems.DamageType, CombatItems.Debuff, CombatItems.DebuffType, CombatItems.StatEffect" +
-                           " FROM Items INNER JOIN CombatItems ON Items.ID = CombatItems.ItemID;";
-                    break;
-                //equipment
-                case 3:
-                    break;
-                //quest items
-                case 4:
-                    break;
-            }
-
-            return ds;
-
-        }
-
-
-        public DataTable LoadPlayerInv(int iSaveID = 1)
-        {
             DataTable dt = new DataTable();
-            string msql = "SELECT Inventory.MageID, Items.ID, IIf(IsNull(Inventory.Count), 0, Inventory.Count) as ItemCount, 0 as StatusFlag" + 
-                          " FROM Items LEFT JOIN Inventory ON Items.ID = Inventory.ItemID" + 
-                          " WHERE IIf(IsNull(Inventory.MageID), 0, Inventory.MageID) in (" + iSaveID + ", 0);";
+            string msql = "SELECT * FROM Inventory WHERE IIf(IsNull(MageID), 0, MageID) in (" + aSaveID + ", 0); ";
             FillDT(msql, dt);
-            return dt;
+
+            List<clsItem> newInv = new List<clsItem>();
+            foreach (DataRow d in dt.Rows)
+            {
+                clsItem newItem= new clsItem(Convert.ToInt32(d["ItemID"].ToString()), Convert.ToInt32(d["Count"].ToString()));
+                newInv.Add(newItem);
+            }
+            return newInv;
         }
 
-        public void SavePlayerInv(int iSaveID, DataTable dtPInv)
+        public void SavePlayerInv(int aSaveID, List<clsItem> anInv)
         {
-
-            /*
             myConn = BreadConnect();
-            string msql = "SELECT ISNULL(MageID, 0) , ItemID, Count as ItemCount from Inventory " +
-                            "WHERE IIf(IsNull(Inventory.MageID), 0, Inventory.MageID) in (" + iSaveID + ", 0);";
-            OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
-            OleDbCommandBuilder cb = new OleDbCommandBuilder(myAdap);
-            cb.GetUpdateCommand();
-            myAdap.Update(dtPInv);
-            */
+            try
+            {
+                string msql = "SELECT * FROM Inventory WHERE IIf(IsNull(MageID), 0, " + aSaveID + ") in (" + aSaveID + ", 0); ";
 
+                OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
+                OleDbCommand myCmd = new OleDbCommand(msql, myConn);
+                myConn.Open();
+
+                myCmd.CommandText = "DELETE FROM INVENTORY WHERE MAGEID = @MageID";
+                myCmd.Parameters.AddWithValue("@MageID", aSaveID);
+                myCmd.ExecuteNonQuery();
+
+                foreach (clsItem e in anInv)
+                {
+                    myCmd.CommandText = "INSERT INTO [INVENTORY] Values(@MageID, @ItemID, @Count)";
+                    myCmd.Parameters.Clear();
+                    myCmd.Parameters.AddWithValue("@MageID", aSaveID);
+                    myCmd.Parameters.AddWithValue("@EffType", e.iIDType);
+                    myCmd.Parameters.AddWithValue("@EffValue", e.iCount);
+                    myCmd.ExecuteNonQuery();
+                }
+                myCmd.Dispose();
+                myConn.Close();
+            }
+            catch (Exception ex)
+            {
+                string s = "Message: " + ex.Message.ToString() + Environment.NewLine + Environment.NewLine + "InnerException: " + ex.InnerException.ToString();
+                s = "Inventory save failed" + Environment.NewLine + Environment.NewLine + s;
+                MessageBox.Show(s);
+            }
+
+            /* OLD SYSTEM
             myConn = BreadConnect();
             try
             {
@@ -244,7 +202,92 @@ namespace BreadMage2
             }
 
 
+            EVEN OLDER??
+            myConn = BreadConnect();
+            string msql = "SELECT ISNULL(MageID, 0) , ItemID, Count as ItemCount from Inventory " +
+                            "WHERE IIf(IsNull(Inventory.MageID), 0, Inventory.MageID) in (" + iSaveID + ", 0);";
+            OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
+            OleDbCommandBuilder cb = new OleDbCommandBuilder(myAdap);
+            cb.GetUpdateCommand();
+            myAdap.Update(dtPInv);
+            */
+        }
 
+        public List<clsMageEffect> LoadMageEffectsList(int aSaveID = 1)
+        {
+            DataTable dt = new DataTable();
+            string msql = "SELECT * FROM MageEffects WHERE IIf(IsNull(MageID), 0, MageID) in (" + aSaveID + ", 0); ";
+            FillDT(msql, dt);
+
+            List<clsMageEffect> EffList = new List<clsMageEffect>();
+            foreach (DataRow d in dt.Rows)
+            {
+                clsMageEffect newEffect = new clsMageEffect(d["EffType"].ToString(), Convert.ToInt32(d["EffValue"].ToString()), Convert.ToInt32(d["Tick"].ToString()));
+                EffList.Add(newEffect);
+            }
+
+            return EffList;
+        }
+
+        public void SaveMageEffectList(int aSaveID, List<clsMageEffect> anEffList)
+        {
+
+            myConn = BreadConnect();
+            try
+            {
+                string msql = "SELECT * FROM MageEffects WHERE IIf(IsNull(MageID), 0, MageID) in (" + aSaveID + ", 0); ";
+                OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
+                OleDbCommand myCmd = new OleDbCommand(msql, myConn);
+                myConn.Open();
+
+                myCmd.CommandText = "DELETE FROM MAGEEFFECTS WHERE MAGEID = @MageID";
+                myCmd.Parameters.AddWithValue("@MageID", aSaveID);
+                myCmd.ExecuteNonQuery();
+
+                foreach (clsMageEffect  e in anEffList)
+                {
+                    myCmd.CommandText = "INSERT INTO [MAGEEFFECTS] Values(@MageID, @EffType, @EffValue, @Tick)";
+                    myCmd.Parameters.Clear();
+                    myCmd.Parameters.AddWithValue("@MageID", aSaveID);
+                    myCmd.Parameters.AddWithValue("@EffType", e.sType);
+                    myCmd.Parameters.AddWithValue("@EffValue", e.iValue);
+                    myCmd.Parameters.AddWithValue("@Tick", e.iTimer);
+                    myCmd.ExecuteNonQuery();
+                }
+                myCmd.Dispose();
+                myConn.Close();
+            }
+            catch (Exception ex)
+            {
+                string s = "Message: " + ex.Message.ToString() + Environment.NewLine + Environment.NewLine + "InnerException: " + ex.InnerException.ToString();
+                s = "Effect List save failed! " + Environment.NewLine + Environment.NewLine + s;
+                MessageBox.Show(s);
+            }
+        }
+
+        public void a(clsMage aMage)
+        {
+            clsTest test = new clsTest();
+            /* writing
+            //test.magename = "aname";
+            //test.athing = 3;
+            System.Xml.Serialization.XmlSerializer a = new System.Xml.Serialization.XmlSerializer(test.GetType());
+
+
+            //var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\something.xml";
+            System.IO.FileStream file = System.IO.File.Open("E:\\Repositories\\mikesusina\\BreadMage2\\BreadMage2\\BreadMage2\\XMLMageFlags.xml", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite);
+
+            a.Serialize(file, test);
+            file.Close();
+            */
+
+            /*reading */
+
+            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(clsTest));
+            System.IO.StreamReader file = new System.IO.StreamReader(@"E:\Repositories\mikesusina\BreadMage2\BreadMage2\BreadMage2\XMLMageFlags.xml");
+            clsTest loaded = (clsTest)reader.Deserialize(file);
+            file.Close();
+            Console.WriteLine(loaded.magename + "" + loaded.athing.ToString());
         }
 
 
