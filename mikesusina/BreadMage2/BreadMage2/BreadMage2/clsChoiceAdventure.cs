@@ -14,33 +14,31 @@ namespace BreadMage2
         public int  AdvID { get; set; }
         public string AdvName { get; set; }
         public string AdvText { get; set; }
-        public string Btn1 { get; set; }
-        public string Btn1Result { get; set; }
-        public string Btn2 { get; set; }
-        public string Btn2Result { get; set; }
-        public string Btn3 { get; set; }
-        public string Condition3 { get; set; }
-        public string Btn3Result { get; set; }
-        public string Btn4 { get; set; }
-        public string Condition4 { get; set; }
-        public string Btn4Result { get; set; }
+        public string Btn1 { get; set; } = "";
+        public string Btn1Result { get; set; } = "";
+        public string Btn1RareResult { get; set; } = "";
+        public string Btn2 { get; set; } = "";
+        public string Btn2Result { get; set; } = "";
+        public string Btn2RareResult { get; set; } = "";
+        public string Btn3 { get; set; } = "";
+        public string Condition3 { get; set; } = "";
+        public string Btn3Result { get; set; } = "";
+        public string Btn3RareResult { get; set; } = "";
+        public string Btn4 { get; set; } = "";
+        public string Condition4 { get; set; } = "";
+        public string Btn4Result { get; set; } = "";
+        public string Btn4RareResult { get; set; } = "";
         public int Location { get; set; }
-        public string ImageURL { get; set; }
-
-        public DataTable ChoiceTable { get; set; }
-        public DataRow ChoiceRow { get; set; }
+        public string ImgURL { get; set; }
 
         public clsChoiceAdventure(DataTable aChoiceData)
         {
-            ChoiceTable = aChoiceData;
-            ParseChoiceData(ChoiceTable);
-               
+            ParseChoiceData(aChoiceData);
         }
 
         public clsChoiceAdventure(DataRow aChoiceRow)
         {
-            ChoiceRow = aChoiceRow;
-            ParseChoiceRowData(ChoiceRow);
+            ParseChoiceRowData(aChoiceRow);
         }
 
         private void ParseChoiceData(DataTable ds)
@@ -50,6 +48,7 @@ namespace BreadMage2
             AdvText = ds.Rows[0]["AdvText"].ToString();
             Btn1 = ds.Rows[0]["Btn1"].ToString();
             Btn1Result = ds.Rows[0]["Btn1Result"].ToString();
+            Btn1RareResult = ds.Rows[0]["Btn1Rare"].ToString();
             Btn2 = ds.Rows[0]["Btn2"].ToString();
             Btn2Result = ds.Rows[0]["Btn2Result"].ToString();
             Btn3 = ds.Rows[0]["Btn3"].ToString();
@@ -59,7 +58,7 @@ namespace BreadMage2
             Condition4 = ds.Rows[0]["Condition4"].ToString();
             Btn4Result = ds.Rows[0]["Btn4Result"].ToString();
             Location = Convert.ToInt32(ds.Rows[0]["Location"].ToString());
-            ImageURL = ds.Rows[0]["ImageURL"].ToString();
+            ImgURL = ds.Rows[0]["ImgURL"].ToString();
         }
 
         private void ParseChoiceRowData(DataRow dr)
@@ -78,10 +77,10 @@ namespace BreadMage2
             Condition4 = dr["Condition4"].ToString();
             Btn4Result = dr["Btn4Result"].ToString();
             Location = Convert.ToInt32(dr["Location"].ToString());
-            ImageURL = dr["ImageURL"].ToString();
+            ImgURL = dr["ImgURL"].ToString();
         }
 
-        public List<string> GetResults(int i)
+        public List<string> GetResults(int i, bool b = false)
         {
             List<string> ResultList = new List<string>();
 
@@ -89,15 +88,19 @@ namespace BreadMage2
             {
                 case 1:
                     ResultList = ParseResult(Btn1Result);
+                    if (b) { ResultList.AddRange(ParseResult(Btn1RareResult)); }
                     break;
                 case 2:
                     ResultList = ParseResult(Btn2Result);
+                    if (b) { ResultList.AddRange(ParseResult(Btn2RareResult)); }
                     break;
                 case 3:
                     ResultList = ParseResult(Btn3Result);
+                    if (b) { ResultList.AddRange(ParseResult(Btn3RareResult)); }
                     break;
                 case 4:
                     ResultList = ParseResult(Btn4Result);
+                    if (b) { ResultList.AddRange(ParseResult(Btn4RareResult)); }
                     break;
                 default:
                     throw new Exception("Result info not found");

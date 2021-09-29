@@ -22,7 +22,7 @@ namespace BreadMage2
         public int iID { get; set; }
         public string sEffectName { get; set; }
         public string sDescription { get; set; }
-        public string ImageURL { get; set; }
+        public string ImgURL { get; set; }
 
         public DataTable EffTable { get; set; }
         public DataRow EffRow { get; set; }
@@ -37,7 +37,7 @@ namespace BreadMage2
         /* Effect Types:
         * MP = Mold/poison
         * ZC = Zest/Confusion
-        * PP = ???/Pinata
+        * TS = Tension/Pinata
         * 
         * 
         * if possible, add these, possibly as a second 
@@ -68,85 +68,32 @@ namespace BreadMage2
                 case "MP": //poison/mold
                     sEffectName = "Mold";
                     sDescription = "";
-                    ImageURL = "";
+                    ImgURL = "";
                     break;
                 case "ZC": //confusion/zest
                     sEffectName = "Zest";
                     sDescription = "";
-                    ImageURL = "";
+                    ImgURL = "";
                     break;
-                case "PP": //pinata
-                    sEffectName = "Pinata";
+                case "TS": //tension/pinata
+                    sEffectName = "Tension";
                     sDescription = "";
-                    ImageURL = "";
+                    ImgURL = "";
                     break;
                 case "QA": //free hit before combat begins
                     sEffectName = "Quick Attack";
                     sDescription = "";
-                    ImageURL = "";
+                    ImgURL = "";
                     break;
-                /*
-                 case "BA":
-                     sEffectName = "BuffPAK";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-                 case "BM":
-                     sEffectName = "BuffMAK";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-                 case "BD":
-                     sEffectName = "BuffDEF";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-                 case "BR":
-                     sEffectName = "BuffRES";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-                 case "DA":
-                     sEffectName = "DebuffPAK";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-                 case "DM":
-                     sEffectName = "DebuffMAK";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-                 case "DD":
-                     sEffectName = "DebuffDEF";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-                 case "DR":
-                     sEffectName = "DebuffRES";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-                 case "BE/DE":
-                     sEffectName = "BuffEvasion";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-                 case "DE":
-                     sEffectName = "DebuffEvasion";
-                     sDescription = "";
-                     ImageURL = "";
-                     break;
-
-                 */
                 case "SS":
                     sEffectName = "Stun";
                     sDescription = "";
-                    ImageURL = "";
+                    ImgURL = "";
                     break;
                 case "NN":
                     sEffectName = "None";
                     sDescription = "You shouldn't be here";
-                    ImageURL = "";
+                    ImgURL = "";
                     break;
             }
         }
@@ -170,7 +117,7 @@ namespace BreadMage2
             sType = ds.Rows[0]["EffType"].ToString();
             sEffectName = ds.Rows[0]["EffName"].ToString();
             sDescription = ds.Rows[0]["Description"].ToString();
-            ImageURL = ds.Rows[0]["ImgURL"].ToString();
+            ImgURL = ds.Rows[0]["ImgURL"].ToString();
         }
 
         private void ParseEffData(DataRow dr)
@@ -179,7 +126,7 @@ namespace BreadMage2
             sType = dr["EffType"].ToString();
             sEffectName = dr["EffName"].ToString();
             sDescription = dr["Description"].ToString();
-            ImageURL = dr["ImgURL"].ToString();
+            ImgURL = dr["ImgURL"].ToString();
         }
 
 

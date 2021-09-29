@@ -23,20 +23,19 @@ namespace BreadMage2
         public int EXP { get; set; } = 0;
         public int MoldCount { get; set; } = 0;
         public int ZestCount { get; set; } = 0;
-        public int PinataCount { get; set; } = 0;
-        public string ImageURL { get; set; } = "BreadMage2";
+        public int TensionCount { get; set; } = 0;
+        public string ImgURL { get; set; } = "BreadMage2";
         public int Location { get; set; } = 1;
 
         private DataTable rawChatter;
+
+        public List<BattleChatter> ChatterList { get; set; } = new List<BattleChatter>();
 
         public List<String> PAKChatterList { get; set; } = new List<string>(); //p atk
         public List<String> MAKChatterList { get; set; } = new List<string>(); //m atk
         public List<String> EAKChatterList { get; set; } = new List<string>(); //effect attack
         public List<String> MISChatterList { get; set; } = new List<string>(); //miss
         public List<String> DEFChatterList { get; set; } = new List<string>(); //defend
-
-        public List<String> ChatterList { get; set; }
-
 
         public List<String> EffTypeList { get; set; }
 
@@ -70,7 +69,7 @@ namespace BreadMage2
             PDef = cInt(ds.Rows[0]["PDEF"].ToString());
             MDef = cInt(ds.Rows[0]["MDEF"].ToString());
             EXP = cInt(ds.Rows[0]["EXP"].ToString());
-            ImageURL = ds.Rows[0]["IMG"].ToString();
+            ImgURL = ds.Rows[0]["ImgURL"].ToString();
             Location = cInt(ds.Rows[0]["Location"].ToString());
             monID = cInt(ds.Rows[0]["MonsterID"].ToString());
             MakeDropTable(ds.Rows[0]["Drops"].ToString());
@@ -89,7 +88,7 @@ namespace BreadMage2
             PDef = cInt(dr["PDEF"].ToString());
             MDef = cInt(dr["MDEF"].ToString());
             EXP = cInt(dr["EXP"].ToString());
-            ImageURL = dr["IMG"].ToString();
+            ImgURL = dr["ImgURL"].ToString();
             Location = cInt(dr["Location"].ToString());
             monID = cInt(dr["MonsterID"].ToString());
             MakeDropTable(dr["Drops"].ToString());
@@ -101,11 +100,11 @@ namespace BreadMage2
 
         public void RefreshMonster()
         {
-            //the monsters in the library get their stats goofed around
+            // if the monsters in the library get their stats goofed around
             HP = HPmax;
             MoldCount = 0;
             ZestCount = 0;
-            PinataCount = 0;
+            TensionCount = 0;
         }
 
         public int TickMonPoison()
@@ -113,7 +112,8 @@ namespace BreadMage2
             int damage = 0;
             int iTick = 1;
 
-            if (MoldCount > 2)
+            if (MoldCount <= 0) { return 0; }
+            else if (MoldCount > 2)
             {
                 iTick = (int)(Math.Ceiling(Convert.ToDouble(MoldCount))) / 2;
             }
@@ -131,12 +131,56 @@ namespace BreadMage2
             {
                 if (cInt(r["MonsterID"].ToString()) == monID)
                 {
+
+                    BattleChatter b = new BattleChatter(r["Chatter"].ToString())
+                    {
+                        iType = (int)r["ChatType"]
+                    };
+                    
+
+                    string s = b.ChatText;
+                    if (s.IndexOf("|") > 0)
+                    {
+                        b.sPreDmgText = s.Substring(0, s.IndexOf("|"));
+                        b.sPostDmgText = s.Substring(s.IndexOf("|") + 1);
+                    }
+                    switch (b.iType)
+                    {
+                        case 1: //patk
+                            b.ChatColor = System.Drawing.Color.Red;
+                            break;
+                        case 2: //matk
+                            b.ChatColor = System.Drawing.Color.CornflowerBlue;
+                            break;
+                        case 3: //miss
+                            b.ChatColor = System.Drawing.Color.White;
+                            break;
+                        case 4: //defend
+                            b.ChatColor = System.Drawing.Color.White;
+                            break;
+                        case 5: //mold
+                            b.ChatColor = System.Drawing.Color.Green;
+                            break;
+                        case 6: //zest
+                            b.ChatColor = System.Drawing.Color.DarkOrange;
+                            break;
+                        case 7: //tension
+                            b.ChatColor = System.Drawing.Color.LightCoral;
+                            break;
+                        case 8: // stun
+                            b.ChatColor = System.Drawing.Color.LightCoral;
+                            break;
+                    }
+                    ChatterList.Add(b);
+                    /*
+                    ChatterList.Add(new BattleChatter())
                     if (cInt(r["ChatType"].ToString()) == 1) { PAKChatterList.Add(r["Chatter"].ToString()); }
                     else if (cInt(r["ChatType"].ToString()) == 2) { MAKChatterList.Add(r["Chatter"].ToString()); }
                     else if (cInt(r["ChatType"].ToString()) == 3) { MISChatterList.Add(r["Chatter"].ToString()); }
                     else if (cInt(r["ChatType"].ToString()) == 4) { DEFChatterList.Add(r["Chatter"].ToString()); }
                     else if (cInt(r["ChatType"].ToString()) == 5) { EAKChatterList.Add(r["Chatter"].ToString()); }
                     //else if (cInt(r["ChatType"].ToString()) == 6) { }
+                    */
                 }
             }
         }

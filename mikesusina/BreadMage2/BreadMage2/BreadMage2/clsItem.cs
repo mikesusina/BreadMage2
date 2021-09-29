@@ -19,15 +19,15 @@ namespace BreadMage2
         /// 1 = healing
         /// 2 = cure
         /// 3 = combat
-        /// 4 = spell scroll
+        /// 4 = MP heal??
         /// (n) = junk/achievement/flavor
         /// </summary>
-        public int iIDType { get; set; }
+        public int itemType { get; set; }
         public int iCount { get; set; }
 
         public clsItem(int aType, int aCount)
         {
-            iIDType = aType;
+            itemType = aType;
             iCount = aCount;
         }
 
@@ -55,20 +55,20 @@ namespace BreadMage2
 
         public override int GetHashCode()
         {
-            return iIDType;
+            return itemType;
         }
 
         public bool Equals(clsItem other)
         {
             if (other == null) return false;
-            return (this.iIDType.Equals(other.iIDType));
+            return (this.itemType.Equals(other.itemType));
         }
 
         static Predicate<clsItem> ByType(int aType)
         {
             return delegate (clsItem item)
             {
-                return item.iIDType == aType;
+                return item.itemType == aType;
             };
         }
     }

@@ -111,6 +111,66 @@ namespace BreadMage2
             return myList;
         }
 
+        public List<clsSpell> LoadSpellList()
+        {
+            List<clsSpell> myList = new List<clsSpell>();
+            DataSet ds = new DataSet();
+            string msql = "SELECT * FROM Spells;";
+            FillDS(msql, ds);
+
+            int i = 0;
+            foreach (DataRow d in ds.Tables[0].Rows)
+            {
+                myList.Add(new clsSpell(ds.Tables[0].Rows[i]));
+                i++;
+            }
+
+            return myList;
+        }
+
+        public List<clsLocation> LoadLocationList()
+        {
+            List<clsLocation> myList = new List<clsLocation>();
+            DataSet ds = new DataSet();
+            string msql = "SELECT * FROM Locations;";
+            FillDS(msql, ds);
+
+            int i = 0;
+            foreach (DataRow d in ds.Tables[0].Rows)
+            {
+                myList.Add(new clsLocation(ds.Tables[0].Rows[i]));
+                i++;
+            }
+
+            return myList;
+        }
+
+        public List<EffectChatter> LoadEffectChatter()
+        {
+            List<EffectChatter> myList = new List<EffectChatter>();
+            try
+            {
+                DataTable dt = new DataTable();
+                string msql = "SELECT * FROM BattleEffectChatter;";
+                FillDT(msql, dt);
+
+                foreach (DataRow r in dt.Rows)
+                {
+                    EffectChatter e = new EffectChatter(r["ChatterText"].ToString(),
+                        null,
+                        true,
+                        r["EffType"].ToString(),
+                        (int)r["SpeakerType"]);
+                    myList.Add(e);
+                }
+            }
+            catch (ApplicationException ex)
+            {
+                string s = "Dang couldn't load that EffectChatterList for some reason" + Environment.NewLine + ex.InnerException.ToString();
+            }
+            return myList;
+        }
+
         public List<clsItem> LoadPlayerInv(int aSaveID = 1)
         {
 
@@ -147,7 +207,7 @@ namespace BreadMage2
                     myCmd.CommandText = "INSERT INTO [INVENTORY] Values(@MageID, @ItemID, @Count)";
                     myCmd.Parameters.Clear();
                     myCmd.Parameters.AddWithValue("@MageID", aSaveID);
-                    myCmd.Parameters.AddWithValue("@EffType", e.iIDType);
+                    myCmd.Parameters.AddWithValue("@EffType", e.itemType);
                     myCmd.Parameters.AddWithValue("@EffValue", e.iCount);
                     myCmd.ExecuteNonQuery();
                 }
@@ -160,57 +220,6 @@ namespace BreadMage2
                 s = "Inventory save failed" + Environment.NewLine + Environment.NewLine + s;
                 MessageBox.Show(s);
             }
-
-            /* OLD SYSTEM
-            myConn = BreadConnect();
-            try
-            {
-                string msql = "SELECT ISNULL(MageID, 0) as MageID, ItemID, Count from Inventory " +
-                            "WHERE IIf(IsNull(Inventory.MageID), 0, Inventory.MageID) in (" + iSaveID + ", 0);";
-
-                OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
-                OleDbCommand myCmd = new OleDbCommand(msql, myConn);
-                int i = 0;
-                myConn.Open();
-
-
-                foreach (DataRow d in dtPInv.Rows)
-                {
-                    if (Convert.ToInt32(dtPInv.Rows[i]["StatusFlag"]) == 2)
-                    {
-                        myCmd.CommandText = "UPDATE [INVENTORY] set [Count] = @Count " +
-                                                "WHERE [MageID] = " + iSaveID + " AND [ItemID] = @ItemID";
-                        myCmd.Parameters.AddWithValue("@Count", Convert.ToInt32(dtPInv.Rows[i]["ItemCount"].ToString()));
-                        myCmd.Parameters.AddWithValue("@ItemID", Convert.ToInt32(dtPInv.Rows[i]["ID"].ToString()));
-                        myCmd.ExecuteNonQuery();
-                    }
-                    else if (Convert.ToInt32(dtPInv.Rows[i]["StatusFlag"]) == 1)
-                    {
-                        myCmd.CommandText = "INSERT INTO [INVENTORY] Values (" + iSaveID + ", @ItemID, @Count)";
-                        myCmd.Parameters.AddWithValue("@Count", Convert.ToInt32(dtPInv.Rows[i]["ItemCount"].ToString()));
-                        myCmd.Parameters.AddWithValue("@ItemID", Convert.ToInt32(dtPInv.Rows[i]["ID"].ToString()));
-                        myCmd.ExecuteNonQuery();
-                    }
-                    i++;
-                }
-                myCmd.Dispose();
-                myConn.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Inventory save failed! ");
-            }
-
-
-            EVEN OLDER??
-            myConn = BreadConnect();
-            string msql = "SELECT ISNULL(MageID, 0) , ItemID, Count as ItemCount from Inventory " +
-                            "WHERE IIf(IsNull(Inventory.MageID), 0, Inventory.MageID) in (" + iSaveID + ", 0);";
-            OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
-            OleDbCommandBuilder cb = new OleDbCommandBuilder(myAdap);
-            cb.GetUpdateCommand();
-            myAdap.Update(dtPInv);
-            */
         }
 
         public List<clsMageEffect> LoadMageEffectsList(int aSaveID = 1)
@@ -244,15 +253,18 @@ namespace BreadMage2
                 myCmd.Parameters.AddWithValue("@MageID", aSaveID);
                 myCmd.ExecuteNonQuery();
 
-                foreach (clsMageEffect  e in anEffList)
+                foreach (clsMageEffect e in anEffList)
                 {
-                    myCmd.CommandText = "INSERT INTO [MAGEEFFECTS] Values(@MageID, @EffType, @EffValue, @Tick)";
-                    myCmd.Parameters.Clear();
-                    myCmd.Parameters.AddWithValue("@MageID", aSaveID);
-                    myCmd.Parameters.AddWithValue("@EffType", e.sType);
-                    myCmd.Parameters.AddWithValue("@EffValue", e.iValue);
-                    myCmd.Parameters.AddWithValue("@Tick", e.iTimer);
-                    myCmd.ExecuteNonQuery();
+                    if(e.iTimer > 0 || e.iValue > 0)
+                    {
+                        myCmd.CommandText = "INSERT INTO [MAGEEFFECTS] Values(@MageID, @EffType, @EffValue, @Tick)";
+                        myCmd.Parameters.Clear();
+                        myCmd.Parameters.AddWithValue("@MageID", aSaveID);
+                        myCmd.Parameters.AddWithValue("@EffType", e.sType);
+                        myCmd.Parameters.AddWithValue("@EffValue", e.iValue);
+                        myCmd.Parameters.AddWithValue("@Tick", e.iTimer);
+                        myCmd.ExecuteNonQuery();
+                    }
                 }
                 myCmd.Dispose();
                 myConn.Close();
@@ -265,31 +277,41 @@ namespace BreadMage2
             }
         }
 
-        public void a(clsMage aMage)
+        public clsGameFlags LoadGameFlags()
         {
-            clsTest test = new clsTest();
-            /* writing
-            //test.magename = "aname";
-            //test.athing = 3;
-            System.Xml.Serialization.XmlSerializer a = new System.Xml.Serialization.XmlSerializer(test.GetType());
-
-
-            //var path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\something.xml";
-            System.IO.FileStream file = System.IO.File.Open("E:\\Repositories\\mikesusina\\BreadMage2\\BreadMage2\\BreadMage2\\XMLMageFlags.xml", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite);
-
-            a.Serialize(file, test);
-            file.Close();
-            */
-
-            /*reading */
-
-            System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(clsTest));
-            System.IO.StreamReader file = new System.IO.StreamReader(@"E:\Repositories\mikesusina\BreadMage2\BreadMage2\BreadMage2\XMLMageFlags.xml");
-            clsTest loaded = (clsTest)reader.Deserialize(file);
-            file.Close();
-            Console.WriteLine(loaded.magename + "" + loaded.athing.ToString());
+            clsGameFlags myGameFlags = new clsGameFlags();
+            try
+            {
+                /*reading */
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(clsGameFlags));
+                System.IO.StreamReader file = new System.IO.StreamReader(@"E:\Repositories\mikesusina\BreadMage2\BreadMage2\BreadMage2\XMLMageFlags.xml");
+                myGameFlags = (clsGameFlags)reader.Deserialize(file);
+                file.Close();
+                return myGameFlags;
+            }
+            catch(ApplicationException ex)
+            {
+                string s = "Hey we had some issues loading GameFlags" + Environment.NewLine + ex.InnerException.ToString();
+                MessageBox.Show(s);
+            }
+            return myGameFlags;
         }
 
+        public void SaveGameFlags(clsGameFlags toSaveFlags)
+        {
+            try
+            {
+                System.Xml.Serialization.XmlSerializer cerealizer= new System.Xml.Serialization.XmlSerializer(toSaveFlags.GetType());
+                System.IO.FileStream file = System.IO.File.Open("E:\\Repositories\\mikesusina\\BreadMage2\\BreadMage2\\BreadMage2\\XMLMageFlags.xml", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite);
+                cerealizer.Serialize(file, toSaveFlags);
+                file.Close();
+            }
+            catch (ApplicationException ex)
+            {
+                string s = "Hey we had some issues saving game flags" + Environment.NewLine + ex.InnerException.ToString();
+                MessageBox.Show(s);
+            }
+        }
 
     }
 }

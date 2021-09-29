@@ -14,26 +14,27 @@ namespace BreadMage2
         //the Mage object, this is the PC
         public clsMageStats Stats { get; set; } = new clsMageStats();
         public List<clsMageEffect> myStatEffects { get; set; } = new List<clsMageEffect>();
+        public clsGameFlags myGameFlags { get; set; } = new clsGameFlags();
 
 
         public int HP { get; set; }
         public int HPmax { get; set; }
         public int MP { get; set; }
         public int MPmax { get; set; }
+        public int SP { get; set; }
         public int Location { get; set; } = 1;
         public int SaveID { get; set; }
         public Action RefreshInvNumbers;
 
         //public DataTable myInv { get; set; }
-        public List<clsItem> myInv { get; set; }
+        public List<clsItem> myInv { get; set; } = new List<clsItem>();
 
-        public List<clsUniqueItem> myItemBook { get; set; }
         public List<clsEquipment> myEquipList { get; set; }
 
         //public list<clsBuff> myBuffList {get;set;}
-
-
         public List<int> myQuickIDs { get; set; }
+
+        private clsSaveData mySaveData { get; set; } = new clsSaveData();
 
        public clsMage()
         {
@@ -42,6 +43,7 @@ namespace BreadMage2
             HP = HPmax;
             MPmax = 100;
             MP = MPmax;
+            SP = 10;
 
             Location = 1;
             myQuickIDs = new List<int>();
@@ -63,14 +65,15 @@ namespace BreadMage2
 
         }
 
-        public void AddItem(int anID, int anAmount)
+        public void AddItem(int aType, int anAmount)
         {
+            //this method is for adding generic item types to the inventory
             int i = 0;
             foreach (clsItem e in myInv)
             {
-                if (e.iIDType == anID) { e.AddItem(anAmount);  i = 1; }
+                if (e.itemType == aType) { e.AddItem(anAmount);  i = 1; }
             }
-            if (i == 0) { myInv.Add(new clsItem(anID, anAmount)); }
+            if (i == 0) { myInv.Add(new clsItem(aType, anAmount)); }
             this.RefreshInvNumbers();
 
             /* OLD SYSTEM
@@ -103,6 +106,8 @@ namespace BreadMage2
             */
         }
 
+        
+
         public void AddEffect(string aType, int aValue, int aTimer)
         {
             int iFlag = 0;
@@ -110,7 +115,7 @@ namespace BreadMage2
             {
                 if (e.sType == aType)
                 {
-                    if (e.sType == "MP" || e.sType == "ZC" || e.sType == "PP")
+                    if (e.sType == "MP" || e.sType == "ZC" || e.sType == "TS")
                     {
                         e.iValue += aValue;
                         if (e.iTimer < aTimer) { e.iTimer = aTimer;  }
@@ -129,10 +134,12 @@ namespace BreadMage2
 
         public void RemoveEffect (string aType)
         {
+            List<clsMageEffect> newEffects = new List<clsMageEffect>();
             foreach (clsMageEffect e in myStatEffects)
             {
-                if (e.sType == aType) { myStatEffects.Remove(e); }
+                if (e.sType != aType) { newEffects.Add(e); }
             }
+            this.myStatEffects = newEffects;
         }
 
         public void TickBuffs()
@@ -142,11 +149,16 @@ namespace BreadMage2
             {
                 foreach (clsMageEffect e in myStatEffects)
                 {
-                    e.iTimer -= 1;
-                    if (e.iTimer <= 0)
+                    if (e.iTimer > 0)
                     {
-                        myStatEffects.Remove(e);
-                        iFlag = 1;
+                        if (e.sType == "MP" || e.sType == "ZC" || e.sType == "TS") { /* do nothing - these tick in battle */ }
+                        else { }
+                        e.iTimer -= 1;
+                        if (e.iTimer <= 0)
+                        {
+                            e.iTimer = 0;
+                            iFlag = 1;
+                        }
                     }
                 }
                 if (iFlag == 1)
@@ -166,19 +178,22 @@ namespace BreadMage2
                     int iTick = 1;
                     if (e.iValue > 2)
                     {
-                        iTick = (int)(Math.Ceiling(Convert.ToDouble(e.iValue))) / 2;
+                        iTick = (int)(Math.Ceiling(Convert.ToDouble(e.iValue) / 2));
                     }
                     damage = 3 * iTick;
                     e.iValue -= iTick;
-                    if (e.iValue <= 0)
+                    e.iTimer -= 1;
+                    if (e.iValue <= 0 || e.iTimer <= 0)
                     {
-                        myStatEffects.Remove(e);
+                        RemoveEffect("MP");
                         break;
                     }
                 }
             }
             return damage;
         }
+
+
 
         public int PAtk()
         {
@@ -225,26 +240,40 @@ namespace BreadMage2
             foreach (clsMageEffect e in myStatEffects) { if (e.sType == "ZC") { return e.iTimer; } }
             return i;
         }
-        /*
-        public int PinataCount()
+        public int TensionCount()
         {
             int i = 0;
-            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "PP") { return e.iValue; } }
+            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "TS") { return e.iValue; } }
             return i;
         }
-        public int PinataTimer()
+        public int TensionTimer()
         {
             int i = 0;
-            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "PP") { return e.iTimer; } }
+            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "TS") { return e.iTimer; } }
             return i;
         }
-        */
 
-        public int GetItemCount(int anItemID)
+
+        public bool hasQuickAttack()
+        {
+            try
+            {
+                clsMageEffect a = myStatEffects.Find(x => x.sType.Contains("QA"));
+                if (a.iTimer > 0 || a.iValue > 0)
+                {
+                    return true;
+                }
+            }
+            catch { return false; }
+            return false;
+        }
+
+
+        public int GetItemCount(int anItemType)
         {
             foreach (clsItem e in myInv)
             {
-                if (anItemID == e.iIDType) { return e.iCount; }
+                if (anItemType == e.itemType) { return e.iCount; }
             }
             return 0;
 
@@ -260,17 +289,27 @@ namespace BreadMage2
             */
         }
 
-        public bool hasQuickAttack()
-        {
-            if (myStatEffects is null) { return false; }
-            else { return myStatEffects.Exists(x => x.sType.Contains("QA")); }
-        }
+        
 
         public bool isStunned()
         {
-            if (myStatEffects is null) { return false; }
-            else { return myStatEffects.Exists(x => x.sType.Contains("SS")); }
+            try
+            {
+                clsMageEffect a = myStatEffects.Find(x => x.sType.Contains("SS"));
+                if (a.iTimer > 0 || a.iValue > 0)
+                {
+                    return true;
+                }
+            }
+            catch  { return false; }
+            return false;
         }
+
+        private void SetGameFlags(clsGameFlags loadedFlags)
+        {
+            myGameFlags = loadedFlags;
+        }
+
 
         private void SetEquipStats()
         {
@@ -280,6 +319,44 @@ namespace BreadMage2
             }
         }
 
+        //////
+        /// SaveData stuff
+        //////
+        ///
+
+        public void GetUniqueItem(int anItemID)
+        {
+            if (mySaveData.gottenItems.Contains(anItemID) == false) { mySaveData.gottenItems.Add(anItemID); }
+        }
+
+        public void GrantSpell(int aSpellID)
+        {
+            if (mySaveData.knownSpells.Contains(aSpellID) == false) { mySaveData.knownSpells.Add(aSpellID); }
+        }
+
+        public List<int> AllSpells()
+        {
+            return mySaveData.knownSpells;
+        }
+        public List<clsSpell> EQSpells()
+        {
+            return mySaveData.equippedSpells;
+        }
+        public int EquippedSP()
+        {
+            int i = 0;
+            foreach (clsSpell s in mySaveData.equippedSpells)
+            {
+                i += s.SPCost;
+            }
+            return i;
+        }
+
+
+        public void equipspell(clsSpell s)
+        {
+            mySaveData.equippedSpells.Add(s);
+        }
     }
 
 }

@@ -37,12 +37,11 @@ namespace BreadMage2.Screens
             {
                 foreach (Control item in myGameScr.Controls["pArea"].Controls)
                 {
-                    if (item.Name == "FightBoard")
-                    {
-                        myGameScr.Controls["pArea"].Controls.Remove(item);
-                        item.Dispose();
-                    }
+                    // if (item.Name == "FightBoard") {}
+                    myGameScr.Controls["pArea"].Controls.Remove(item);
+                    item.Dispose();
                 }
+                myGameScr.gLock = false;
             }
 
         }
@@ -116,9 +115,14 @@ namespace BreadMage2.Screens
 
         private void button4_Click(object sender, EventArgs e)
         {
+            /*
             //testing XML stuff
             BreadDB bnet = new BreadDB();
-            bnet.a(myGameScr.gMage);
+            List<clsSpell> sb = new List<clsSpell>();
+            
+            myGameScr.gMage.myGameFlags.aspellbook = sb;
+            bnet.SaveGameFlags(myGameScr.gMage.myGameFlags);
+            */
         }
 
         private void button5_Click(object sender, EventArgs e)

@@ -24,6 +24,8 @@ namespace BreadMage2
         {
             InitializeComponent();
             myGameScr = aGameScr;
+            bFight = myGameScr.bFight;
+            bChoice = myGameScr.bChoice;
            
         }
 
@@ -46,11 +48,10 @@ namespace BreadMage2
                 else
                 {
                     //combat
-                    Control FightZone = new Control();
+                    Control pZone = new Control();
                     bFight = new FightBoard(myGameScr);
-                    FightZone = this.Parent.Parent.Controls["pArea"];
-                    FightZone.Controls.Add(bFight);
-                    myGameScr.bFight = bFight;
+                    pZone = myGameScr.Controls["pArea"];
+                    pZone.Controls.Add(bFight);
                     myGameScr.gLock = true;
                     bFight.Show();
                     //FightZone.Controls["FightBoard"].Show();
@@ -58,6 +59,35 @@ namespace BreadMage2
             }
             else { MessageBox.Show("Hey there's something there!"); }
         }
+
+        private void btnSpellBook_Click(object sender, EventArgs e)
+        {
+            if (myGameScr.gLock == false)
+            {
+                Control pZone = new Control();
+                SpellBookBoard bSpell = new SpellBookBoard(myGameScr);
+                pZone = myGameScr.Controls["pArea"];
+                pZone.Controls.Add(bSpell);
+                myGameScr.gLock = true;
+                bSpell.Show();
+            }
+            else { MessageBox.Show("Hey there's something there!"); }
+        }
+
+        private void btnMap_Click(object sender, EventArgs e)
+        {
+            if (myGameScr.gLock == false)
+            {
+                Control pZone = new Control();
+                MapBoard bMap = new MapBoard(myGameScr);
+                pZone = myGameScr.Controls["pArea"];
+                pZone.Controls.Add(bMap);
+                myGameScr.gLock = true;
+                bMap.Show();
+            }
+            else { MessageBox.Show("Hey there's something there!"); }
+        }
+
 
 
         //DevTools
@@ -91,14 +121,42 @@ namespace BreadMage2
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if (myGameScr.gMage != null)
+            {
+                myGameScr.gMage.GrantSpell(1);
+                myGameScr.gMage.GrantSpell(2);
+                myGameScr.gMage.GrantSpell(4);
+                myGameScr.gMage.GrantSpell(5);
+                myGameScr.gMage.GrantSpell(6);
+                myGameScr.gMage.GrantSpell(7);
+                myGameScr.gMage.equipspell(myGameScr.GetSpell(5));
+                myGameScr.gMage.equipspell(myGameScr.GetSpell(6));
+                myGameScr.gMage.equipspell(myGameScr.GetSpell(7));
+            }
 
+
+            /*
+            if (myGameScr.gLock == false)
+            {
+                Control pZone = new Control();
+                TownBoard bTown = new TownBoard(myGameScr);
+                pZone = myGameScr.Controls["pArea"];
+                pZone.Controls.Add(bTown);
+                myGameScr.gLock = true;
+                bTown.Show();
+            }
+            else { MessageBox.Show("Hey there's something there!"); }
+            */
+
+
+
+            /*
             if (myGameScr.gMage != null)
             {
                 BreadDB BN = new BreadDB();
                 BN.SavePlayerInv(myGameScr.gMage.SaveID, myGameScr.gMage.myInv);
                 BN.SaveMageEffectList(myGameScr.gMage.SaveID, myGameScr.gMage.myStatEffects);
             }
-            /*
             if (myGameScr.GetPlayerInv() != null)
             {
                 int i = 0;
@@ -113,5 +171,7 @@ namespace BreadMage2
             }
             */
         }
+
+       
     }
 }

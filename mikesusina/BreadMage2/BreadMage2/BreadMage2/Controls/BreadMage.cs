@@ -21,8 +21,6 @@ namespace BreadMage2
             thisMage = aMage;
             LoadImage();
             SetBars();
-
-
         }
 
         private void LoadImage()

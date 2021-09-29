@@ -26,22 +26,26 @@ namespace BreadMage2
         public FightBoard bFight { get; set; }
         public QuickBoard bQuick { get; set; }
         public ChoiceBoard bChoice { get; set; }
+        public MapBoard bMap { get; set; }
 
         public List<clsMonster> gMonsterList { get; set; }
 
         // for libraries
-        public List<clsUniqueItem> gItemBook { get; set; }
-        public List<clsChoiceAdventure> gChoiceList { get; set; }
+        public List<clsUniqueItem> gItemBook { get; set; } = new List<clsUniqueItem>();
+        public List<clsSpell> gSpellBook { get; set; } = new List<clsSpell>();
+        public List<clsChoiceAdventure> gChoiceList { get; set; } = new List<clsChoiceAdventure>();
+        public List<EffectChatter> gEffectChatter { get; set; } = new List<EffectChatter>();
+        public List<clsLocation> gLocationList { get; set; } = new List<clsLocation>();
 
-        public Random gRandom { get; set; }
+        public Random gRandom { get; set; } 
 
         public engGLog gLog { get; set; }
 
-        public bool gLock { get; set; }
+        public bool gLock { get; set; } = false;
 
         
 
-        public GameScreen(MainScreen scrMainScreen, int iLoadFlag, List<clsMonster> aMonsterList, List<clsUniqueItem> aItemBook, List<clsChoiceAdventure> aChoiceLib)
+        public GameScreen(MainScreen scrMainScreen, int iLoadFlag, List<clsMonster> aMonsterList, List<clsUniqueItem> aItemBook, List<clsChoiceAdventure> aChoiceLib, List<EffectChatter> aEffectChatterList, List<clsSpell> aSpellBook)
         {
             InitializeComponent();
             scrMain = scrMainScreen;
@@ -51,6 +55,8 @@ namespace BreadMage2
             gMonsterList = aMonsterList;
             gItemBook = aItemBook;
             gChoiceList = aChoiceLib;
+            gSpellBook = aSpellBook;
+            gEffectChatter = aEffectChatterList;
             gLock = false;
 
             //LoadFlag 0  = new game
@@ -59,6 +65,8 @@ namespace BreadMage2
 
             gRandom = new Random();
             BreadDB BreadNet = new BreadDB();
+
+            gLocationList = BreadNet.LoadLocationList();
 
             if (iLoadFlag == 0)
             {
@@ -84,14 +92,14 @@ namespace BreadMage2
 
 
 
-                if (gMonsterList is null || gItemBook is null || gChoiceList is null)
+                if (gMonsterList is null || gItemBook is null || gChoiceList is null || gSpellBook is null)
                 {
                     //load various data from DB
                     //hopefully this is in memory already from program boot
                     gMonsterList = BreadNet.LoadMonsterList();
                     gItemBook = BreadNet.LoadUniqueItemsList();
                     gChoiceList = BreadNet.LoadChoiceList();
-                    gMage.myItemBook = gItemBook;
+                    gSpellBook = BreadNet.LoadSpellList();
                 }
 
                 if (gChatBot is null)
@@ -118,35 +126,48 @@ namespace BreadMage2
             { }
             else if (iLoadFlag == 1)
             {
-                //load test saveID
-                clsMage gMage = new clsMage();
-                // Clear any mage info from the panel first
-                if (pMageZone.Controls != null) { pMageZone.Controls.Clear(); }
-                gMage.myInv = BreadNet.LoadPlayerInv(1);
-                gMage.myStatEffects = BreadNet.LoadMageEffectsList(1);
-                gMage.SaveID = 1;
+                try
+                {
+                    //load test saveID
+                    gMage = new clsMage();
+                    // Clear any mage info from the panel first
+                    if (pMageZone.Controls != null) { pMageZone.Controls.Clear(); }
+                    gMage.myInv = BreadNet.LoadPlayerInv(1);
+                    gMage.myStatEffects = BreadNet.LoadMageEffectsList(1);
+                    gMage.myGameFlags = BreadNet.LoadGameFlags();
+                    gMage.SaveID = iLoadFlag;
 
-                bMage = new BreadMage(gMage);
-                pMageZone.Controls.Add(bMage);
-                bMage.Show();
-                // clear the Log
-                //lbLog.Items.Clear();
-                gLog = new engGLog(lbLog);
-                gLog.Add("Welcome to Bread Mage 2!!!");
+                    ///adding a spell
+                    gMage.GrantSpell(1);
+                    gMage.GrantSpell(2);
 
-                //for updating item count stuff
-                gMage.RefreshInvNumbers = UpdateQuickBoard;
+                    bMage = new BreadMage(gMage);
+                    pMageZone.Controls.Add(bMage);
+                    bMage.Show();
+                    // clear the Log
+                    //lbLog.Items.Clear();
+                    gLog = new engGLog(lbLog);
+                    gLog.Add("Welcome to Bread Mage 2!!!");
+
+                    //for updating item count stuff
+                    gMage.RefreshInvNumbers = UpdateQuickBoard;
+                }
+                catch (ApplicationException ex)
+                {
+                    string s = "You mage didn't come out of the over correctly" + Environment.NewLine + ex.InnerException.ToString();
+                }
 
 
 
-                if (gMonsterList is null || gItemBook is null || gChoiceList is null)
+
+                if (gMonsterList is null || gItemBook is null || gChoiceList is null || gSpellBook is null)
                 {
                     //load various data from DB
                     //hopefully this is in memory already from program boot
                     gMonsterList = BreadNet.LoadMonsterList();
                     gItemBook = BreadNet.LoadUniqueItemsList();
                     gChoiceList = BreadNet.LoadChoiceList();
-                    gMage.myItemBook = gItemBook;
+                    gSpellBook = BreadNet.LoadSpellList();
                 }
 
                 if (gChatBot is null)
@@ -181,6 +202,18 @@ namespace BreadMage2
                 s = o.ItemName;
             }
             return s;
+        }
+        public clsSpell GetSpell(int anID)
+        {
+            return gSpellBook.Find(x => x.spellID == anID);
+        }
+        public clsSpell GetSpell(string aSpellName)
+        {
+            return gSpellBook.Find(x => x.spellName == aSpellName);
+        }
+        public List<clsSpell> GetItemSpells()
+        {
+            return gSpellBook.FindAll(x => x.spellType == 999);
         }
 
         public void ChoiceChain(clsChoiceAdventure anAdv)

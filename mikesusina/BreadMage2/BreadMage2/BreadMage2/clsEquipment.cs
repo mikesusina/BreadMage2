@@ -11,13 +11,13 @@ namespace BreadMage2
 {
     public class clsEquipment : IEquatable<clsEquipment>
     {
-        public int itemID { get; set; }
+        public int equipID { get; set; }
         public string ItemName { get; set; }
         public int Slot { get; set; }
         public string Stats { get; set; }
-        public string ExtraInfo { get; set; } //for adding abilities or other effects?
+        public string ExtraInfo { get; set; } //for adding abilities or other effects? idea: recycle effects like mold as add w/ weapon types and resist with armor types?
         public string  Description { get; set; }
-        public string ImageURL { get; set; }
+        public string ImgURL { get; set; }
 
 
         private int PAtkStat { get; set; }
@@ -29,23 +29,15 @@ namespace BreadMage2
 
         //public int HP
 
-
-
-
-        public DataTable ItemTable { get; set; }
-        public DataRow ItemRow { get; set; }
-
         public clsEquipment(DataTable aItemTable)
         {
-            ItemTable = aItemTable;
-            ParseEquipmentData(ItemTable);
+            ParseEquipmentData(aItemTable);
             InitalizeEquipment();
         }
 
         public clsEquipment(DataRow aItemRow)
         {
-            ItemRow = aItemRow;
-            ParseEquipmentDataRow(ItemRow);
+            ParseEquipmentDataRow(aItemRow);
             InitalizeEquipment();
         }
 
@@ -62,26 +54,26 @@ namespace BreadMage2
         {
             //  Items.ID, Equipment.ItemName, Equipment.ImgURL, Equipment.Slot, Equipment.Stats, Equipment.SP, Equipment.Restore
 
-            itemID = Convert.ToInt32(ds.Rows[0].ItemArray[0].ToString());
+            equipID = Convert.ToInt32(ds.Rows[0]["EquipID"].ToString());
             ItemName = ds.Rows[0]["ItemName"].ToString();
             Slot = Convert.ToInt32(ds.Rows[0]["Slot"].ToString());
             Stats = ds.Rows[0]["Stats"].ToString();
             ExtraInfo = ds.Rows[0]["ExtraInfo"].ToString();
             Description = ds.Rows[0]["Description"].ToString();
-            ImageURL = ds.Rows[0]["ImgURL"].ToString();
+            ImgURL = ds.Rows[0]["ImgURL"].ToString();
         }
 
         private void ParseEquipmentDataRow(DataRow dr)
         {
             //  Items.ID, Equipment.ItemName, Equipment.ImgURL, Equipment.HP, Equipment.MP, Equipment.SP, Equipment.Restore
 
-            itemID = Convert.ToInt32(dr["ID"].ToString());
+            equipID = Convert.ToInt32(dr["EquipID"].ToString());
             ItemName = dr["ItemName"].ToString();
             Slot = Convert.ToInt32(dr["Slot"].ToString());
             Stats = dr["Stats"].ToString();
             ExtraInfo = dr["ExtraInfo"].ToString();
             Description = dr["Description"].ToString();
-            ImageURL = dr["ImgURL"].ToString();
+            ImgURL = dr["ImgURL"].ToString();
         }
 
         private void InitalizeEquipment()
@@ -151,13 +143,13 @@ namespace BreadMage2
 
         public override int GetHashCode()
         {
-            return itemID;
+            return equipID;
         }
 
         public bool Equals(clsEquipment other)
         {
             if (other == null) return false;
-            return (this.itemID.Equals(other.itemID));
+            return (this.equipID.Equals(other.equipID));
         }
     }
 }

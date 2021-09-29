@@ -12,7 +12,7 @@ namespace BreadMage2
         public int itemID { get; set; }
         public string ItemName { get; set; }
         public int itemType { get; set; }
-        public string ImageURL { get; set; }
+        public string ImgURL { get; set; }
         public string Description { get; set; }
 
         public clsUniqueItem(DataTable dt)
@@ -20,7 +20,7 @@ namespace BreadMage2
             itemID = Convert.ToInt32(dt.Rows[0]["ItemID"].ToString());
             ItemName = dt.Rows[0]["ItemName"].ToString();
             itemType = Convert.ToInt32(dt.Rows[0]["ItemType"].ToString());
-            ImageURL = dt.Rows[0]["ImgURL"].ToString();
+            ImgURL = dt.Rows[0]["ImgURL"].ToString();
             Description = dt.Rows[0]["Description"].ToString();
         }
 
@@ -29,7 +29,7 @@ namespace BreadMage2
             itemID = Convert.ToInt32(dr["ItemID"].ToString());
             ItemName = dr["ItemName"].ToString();
             itemType = Convert.ToInt32(dr["ItemType"].ToString());
-            ImageURL = dr["ImgURL"].ToString();
+            ImgURL = dr["ImgURL"].ToString();
             Description = dr["Description"].ToString();
         }
 

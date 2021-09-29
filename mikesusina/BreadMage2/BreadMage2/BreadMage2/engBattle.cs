@@ -11,14 +11,15 @@ namespace BreadMage2
 {
     class engBattle
     {
-        //a class to handle the combat logic
-        
         private GameScreen myGameScr;
+        private int MageDefend = 0;
 
         public engBattle(GameScreen aGameScr)
         {
 
             myGameScr = aGameScr;
+            myGameScr.bMage.UpdateBars(myGameScr.gMage);
+
 
             // roll initiative - do better than a flip
             int i = int.Parse(DateTime.Now.ToString("MM/DD/yy h:mm:ss").Substring(DateTime.Now.ToString("MM/DD/yy h:mm:ss").Length - 1, 1));
@@ -45,8 +46,8 @@ namespace BreadMage2
         {
             //poison ticks "on start of turn" so just tick it now 
             //*** this is where you'd implement a poison save spell - add it ass a buff? consume ticks no timer?, cast grants > 1
-            TickPoison(myGameScr.gMage);
-            QuickAttack(myGameScr.gMage);
+            TickPoison(1);
+            QuickAttack();
 
             //update the bars one final time
             myGameScr.bMage.UpdateBars(myGameScr.gMage);
@@ -58,8 +59,8 @@ namespace BreadMage2
             int bdamage = 0;
 
             // attack types//
-            // 1 = regular attack
-            // 2 = ??
+            // 1 = p attack
+            // 2 = m attack
             // 3 = ??
             // attack
             // defend
@@ -70,6 +71,9 @@ namespace BreadMage2
             {
                 //skip attack and clear status 
                 myGameScr.gMage.RemoveEffect("SS");
+                string s = Environment.NewLine + "That smarts! you're stunned!";
+                myGameScr.bFight.AddChatter(s);
+                MonsterAttack();
             }
             else
             {
@@ -77,12 +81,14 @@ namespace BreadMage2
                 {
 
                     case 1: // regular attack
-                        bdamage = MageWeaponAttack();
+                        bdamage = MagePAttack();
                         break;
                     case 2:
-                        //bdamage = MageSpellAttack(probably int for spellID)
+                        bdamage = MageMAttack();
                         break;
                     case 3:
+                        MageDefend = 1;
+                        bdamage = 0;
                         break;
                     default:
                         bdamage = myGameScr.gMage.PAtk() - myGameScr.gMonster.PDef;
@@ -96,21 +102,55 @@ namespace BreadMage2
             {
                 EndCombat();
             }
-            else
+            else if (bdamage > 0)
             {
+                //need some "mage chatter" stuff. Maybe use another monster?
                 string s = "You gooshed it good for " + bdamage.ToString() + " damage!";
                 myGameScr.bFight.AddChatter(s);
                 // monster turn
-                MonsterAttack(1);
+                MonsterAttack();
             }
+            else { MonsterAttack(); }
         }
 
-        private int MageWeaponAttack()
+        private int MagePAttack()
         {
             int damage = myGameScr.gMage.PAtk() - myGameScr.gMonster.PDef;
             HitMonster(damage);
             myGameScr.bFight.UpdateBars(myGameScr.gMonster);
             return damage;
+        }
+
+        private int MageMAttack()
+        {
+            int damage = myGameScr.gMage.MAtk() - myGameScr.gMonster.MDef;
+            HitMonster(damage);
+            myGameScr.bFight.UpdateBars(myGameScr.gMonster);
+            return damage;
+        }
+
+        //this is called from FightBoard when spell is clicked
+        public void MageSpell(string spellname = "", int tier = 1)
+        {
+            try
+            {
+                clsSpell spell = new clsSpell();
+                if (myGameScr.gSpellBook.Exists(x => x.spellName == spellname)) { spell = myGameScr.gSpellBook.Find(x => x.spellName == spellname); }
+                if (spell.spellName != "")
+                {
+                    CastSpell(spell, tier);
+                }
+            }
+            catch
+            {
+                string s = "didn't quite catch that spell, friendo";
+                MessageBox.Show(s);
+            }
+        }
+
+        private void CastSpell(clsSpell aSpell, int aTier = 1)
+        {
+
         }
 
         //private void MageAbility { }
@@ -121,30 +161,14 @@ namespace BreadMage2
 
         //private void MageDefend { }
 
-
-
-        private void HitMage(int someDamage)
-        {
-            myGameScr.gMage.HP -= someDamage;
-            if (myGameScr.gMage.HP <= 0) { myGameScr.GameOver(); }
-        }
-
-        private void HitMonster(int someDamage)
-        {
-            myGameScr.gMonster.HP -= someDamage;
-        }
-
-
         /// <summary>
         /// Monster Attack logic starts here
         /// </summary>
         /// <param name="MonsterAttacks"></param>
 
-        private void MonsterAttack(int AtkType = 1)
+        public void MonsterAttack(int AtkType = 1)
         {
-
             int bdamage = 0;
-            int chatType = 0;
 
             //potential moves:
             // attack
@@ -152,70 +176,54 @@ namespace BreadMage2
             // ability (if available? all monsters have at least one?)
             // ideas: monster healing, adding DoT attacks? enrage
 
+            //check for stun status and block an attack
+            //stun stuff
+
             //tick poison on turn start
-            TickPoison(myGameScr.gMonster);
+            TickPoison(2);
 
             //placeholder - utilizing m and p attack
-            int i = myGameScr.gRandom.Next(6);
-            if (i == 5 ) { AtkType = 3; }
+            /*int i = myGameScr.gRandom.Next(7);
+            if (i == 6) { AtkType = 8; }
+            else if (i == 5 ) { AtkType = 5; }
             else if (i == 0 || i == 2|| i == 4 ) { AtkType = 1; }
             else { AtkType = 2; }
-
+            */
+            //AtkType = 5;
             switch (AtkType)
             {
                 case 1: //patk
                     bdamage = MonsterPAttack();
-                    chatType = 1;
                     break;
                 case 2: //matk
                     bdamage = MonsterMAttack();
-                    chatType = 2;
                     break;
-                case 3: // poison
+                case 3: // miss
+                    break;
+                case 4: // defend
+                    // bdamage = half damage? block attack completely?
+                    break;
+                case 5: //mold
                     bdamage = MonsterEffAttack("MP");
-                    chatType = 5;
                     break;
-                case 4: // pinata
+                case 6: //zest
                     break;
-                case 5:
+                case 7: // tension
                     break;
+                case 8: // stun
+                    myGameScr.gMage.AddEffect("SS", 1, 1);
+                    break;
+                case 9:
+                    break;
+
             }
 
             HitMage(bdamage);
-            myGameScr.bFight.AddMonsterChatter(chatType, bdamage);
-
-            /* placeholder chatter - 
-            if (bdamage <= 0)
+            if (myGameScr.gMage.HP > 0)
             {
-                string s = "Your incredible ";
-                switch (AtkType)
-                {
-                    case 1: //patk
-                        s += "might";
-                        break;
-                    case 2: //matk
-                        s += "resistence";
-                        break;
-                    case 3: //mold. This needs to be reworked
-                        s += "mold immunity??";
-                        break;
-                }
-                s += " shrugs off their attack.";
-                myGameScr.bFight.AddChatter(s);
+                myGameScr.bFight.AddMonsterChatter(AtkType, bdamage);
+                MageTurn();
             }
-            else
-            {
-                //ability to manipulate all mage bars at once - HP, MP, SP - update to new value
-                string s = "";
-                if (AtkType == 1) { s = myGameScr.bFight.AddMonsterChatter(1); } //s = "it rustled your jimmies for " + bdamage.ToString() + " damage!"; }
-                else if (AtkType == 2) { s = "it magically singes you for " + bdamage.ToString() + " damage!"; }
-                else { s = "The mold! It burns! For " + bdamage.ToString() + " damage!"; }
-                myGameScr.bFight.AddChatter(s);
-            }
-
-            */
-
-            MageTurn();
         }
 
         private int MonsterPAttack()
@@ -235,6 +243,7 @@ namespace BreadMage2
         private int MonsterEffAttack(string effType)
         {
             double baseDamage = (myGameScr.gMonster.MAtk - myGameScr.gMage.Res()) / 3;
+            if (baseDamage < 0) { baseDamage = 0; }
             int damage = (int)Math.Floor(baseDamage);
 
             //int iStack = 3;
@@ -250,13 +259,14 @@ namespace BreadMage2
                 case "ZC":
                     s = "zest";
                     break;
-                case "PP":
-                    s = "pinata";
+                case "TS":
+                    s = "tension";
                     break;
                 default:
                     s = "something goofed up";
                     break;
             }
+            //again, effect chatter
             s = "Ugh! That's " + iStack.ToString() + " " + s + " for you!";
             myGameScr.bFight.AddChatter(s);
             return damage;
@@ -269,21 +279,42 @@ namespace BreadMage2
         /// <param name="PostCombat"></param>
 
 
-        private void TickPoison(object o)
+        private void TickBuffs()
         {
+
+        }
+
+        private void HitMage(int someDamage)
+        {
+            if (MageDefend == 1) { someDamage = someDamage / 2; MageDefend = 0; }
+            someDamage = (int)Math.Floor((double)someDamage);
+            myGameScr.gMage.HP -= someDamage;
+            if (myGameScr.gMage.HP <= 0) { myGameScr.gMage.HP = 0; myGameScr.GameOver(); }
+        }
+
+        private void HitMonster(int someDamage)
+        {
+            myGameScr.gMonster.HP -= someDamage;
+            myGameScr.bFight.UpdateBars(myGameScr.gMonster);
+        }
+
+        private void TickPoison(int i = 0)
+        {
+            //these chatter additions are going to use a different chatter type
             int pdamage = 0;
-            if (o is clsMage)
+
+            if (i == 1)
             {
                 pdamage = myGameScr.gMage.TickMagePoison();
                 HitMage(pdamage);
                 myGameScr.bMage.UpdateBars(myGameScr.gMage);
-                if (pdamage > 0)
+                if (pdamage > 0 && myGameScr.gMage.HP > 0)
                 {
                     string s = "You quiver with " + pdamage.ToString() + " mold damage";
                     myGameScr.bFight.AddChatter(s);
                 }
             }
-            else if (o is clsMonster)
+            else if (i == 2)
             {
                 pdamage = myGameScr.gMonster.TickMonPoison();
                 myGameScr.bFight.UpdateBars(myGameScr.gMonster);
@@ -295,9 +326,22 @@ namespace BreadMage2
             }
         }
 
-        private void QuickAttack(clsMage aMage)
+        private void QuickAttack()
         {
-            //do this thing
+            if (myGameScr.gMage.hasQuickAttack())
+            {
+               //do this thing
+                int pdamage1 = MagePAttack();
+                int pdamage2 = MageMAttack();
+                int fdamage = 0;
+                if (pdamage1 >= pdamage2) { fdamage = pdamage1; }
+                else { fdamage = pdamage2; }
+
+                string s = "Your lightning speed allows you to get a free hit in! Bif!";
+                myGameScr.bFight.AddChatter(s);
+
+                HitMonster(fdamage);
+            }
         }
 
         private void ResolveTurn()
@@ -327,6 +371,5 @@ namespace BreadMage2
 
 
         }
-
     }
 }

@@ -21,6 +21,8 @@ namespace BreadMage2.Screens
         // for item libraries - avoid pulling too much game data, but this should increase new and load game performance 
         public List<clsUniqueItem> mItemBook { get; set; }
         public List<clsChoiceAdventure> mChoiceLib { get; set; }
+        public List<EffectChatter> mEffectChatter { get; set; }
+        public List<clsSpell> mSpellBook { get; set; }
 
         public List<clsMonster> mMonsterList { get; set; }
 
@@ -32,8 +34,10 @@ namespace BreadMage2.Screens
             mMonsterList = breadConn.LoadMonsterList();
             mItemBook = breadConn.LoadUniqueItemsList();
             mChoiceLib = breadConn.LoadChoiceList();
+            mEffectChatter = breadConn.LoadEffectChatter();
 
-            scrGame = new GameScreen(this, -1, mMonsterList, mItemBook, mChoiceLib);
+
+            scrGame = new GameScreen(this, -1, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
             scrSettings = new SettingsScreen(this);
             scrGame.MdiParent = this;
             scrSettings.MdiParent = this;
@@ -57,7 +61,7 @@ namespace BreadMage2.Screens
             if (scrGame != null)
             {
                 scrGame.Close();
-                scrGame = new GameScreen(this, 0, mMonsterList, mItemBook, mChoiceLib);
+                scrGame = new GameScreen(this, 0, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
                 scrGame.MdiParent = this;
             }
             Point p = new Point(65, 10);
@@ -72,7 +76,7 @@ namespace BreadMage2.Screens
             if (scrGame != null)
             {
                 scrGame.Close();
-                scrGame = new GameScreen(this, 1, mMonsterList, mItemBook, mChoiceLib);
+                scrGame = new GameScreen(this, 1, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
                 scrGame.MdiParent = this;
             }
             Point p = new Point(65, 10);

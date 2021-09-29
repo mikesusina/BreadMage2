@@ -34,7 +34,7 @@ namespace BreadMage2.Controls
 
             //load image
             //pbMonster.Image = Properties.Resources.[URL];
-            object o = Properties.Resources.ResourceManager.GetObject(anAdventure.ImageURL);
+            object o = Properties.Resources.ResourceManager.GetObject(anAdventure.ImgURL);
             if (o is Image) { pbChoicePic.Image = o as Image; }
             else { pbChoicePic.Image = Properties.Resources.BreadMage2; }
             pbChoicePic.Show();
@@ -138,7 +138,7 @@ namespace BreadMage2.Controls
                         iMonID = Convert.ToInt32(s.Substring(4));
                         //sGameScreen.ChoiceFight(iMonID);
                         break;
-                    case "ITM": // grant item (add ability to grant more than one. Handle multiple item drops as individual tags
+                    case "ITM": // grant item (add ability to grant more than one. Handle multiple item drops as individual tags. actually give an item??
                         int iItemID = Convert.ToInt32(s.Substring(4));
                         string t = "You got a " + sGameScreen.GetItemName(iItemID);
                         sGameScreen.gLog.Add(t);
@@ -151,6 +151,8 @@ namespace BreadMage2.Controls
 
                         sGameScreen.gLog.Add("okay");
                         */
+                        break;
+                    case "EQP": //grant equipment
                         break;
                     case "EXP": // exp, unimplemented
                         break;
@@ -165,14 +167,15 @@ namespace BreadMage2.Controls
                 }
             }
 
-
             // after decoding, decide: if chain, refresh immediately with new adventure
             // if combat, throw up flavor text and wait for close button, which generates the fight board
             // otherwise return to idle/wander
             if (bChainFlag == true)
             {
+                //remember to remove this:
+                advID = 1;
                 // if it chains, no need to wait for window close - refresh that info now
-                sGameScreen.ChoiceChain(sGameScreen.gChoiceList.Find(x => x.AdvID == 1));
+                sGameScreen.ChoiceChain(sGameScreen.gChoiceList.Find(x => x.AdvID == advID));
             }
             else if (bFightFlag == true)
             {
@@ -193,28 +196,27 @@ namespace BreadMage2.Controls
 
         private void btnChoiceOne_Click(object sender, EventArgs e)
         {
-            // button 1 clicked
-            lResultData = cChoice.GetResults(1);
+            lResultData = cChoice.GetResults(1, RareRoll());
             ResolveChoice();
         }
 
         private void btnChoiceTwo_Click(object sender, EventArgs e)
         {
             // button 2 clicked 
-            lResultData = cChoice.GetResults(2);
+            lResultData = cChoice.GetResults(2, RareRoll());
             ResolveChoice();
         }
         private void BtnThreeClick(object sender, EventArgs e)
         {
             // when Button 3 is clicked
-            lResultData = cChoice.GetResults(3);
+            lResultData = cChoice.GetResults(3, RareRoll());
             ResolveChoice();
         }
 
         private void BtnFourClick(object sender, EventArgs e)
         {
             // when Button 4 is clicked
-            lResultData = cChoice.GetResults(4);
+            lResultData = cChoice.GetResults(4, RareRoll());
             ResolveChoice();
         }
 
@@ -230,6 +232,13 @@ namespace BreadMage2.Controls
                 sGameScreen.gLock = false;
                 this.Dispose();
             }
+        }
+
+        private bool RareRoll()
+        {
+            bool b = false;
+            if (sGameScreen.gRandom.Next(1, 11) == 10) { b = true; }
+            return b;
         }
     }
 }

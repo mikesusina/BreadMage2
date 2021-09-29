@@ -86,11 +86,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BreadDB.cs" />
+    <Compile Include="clsChatterText.cs" />
     <Compile Include="clsChoiceAdventure.cs" />
     <Compile Include="clsEquipment.cs" />
+    <Compile Include="clsGameFlags.cs" />
     <Compile Include="clsItem.cs" />
+    <Compile Include="clsLocation.cs" />
     <Compile Include="clsMageEffect.cs" />
     <Compile Include="clsMageStats.cs" />
+    <Compile Include="clsSaveData.cs" />
+    <Compile Include="clsSpell.cs" />
     <Compile Include="clsTest.cs" />
     <Compile Include="clsUniqueItem.cs" />
     <Compile Include="Controls\ChoiceBoard.cs">
@@ -99,11 +104,23 @@
     <Compile Include="Controls\ChoiceBoard.Designer.cs">
       <DependentUpon>ChoiceBoard.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\EquipBoard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\EquipBoard.Designer.cs">
+      <DependentUpon>EquipBoard.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ExtraBoard.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ExtraBoard.Designer.cs">
       <DependentUpon>ExtraBoard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MapBoard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MapBoard.Designer.cs">
+      <DependentUpon>MapBoard.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\QuickBoard.cs">
       <SubType>UserControl</SubType>
@@ -150,6 +167,12 @@
     <Compile Include="Screens\DevTools.Designer.cs">
       <DependentUpon>DevTools.cs</DependentUpon>
     </Compile>
+    <Compile Include="Screens\EquipScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Screens\EquipScreen.Designer.cs">
+      <DependentUpon>EquipScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Screens\MainScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -171,11 +194,32 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Controls\SpellBookBoard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SpellBookBoard.Designer.cs">
+      <DependentUpon>SpellBookBoard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TownBoards\ShopItems.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TownBoards\ShopItems.Designer.cs">
+      <DependentUpon>ShopItems.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TownBoard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TownBoard.Designer.cs">
+      <DependentUpon>TownBoard.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Controls\BreadMage.resx">
       <DependentUpon>BreadMage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ChoiceBoard.resx">
       <DependentUpon>ChoiceBoard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\EquipBoard.resx">
+      <DependentUpon>EquipBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FightBoard.resx">
       <DependentUpon>FightBoard.cs</DependentUpon>
@@ -183,8 +227,17 @@
     <EmbeddedResource Include="Controls\ExtraBoard.resx">
       <DependentUpon>ExtraBoard.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MapBoard.resx">
+      <DependentUpon>MapBoard.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\QuickBoard.resx">
       <DependentUpon>QuickBoard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TownBoards\ShopItems.resx">
+      <DependentUpon>ShopItems.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\SpellBookBoard.resx">
+      <DependentUpon>SpellBookBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Screens\ChoiceScreen.resx">
       <DependentUpon>ChoiceScreen.cs</DependentUpon>
@@ -194,6 +247,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Screens\DevTools.resx">
       <DependentUpon>DevTools.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Screens\EquipScreen.resx">
+      <DependentUpon>EquipScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Screens\MainScreen.resx">
       <DependentUpon>MainScreen.cs</DependentUpon>
@@ -208,6 +264,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TownBoard.resx">
+      <DependentUpon>TownBoard.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -263,6 +322,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\mouse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\slugshakers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gellea.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wizhut.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mapvoid.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

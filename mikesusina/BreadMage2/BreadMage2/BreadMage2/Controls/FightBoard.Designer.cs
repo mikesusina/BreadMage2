@@ -50,11 +50,13 @@
             this.lblMoldCounter = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.rtbMonIntro = new System.Windows.Forms.RichTextBox();
+            this.rtbSpellBox = new System.Windows.Forms.RichTextBox();
+            this.pbActionDisplay = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbMonster)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbMoldIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbZestIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbActionDisplay)).BeginInit();
             this.SuspendLayout();
             // 
             // pbMonster
@@ -85,6 +87,7 @@
             this.btnMAtk.TabIndex = 2;
             this.btnMAtk.Text = "M Attack";
             this.btnMAtk.UseVisualStyleBackColor = true;
+            this.btnMAtk.Click += new System.EventHandler(this.btnMAtk_Click);
             // 
             // btnDef
             // 
@@ -94,6 +97,7 @@
             this.btnDef.TabIndex = 3;
             this.btnDef.Text = "Defend";
             this.btnDef.UseVisualStyleBackColor = true;
+            this.btnDef.Click += new System.EventHandler(this.btnDef_Click);
             // 
             // btnSpell
             // 
@@ -103,6 +107,7 @@
             this.btnSpell.TabIndex = 4;
             this.btnSpell.Text = "Spell";
             this.btnSpell.UseVisualStyleBackColor = true;
+            this.btnSpell.Click += new System.EventHandler(this.btnSpell_Click);
             // 
             // pbMonHP
             // 
@@ -158,6 +163,7 @@
             this.lstSpellBook.Name = "lstSpellBook";
             this.lstSpellBook.Size = new System.Drawing.Size(214, 21);
             this.lstSpellBook.TabIndex = 10;
+            this.lstSpellBook.SelectedIndexChanged += new System.EventHandler(this.lstSpellBook_SelectedIndexChanged);
             // 
             // lstSpellTier
             // 
@@ -268,24 +274,30 @@
             this.label3.Text = "100";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // rtbMonIntro
+            // rtbSpellBox
             // 
-            this.rtbMonIntro.BackColor = System.Drawing.Color.Black;
-            this.rtbMonIntro.ForeColor = System.Drawing.Color.Lime;
-            this.rtbMonIntro.HideSelection = false;
-            this.rtbMonIntro.Location = new System.Drawing.Point(250, 125);
-            this.rtbMonIntro.Name = "rtbMonIntro";
-            this.rtbMonIntro.ReadOnly = true;
-            this.rtbMonIntro.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.rtbMonIntro.Size = new System.Drawing.Size(177, 155);
-            this.rtbMonIntro.TabIndex = 24;
-            this.rtbMonIntro.Text = "";
+            this.rtbSpellBox.BackColor = System.Drawing.Color.Black;
+            this.rtbSpellBox.ForeColor = System.Drawing.Color.White;
+            this.rtbSpellBox.Location = new System.Drawing.Point(245, 179);
+            this.rtbSpellBox.Name = "rtbSpellBox";
+            this.rtbSpellBox.Size = new System.Drawing.Size(191, 100);
+            this.rtbSpellBox.TabIndex = 24;
+            this.rtbSpellBox.Text = "";
+            // 
+            // pbActionDisplay
+            // 
+            this.pbActionDisplay.Location = new System.Drawing.Point(311, 123);
+            this.pbActionDisplay.Name = "pbActionDisplay";
+            this.pbActionDisplay.Size = new System.Drawing.Size(50, 50);
+            this.pbActionDisplay.TabIndex = 25;
+            this.pbActionDisplay.TabStop = false;
             // 
             // FightBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.rtbMonIntro);
+            this.Controls.Add(this.pbActionDisplay);
+            this.Controls.Add(this.rtbSpellBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lblMoldCounter);
@@ -314,6 +326,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbMoldIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbZestIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbActionDisplay)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -343,6 +356,7 @@
         private System.Windows.Forms.Label lblMoldCounter;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.RichTextBox rtbMonIntro;
+        private System.Windows.Forms.RichTextBox rtbSpellBox;
+        private System.Windows.Forms.PictureBox pbActionDisplay;
     }
 }
