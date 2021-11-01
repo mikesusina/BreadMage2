@@ -32,12 +32,12 @@ namespace BreadMage2.Controls
             LocalLoc = myGameScr.gMage.Location;
             
             //generate the map
-            if (myGameScr.gLocationList.Exists(x => x.LocID == LocalLoc))
+            if (myGameScr.GameLibraries.LocationLib().Exists(x => x.LocID == LocalLoc))
             {
-                LocalZone = myGameScr.gLocationList.Find(x => x.LocID == LocalLoc).Zone;
+                LocalZone = myGameScr.GameLibraries.LocationLib().Find(x => x.LocID == LocalLoc).Zone;
             }
 
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone ) { SetMapTile(o); }
             }
@@ -62,7 +62,7 @@ namespace BreadMage2.Controls
 
         private void ClickA1(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 1 && o.LocY == "A")
                 {
@@ -74,7 +74,7 @@ namespace BreadMage2.Controls
 
         private void ClickA2(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 2 && o.LocY == "A")
                 {
@@ -86,7 +86,7 @@ namespace BreadMage2.Controls
 
         private void ClickA3(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 3 && o.LocY == "A")
                 {
@@ -98,7 +98,7 @@ namespace BreadMage2.Controls
 
         private void ClickB1(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 1 && o.LocY == "B")
                 {
@@ -110,7 +110,7 @@ namespace BreadMage2.Controls
 
         private void ClickB2(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 2 && o.LocY == "B")
                 {
@@ -122,7 +122,7 @@ namespace BreadMage2.Controls
 
         private void ClickB3(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 3 && o.LocY == "B")
                 {
@@ -134,7 +134,7 @@ namespace BreadMage2.Controls
 
         private void ClickC1(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 1 && o.LocY == "C")
                 {
@@ -146,7 +146,7 @@ namespace BreadMage2.Controls
 
         private void ClickC2(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 2 && o.LocY == "C")
                 {
@@ -158,7 +158,7 @@ namespace BreadMage2.Controls
 
         private void ClickC3(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 3 && o.LocY == "C")
                 {
@@ -170,7 +170,7 @@ namespace BreadMage2.Controls
 
         private void ClickD1(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 1 && o.LocY == "D")
                 {
@@ -182,7 +182,7 @@ namespace BreadMage2.Controls
 
         private void ClickD2(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 2 && o.LocY == "D")
                 {
@@ -194,7 +194,7 @@ namespace BreadMage2.Controls
 
         private void ClickD3(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.gLocationList)
+            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
             {
                 if (o.Zone == LocalZone && o.LocX == 3 && o.LocY == "D")
                 {

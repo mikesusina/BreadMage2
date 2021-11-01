@@ -17,12 +17,14 @@ namespace BreadMage2.Screens
         public GameScreen scrGame;
         public SettingsScreen scrSettings;
 
+        public clsGameLibs mainLibs;
 
         // for item libraries - avoid pulling too much game data, but this should increase new and load game performance 
         public List<clsUniqueItem> mItemBook { get; set; }
         public List<clsChoiceAdventure> mChoiceLib { get; set; }
         public List<EffectChatter> mEffectChatter { get; set; }
         public List<clsSpell> mSpellBook { get; set; }
+        public IDictionary<string, clsMageEffect> MasterEffects {get; set;}
 
         public List<clsMonster> mMonsterList { get; set; }
 
@@ -31,13 +33,16 @@ namespace BreadMage2.Screens
             InitializeComponent();
 
             BreadDB breadConn = new BreadDB();
+            mainLibs = breadConn.LoadLibraries();
+            /*
             mMonsterList = breadConn.LoadMonsterList();
             mItemBook = breadConn.LoadUniqueItemsList();
             mChoiceLib = breadConn.LoadChoiceList();
             mEffectChatter = breadConn.LoadEffectChatter();
+            */
 
-
-            scrGame = new GameScreen(this, -1, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
+            //scrGame = new GameScreen(this, -1, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
+            scrGame = new GameScreen(this, -1, mainLibs);
             scrSettings = new SettingsScreen(this);
             scrGame.MdiParent = this;
             scrSettings.MdiParent = this;
@@ -58,10 +63,16 @@ namespace BreadMage2.Screens
         private void newGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+            if (mainLibs is null)
+            {
+                BreadDB bnet = new BreadDB();
+                mainLibs = bnet.LoadLibraries();
+            }
             if (scrGame != null)
             {
                 scrGame.Close();
-                scrGame = new GameScreen(this, 0, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
+                //scrGame = new GameScreen(this, 0, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
+                scrGame = new GameScreen(this, 0, mainLibs);
                 scrGame.MdiParent = this;
             }
             Point p = new Point(65, 10);
@@ -72,11 +83,18 @@ namespace BreadMage2.Screens
         //Load Game TS
         private void loadGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (mainLibs is null)
+            {
+                BreadDB bnet = new BreadDB();
+                mainLibs = bnet.LoadLibraries();
+            }
+
             //TODO: IMPLEMENT actually picting a save ID
             if (scrGame != null)
             {
                 scrGame.Close();
-                scrGame = new GameScreen(this, 1, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
+                scrGame = new GameScreen(this, 1, mainLibs);
+                //scrGame = new GameScreen(this, 1, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
                 scrGame.MdiParent = this;
             }
             Point p = new Point(65, 10);

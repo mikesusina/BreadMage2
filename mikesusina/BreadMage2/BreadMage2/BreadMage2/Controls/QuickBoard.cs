@@ -159,7 +159,7 @@ namespace BreadMage2.Controls
         public void UpdateItemCount()
         {
 
-            lblQS1.Text = myGameScr.gMage.GetItemCount(iSlot1).ToString();
+            lblQS1.Text = myGameScr.gMage.GetComponentCount(iSlot1).ToString();
             //lblQS2.Text = myGameScr.gMage.GetItemCount(iSlot2).ToString();
             //lblQS3.Text = myGameScr.gMage.GetItemCount(iSlot3).ToString();
             //lblQS4.Text = myGameScr.gMage.GetItemCount(iSlot4).ToString();

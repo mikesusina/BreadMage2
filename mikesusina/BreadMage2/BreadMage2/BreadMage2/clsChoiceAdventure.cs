@@ -88,19 +88,19 @@ namespace BreadMage2
             {
                 case 1:
                     ResultList = ParseResult(Btn1Result);
-                    if (b) { ResultList.AddRange(ParseResult(Btn1RareResult)); }
+                    if (b && Btn1RareResult != "") { ResultList.AddRange(ParseResult(Btn1RareResult)); }
                     break;
                 case 2:
                     ResultList = ParseResult(Btn2Result);
-                    if (b) { ResultList.AddRange(ParseResult(Btn2RareResult)); }
+                    if (b && Btn2RareResult != "") { ResultList.AddRange(ParseResult(Btn2RareResult)); }
                     break;
                 case 3:
                     ResultList = ParseResult(Btn3Result);
-                    if (b) { ResultList.AddRange(ParseResult(Btn3RareResult)); }
+                    if (b && Btn3RareResult != "") { ResultList.AddRange(ParseResult(Btn3RareResult)); }
                     break;
                 case 4:
                     ResultList = ParseResult(Btn4Result);
-                    if (b) { ResultList.AddRange(ParseResult(Btn4RareResult)); }
+                    if (b && Btn4RareResult != "") { ResultList.AddRange(ParseResult(Btn4RareResult)); }
                     break;
                 default:
                     throw new Exception("Result info not found");

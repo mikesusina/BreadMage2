@@ -58,7 +58,7 @@ namespace BreadMage2
         {
             if (boxKnown.SelectedItem != null)
             {
-                clsSpell z = sGameScreen.gSpellBook.Find(x => x.spellName == boxKnown.SelectedItem.ToString());
+                clsSpell z = sGameScreen.GameLibraries.SpellBook().Find(x => x.spellName == boxKnown.SelectedItem.ToString());
                 if (z.SPCost + iEquipped > iCap)
                 {
                     MessageBox.Show("Woah now, that's too many sps bud");
@@ -77,7 +77,7 @@ namespace BreadMage2
         {
             if (boxEquipped.SelectedItem != null)
             {
-                clsSpell z = sGameScreen.gSpellBook.Find(x => x.spellName == boxEquipped.SelectedItem.ToString());
+                clsSpell z = sGameScreen.GameLibraries.SpellBook().Find(x => x.spellName == boxEquipped.SelectedItem.ToString());
                 ActiveSpells.Remove(z);
                 boxKnown.Items.Add(boxEquipped.SelectedItem);
                 boxEquipped.Items.Remove(boxEquipped.SelectedItem);

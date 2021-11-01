@@ -80,7 +80,7 @@ namespace BreadMage2.Screens
             {
                 if (myGameScr != null && myGameScr.Controls["pQuickBoard"].Controls["QuickBoard"] != null)
                 {
-                    myGameScr.gMage.AddItem(Convert.ToInt32(tbItemID.Text.ToString()), Convert.ToInt32(tbAmount.Text.ToString()));
+                    myGameScr.gMage.GetComponents(Convert.ToInt32(tbItemID.Text.ToString()), Convert.ToInt32(tbAmount.Text.ToString()));
                 }
             }
                 
@@ -108,8 +108,10 @@ namespace BreadMage2.Screens
             if (myGameScr.gMage != null)
             {
                 BreadDB BN = new BreadDB();
-                BN.SavePlayerInv(myGameScr.gMage.SaveID, myGameScr.gMage.myInv);
-                BN.SaveMageEffectList(myGameScr.gMage.SaveID, myGameScr.gMage.myStatEffects);
+                myGameScr.gMage.PrepSaveData();
+                BN.SaveData(myGameScr.gMage.GetSaveData());
+               // BN.SavePlayerInv(myGameScr.gMage.SaveID, myGameScr.gMage.myInv);
+               // BN.SaveMageEffectList(myGameScr.gMage.SaveID, myGameScr.gMage.myStatEffects);
             }
         }
 

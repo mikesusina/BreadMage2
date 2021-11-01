@@ -8,6 +8,8 @@ namespace BreadMage2
 {
     public class clsMageStats
     {
+        public int Level { get; set; }
+        public int EXP { get; set; }
         public int BasePAtk { get; set; }
         public int BaseMAtk { get; set; }
         public int BaseDef { get; set; }
@@ -17,12 +19,22 @@ namespace BreadMage2
         public int ModDef { get; set; } = 0;
         public int ModRes { get; set; } = 0;
 
+        private int HealItems { get; set; } = 0;
+        private int CombatItems { get; set; } = 0;
+        private int RestoreItems { get; set; } = 0;
+        private int MPItems { get; set; } = 0;
+
+        public List<clsMageEffect> myEffects = new List<clsMageEffect>();
+
         public clsMageStats()
         {
-            BasePAtk = 10;
-            BaseMAtk = 15;
-            BaseDef = 5;
-            BaseRes = 7;
+            BasePAtk = 13;
+            BaseMAtk = 13;
+            BaseDef = 3;
+            BaseRes = 6;
+
+
+            HealItems = 3;
         }
 
         public int PAtk()
@@ -63,26 +75,111 @@ namespace BreadMage2
                     aModRes += e.Res();
                 }
             }
-
-
+            /*
             if (myBuffList != null && myBuffList.Count > 0)
             {
                 foreach (clsMageEffect b in myBuffList)
                 {
-                    // loop through buffs/debuffs and figure that out
-                    /*
-                    aModPAtk += b.PAtk();
-                    aModMAtk += b.MAtk();
-                    aModDef += b.Def();
-                    aModRes += b.Res();
-                    */
+                    double mod = 0;
+                       switch (b.sPower)
+                    {
+                        case "D":
+                            mod = .1;
+                            break;
+                        case "C":
+                            mod = .25;
+                            break;
+                        case "B":
+                            mod = .5;
+                            break;
+                        case "A":
+                            mod = 1;
+                            break;
+                        case "S":
+                            mod = 2.5;
+                            break;
+                    }
+
+                    if (b.sType == "D") { mod *= -1; }
+                    switch (b.sTarget)
+                    {
+                        case "A": //p [A]tk
+                            aModPAtk += (int)Math.Ceiling(mod * BasePAtk);
+                            break;
+                        case "D": //[D]efence
+                            aModDef += (int)Math.Ceiling(mod * BaseDef);
+                            break;
+                        case "M": //[M]agic atk
+                            aModMAtk+= (int)Math.Ceiling(mod * BaseMAtk);
+                            break;
+                        case "R": //[R]esist
+                            aModRes += (int)Math.Ceiling(mod * BaseMAtk);
+                            break;
+                        case "Y": //ph[Y]sical stats/ pak+def
+                            aModPAtk += (int)Math.Ceiling(mod * BasePAtk);
+                            aModDef += (int)Math.Ceiling(mod * BaseDef);
+                            break;
+                        case "G": //ma[G]ic stats/ mak+res
+                            aModRes += (int)Math.Ceiling(mod * BaseMAtk);
+                            aModRes += (int)Math.Ceiling(mod * BaseRes);
+                            break;
+                        case "O": //[O]ffensive stats
+                            aModPAtk += (int)Math.Ceiling(mod * BasePAtk);
+                            aModPAtk += (int)Math.Ceiling(mod * BasePAtk);
+                            break;
+                        case "V": //defensi[V]e stats
+                            aModDef += (int)Math.Ceiling(mod * BaseDef);
+                            aModRes += (int)Math.Ceiling(mod * BaseRes);
+                            break;
+                    }
                 }
             }
-
+            */
             ModPAtk = aModPAtk;
             ModMAtk = aModMAtk;
             ModDef = aModDef;
             ModRes = aModRes;
+        }
+
+
+        public int ComponentCount(int aType)
+        {
+            int i = 0;
+            switch (aType)
+            {
+                case 1:
+                    return HealItems;
+                case 2:
+                    return CombatItems;
+                case 3:
+                    return RestoreItems;
+                case 4:
+                    return MPItems;
+                default:
+                    break;
+            }
+            return i;
+        }
+
+        public void AddComponents(int aType, int anAmount)
+        {
+            switch (aType)
+            {
+                case 1:
+                    HealItems += anAmount;
+                    break;
+                case 2:
+                    CombatItems += anAmount;
+                    break;
+                case 3:
+                    RestoreItems += anAmount;
+                    break;
+                case 4:
+                    MPItems += anAmount;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

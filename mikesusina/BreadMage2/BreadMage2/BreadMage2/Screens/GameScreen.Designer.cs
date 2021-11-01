@@ -46,12 +46,14 @@
             // lbLog
             // 
             this.lbLog.BackColor = System.Drawing.Color.Black;
+            this.lbLog.Font = new System.Drawing.Font("Moire", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbLog.ForeColor = System.Drawing.Color.White;
             this.lbLog.FormattingEnabled = true;
+            this.lbLog.ItemHeight = 18;
             this.lbLog.Location = new System.Drawing.Point(9, 470);
             this.lbLog.Name = "lbLog";
             this.lbLog.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.lbLog.Size = new System.Drawing.Size(507, 134);
+            this.lbLog.Size = new System.Drawing.Size(507, 130);
             this.lbLog.TabIndex = 2;
             // 
             // pArea

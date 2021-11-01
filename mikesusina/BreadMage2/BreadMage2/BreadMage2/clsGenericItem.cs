@@ -11,7 +11,7 @@ namespace BreadMage2
 {
 
 
-    public class clsItem : IEquatable<clsItem>
+    public class clsGenericItem : IEquatable<clsGenericItem>
     {
         /// <summary>
         /// This is the generic "item" class to populate the mage inventory. [probably] not the same as the item use engine
@@ -25,7 +25,7 @@ namespace BreadMage2
         public int itemType { get; set; }
         public int iCount { get; set; }
 
-        public clsItem(int aType, int aCount)
+        public clsGenericItem(int aType, int aCount)
         {
             itemType = aType;
             iCount = aCount;
@@ -48,7 +48,7 @@ namespace BreadMage2
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
-            clsItem objAsChoice = obj as clsItem;
+            clsGenericItem objAsChoice = obj as clsGenericItem;
             if (objAsChoice == null) return false;
             else return Equals(objAsChoice);
         }
@@ -58,15 +58,15 @@ namespace BreadMage2
             return itemType;
         }
 
-        public bool Equals(clsItem other)
+        public bool Equals(clsGenericItem other)
         {
             if (other == null) return false;
             return (this.itemType.Equals(other.itemType));
         }
 
-        static Predicate<clsItem> ByType(int aType)
+        static Predicate<clsGenericItem> ByType(int aType)
         {
-            return delegate (clsItem item)
+            return delegate (clsGenericItem item)
             {
                 return item.itemType == aType;
             };

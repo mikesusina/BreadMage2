@@ -48,8 +48,8 @@
             this.pbZestIcon = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.lblMoldCounter = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblZestCounter = new System.Windows.Forms.Label();
+            this.lblTensionCounter = new System.Windows.Forms.Label();
             this.rtbSpellBox = new System.Windows.Forms.RichTextBox();
             this.pbActionDisplay = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbMonster)).BeginInit();
@@ -144,6 +144,7 @@
             // rtbChatter
             // 
             this.rtbChatter.BackColor = System.Drawing.Color.Black;
+            this.rtbChatter.Font = new System.Drawing.Font("Trebuchet MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbChatter.ForeColor = System.Drawing.Color.Lime;
             this.rtbChatter.HideSelection = false;
             this.rtbChatter.Location = new System.Drawing.Point(12, 396);
@@ -254,25 +255,25 @@
             this.lblMoldCounter.Text = "100";
             this.lblMoldCounter.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // label2
+            // lblZestCounter
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(324, 96);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(25, 13);
-            this.label2.TabIndex = 22;
-            this.label2.Text = "100";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lblZestCounter.AutoSize = true;
+            this.lblZestCounter.Location = new System.Drawing.Point(324, 96);
+            this.lblZestCounter.Name = "lblZestCounter";
+            this.lblZestCounter.Size = new System.Drawing.Size(25, 13);
+            this.lblZestCounter.TabIndex = 22;
+            this.lblZestCounter.Text = "100";
+            this.lblZestCounter.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // label3
+            // lblTensionCounter
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(389, 96);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(25, 13);
-            this.label3.TabIndex = 23;
-            this.label3.Text = "100";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.lblTensionCounter.AutoSize = true;
+            this.lblTensionCounter.Location = new System.Drawing.Point(389, 96);
+            this.lblTensionCounter.Name = "lblTensionCounter";
+            this.lblTensionCounter.Size = new System.Drawing.Size(25, 13);
+            this.lblTensionCounter.TabIndex = 23;
+            this.lblTensionCounter.Text = "100";
+            this.lblTensionCounter.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // rtbSpellBox
             // 
@@ -298,8 +299,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pbActionDisplay);
             this.Controls.Add(this.rtbSpellBox);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lblTensionCounter);
+            this.Controls.Add(this.lblZestCounter);
             this.Controls.Add(this.lblMoldCounter);
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pbZestIcon);
@@ -354,8 +355,8 @@
         private System.Windows.Forms.PictureBox pbZestIcon;
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.Label lblMoldCounter;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblZestCounter;
+        private System.Windows.Forms.Label lblTensionCounter;
         private System.Windows.Forms.RichTextBox rtbSpellBox;
         private System.Windows.Forms.PictureBox pbActionDisplay;
     }

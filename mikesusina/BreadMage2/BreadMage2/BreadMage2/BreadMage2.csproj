@@ -88,9 +88,11 @@
     <Compile Include="BreadDB.cs" />
     <Compile Include="clsChatterText.cs" />
     <Compile Include="clsChoiceAdventure.cs" />
+    <Compile Include="clsEffect.cs" />
     <Compile Include="clsEquipment.cs" />
     <Compile Include="clsGameFlags.cs" />
-    <Compile Include="clsItem.cs" />
+    <Compile Include="clsGameLibs.cs" />
+    <Compile Include="clsGenericItem.cs" />
     <Compile Include="clsLocation.cs" />
     <Compile Include="clsMageEffect.cs" />
     <Compile Include="clsMageStats.cs" />
@@ -129,6 +131,8 @@
       <DependentUpon>QuickBoard.cs</DependentUpon>
     </Compile>
     <Compile Include="engBattle.cs" />
+    <Compile Include="engBattleChatter.cs" />
+    <Compile Include="engChoice.cs" />
     <Compile Include="engGLog.cs" />
     <Compile Include="clsMonster.cs" />
     <Compile Include="Controls\BreadMage.cs">
@@ -144,6 +148,8 @@
       <DependentUpon>FightBoard.cs</DependentUpon>
     </Compile>
     <Compile Include="clsMage.cs" />
+    <Compile Include="engSaveData.cs" />
+    <Compile Include="engBuffs.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -297,7 +303,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\potato.png" />
+    <EmbeddedResource Include="Resources\Images\Monsters\potato.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -321,10 +327,10 @@
     <EmbeddedResource Include="Resources\Images\Items\butter.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\mouse.png" />
+    <None Include="Resources\Images\Monsters\mouse.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\slugshakers.png" />
+    <None Include="Resources\Images\Monsters\slugshakers.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\gellea.png" />
@@ -334,6 +340,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\mapvoid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\Monsters\Fizzard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\Monsters\plant.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Images\Monsters\tinybug.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

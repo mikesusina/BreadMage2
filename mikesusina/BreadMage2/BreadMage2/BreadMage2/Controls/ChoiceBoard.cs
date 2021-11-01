@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace BreadMage2.Controls
 {
@@ -16,6 +17,7 @@ namespace BreadMage2.Controls
         public clsChoiceAdventure cChoice { get; set; }
         public ChoiceBoard bChoice { get; set; }
         public List<string> lResultData { get; set; }
+        public List<string> lExtraData { get; set; }
 
 
         private int iMonID { get; set; }
@@ -72,6 +74,7 @@ namespace BreadMage2.Controls
                 aButton.Size = new Size(250, 30);
                 aButton.Location = p;
                 aButton.Text = cChoice.Btn3;
+                aButton.Font = btnChoiceOne.Font;
                 btnChoiceThree = aButton;
 
                 this.Controls.Add(btnChoiceThree);
@@ -92,6 +95,7 @@ namespace BreadMage2.Controls
                 aButton.Size = new Size(250, 30);
                 aButton.Location = p;
                 aButton.Text = cChoice.Btn4;
+                aButton.Font = btnChoiceOne.Font;
                 btnChoiceFour = aButton;
 
                 this.Controls.Add(btnChoiceFour);
@@ -113,24 +117,36 @@ namespace BreadMage2.Controls
             //if MON=X, start a fight with monsterID
             //if ITM=X, gain item ID (possibly work in multiples if needed?)
             //if ADV=X, start next choice adventure - mark bFlag true and handle
+            // MTD=X
             //more stuff: add money(YST), exp, status effects(STF)
             // take result text and overwrite text box - "chain" adventures should NOT contain result flavor text, next adv text box will deal
             //
             // ***currently plan is ADV= tags should not be mixed with other tags, and contain no flavor text, as it's on the next adventure
             //      [can trigger increments or stats? just MAKE SURE IT'S MENTIONED CLEARLY IN THE NEXT TEXT]
             //
+            //
+            // ***IS THIS DOABLE? make like a "MHD=Meow" result type, and have it run choiceboard.meow() (or choice engine, if I go that route)
+            // this would allow for a lot more unique, specific, and involved results than spitting out text and giving items
+            //
 
 
             int advID = 0;
             bool bChainFlag = false;
+            bool bFreshText = true;
             bFightFlag = false;
+
+            if (lExtraData is null) { lExtraData = new List<string>(); }
+            else { lExtraData.Clear(); }
+
+
             foreach (string s in lResultData)
             {
                 //decode action tag "XYZ="
                 switch (s.Substring(0, 3))
                 {
                     case "FLV": // flavor text
-                        tbChoiceText.Text = s.Substring(4);
+                        if (bFreshText) { tbChoiceText.Text = s.Substring(4); bFreshText = false; }
+                        else { tbChoiceText.AppendText(Environment.NewLine + s.Substring(4)); }
                         break;
                     case "MON": // Enter combat w/ monster ID
                         //trigger fight on window close, not before!
@@ -158,12 +174,74 @@ namespace BreadMage2.Controls
                         break;
                     case "YST": // yeast, unimplemented
                         break;
+                    case "RHP": // restore HP
+                        break;
+                    case "BUF": // grant buff
+                        break;
                     case "ADV": // chain adventure
                         bChainFlag = true;
                         advID = Convert.ToInt32(s.Substring(4));
                         break;
+                    case "MTD": //custom scripts
+                        RunMethod(s.Substring(4));
+                        break;
                     default:
                         break;
+                }
+            }
+
+            //I can do better than this...
+            if (lExtraData.Count > 0)
+            {
+                foreach (string s in lExtraData)
+                {
+                    //decode action tag "XYZ="
+                    switch (s.Substring(0, 3))
+                    {
+                        case "FLV": // flavor text
+                            if (bFreshText) { tbChoiceText.Text = s.Substring(4); bFreshText = false; }
+                            else { tbChoiceText.AppendText(Environment.NewLine + s.Substring(4)); }
+                            break;
+                        case "MON": // Enter combat w/ monster ID
+                            //trigger fight on window close, not before!
+                            bFightFlag = true;
+                            iMonID = Convert.ToInt32(s.Substring(4));
+                            //sGameScreen.ChoiceFight(iMonID);
+                            break;
+                        case "ITM": // grant item (add ability to grant more than one. Handle multiple item drops as individual tags. actually give an item??
+                            int iItemID = Convert.ToInt32(s.Substring(4));
+                            string t = "You got a " + sGameScreen.GetItemName(iItemID);
+                            sGameScreen.gLog.Add(t);
+                            /*
+                            int i = 1;
+                            sGameScreen.gMage.AddItem(iItemID, i);
+                            string t = "Nice work, you got(" + i.ToString() + ") ";
+                            if (i == 1) { t += t; }
+                            else { t += "(s) " + "s"; }
+
+                            sGameScreen.gLog.Add("okay");
+                            */
+                            break;
+                        case "EQP": //grant equipment
+                            break;
+                        case "EXP": // exp, unimplemented
+                            break;
+                        case "YST": // yeast, unimplemented
+                            break;
+                        case "RHP": // restore HP
+                            break;
+                        case "BUF": // grant buff
+                            break;
+                        case "ADV": // chain adventure
+                            bChainFlag = true;
+                            advID = Convert.ToInt32(s.Substring(4));
+                            break;
+                        case "MTD": //custom scripts
+                            RunMethod(s.Substring(4));
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
@@ -175,7 +253,7 @@ namespace BreadMage2.Controls
                 //remember to remove this:
                 advID = 1;
                 // if it chains, no need to wait for window close - refresh that info now
-                sGameScreen.ChoiceChain(sGameScreen.gChoiceList.Find(x => x.AdvID == advID));
+                sGameScreen.ChoiceChain(sGameScreen.GameLibraries.ChoiceLib().Find(x => x.AdvID == advID));
             }
             else if (bFightFlag == true)
             {
@@ -216,7 +294,8 @@ namespace BreadMage2.Controls
         private void BtnFourClick(object sender, EventArgs e)
         {
             // when Button 4 is clicked
-            lResultData = cChoice.GetResults(4, RareRoll());
+            //lResultData = cChoice.GetResults(4, RareRoll());
+            lResultData = cChoice.GetResults(4, true);
             ResolveChoice();
         }
 
@@ -239,6 +318,42 @@ namespace BreadMage2.Controls
             bool b = false;
             if (sGameScreen.gRandom.Next(1, 11) == 10) { b = true; }
             return b;
+        }
+
+        /// <summary>
+        /// Begin custom result methods
+        /// </summary>
+
+        private void RunMethod(string s)
+        {
+            engChoice c = new engChoice();
+
+            Type t = this.GetType();
+            MethodInfo mi = t.GetMethod(s, BindingFlags.NonPublic | BindingFlags.Instance);
+            mi.Invoke(this, new object[] { });
+            Console.WriteLine("Hey we made it");
+        }
+
+        private void TestMethod()
+        {
+            if (sGameScreen.gRandom.Next(2) == 1) { iMonID = 4; bFightFlag = true; }
+            else { sGameScreen.gLog.Add("Whew, missed that one"); }
+        }
+
+        private void GatchaRoulette()
+        {
+            List<int> GatchaPrizes = new List<int> { /* the prioze IDs */ 2, 3};
+
+            int i = sGameScreen.gRandom.Next(10);
+            if (i == 0) { AddExtraData("ITM", "1"); AddExtraData("FLV", "It looks like a bonus one rolled out! Lucky day!"); AddExtraData("ITM", "2"); } /*double prizes*/
+            else if (i > 4) { AddExtraData("ITM", "1"); AddExtraData("FLV", "Woah something came down from the tree when you shook it! Look out!"); AddExtraData("MON", "4");  }
+            else { AddExtraData("FLV", "Dang, nothing happened"); }
+        }
+
+        private void AddExtraData(string tag, string text)
+        {
+            string s = tag + "=" + text;
+            lExtraData.Add(s);
         }
     }
 }

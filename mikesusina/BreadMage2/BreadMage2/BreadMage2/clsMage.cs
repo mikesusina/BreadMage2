@@ -13,7 +13,9 @@ namespace BreadMage2
     {
         //the Mage object, this is the PC
         public clsMageStats Stats { get; set; } = new clsMageStats();
-        public List<clsMageEffect> myStatEffects { get; set; } = new List<clsMageEffect>();
+        //private List<StatusEffect> myStatEffects { get; set; } = new List<StatusEffect>();
+        //private List<ActiveEffect> myActiveEffects { get; set; } = new List<ActiveEffect>();
+        //private List<PassiveEffect> myPassiveEffects { get; set; } = new List<PassiveEffect>();
         public clsGameFlags myGameFlags { get; set; } = new clsGameFlags();
 
 
@@ -27,7 +29,7 @@ namespace BreadMage2
         public Action RefreshInvNumbers;
 
         //public DataTable myInv { get; set; }
-        public List<clsItem> myInv { get; set; } = new List<clsItem>();
+        public List<clsGenericItem> myInv { get; set; } = new List<clsGenericItem>();
 
         public List<clsEquipment> myEquipList { get; set; }
 
@@ -36,10 +38,10 @@ namespace BreadMage2
 
         private clsSaveData mySaveData { get; set; } = new clsSaveData();
 
-       public clsMage()
+        public clsMage()
         {
 
-            HPmax = 100;
+            HPmax = 30;
             HP = HPmax;
             MPmax = 100;
             MP = MPmax;
@@ -65,18 +67,25 @@ namespace BreadMage2
 
         }
 
+        public void GetComponents(int aType, int anAmount = 1)
+        {
+            Stats.AddComponents(aType, anAmount);
+            this.RefreshInvNumbers();
+        }
+
+        /* This was for generics, now components? 
         public void AddItem(int aType, int anAmount)
         {
             //this method is for adding generic item types to the inventory
             int i = 0;
-            foreach (clsItem e in myInv)
+            foreach (clsGenericItem e in myInv)
             {
                 if (e.itemType == aType) { e.AddItem(anAmount);  i = 1; }
             }
-            if (i == 0) { myInv.Add(new clsItem(aType, anAmount)); }
+            if (i == 0) { myInv.Add(new clsGenericItem(aType, anAmount)); }
             this.RefreshInvNumbers();
 
-            /* OLD SYSTEM
+            // OLD SYSTEM
             int i = 0;
             bool b = false;
             foreach (DataRow d in this.myInv.Rows)
@@ -103,77 +112,98 @@ namespace BreadMage2
                                     1});
             }
             
-            */
+        }
+        */
+
+
+        public void AddEffect(int anID, int aValue, int aTimer)
+        {
+            var obj = GetStatEffects().FirstOrDefault(x => x.iID == anID);
+            if (obj != null) { obj.iValue += aValue; }
+            else { Stats.myEffects.Add(new clsMageEffect(anID, aValue, aTimer)); }
+
+            /*int iFlag = 0;
+                    foreach (clsMageEffect e in myStatEffects)
+                    {
+                        if (e.sType == aType)
+                        {
+                            if (e.sType == "MP" || e.sType == "ZC" || e.sType == "TS")
+                            {
+                                e.iValue += aValue;
+                                if (e.iTimer < aTimer) { e.iTimer = aTimer;  }
+                                iFlag = 1;
+                            }
+                            else if (e.iValue < aValue)
+                            {
+                                e.iValue = aValue;
+                                e.iTimer += aTimer;
+                                iFlag = 1;
+                            }
+                        }
+                    }
+                    if (iFlag == 0) { myStatEffects.Add(new clsMageEffect(aType, aValue, aTimer)); }
+                    */
         }
 
-        
-
-        public void AddEffect(string aType, int aValue, int aTimer)
+        public void RemoveEffect(int anID)
         {
-            int iFlag = 0;
-            foreach (clsMageEffect e in myStatEffects)
-            {
-                if (e.sType == aType)
-                {
-                    if (e.sType == "MP" || e.sType == "ZC" || e.sType == "TS")
-                    {
-                        e.iValue += aValue;
-                        if (e.iTimer < aTimer) { e.iTimer = aTimer;  }
-                        iFlag = 1;
-                    }
-                    else if (e.iValue < aValue)
-                    {
-                        e.iValue = aValue;
-                        e.iTimer += aTimer;
-                        iFlag = 1;
-                    }
-                }
-            }
-            if (iFlag == 0) { myStatEffects.Add(new clsMageEffect(aType, aValue, aTimer)); }
-        }
-
-        public void RemoveEffect (string aType)
-        {
-            List<clsMageEffect> newEffects = new List<clsMageEffect>();
-            foreach (clsMageEffect e in myStatEffects)
-            {
-                if (e.sType != aType) { newEffects.Add(e); }
-            }
-            this.myStatEffects = newEffects;
+            if (GetStatEffects().Find(x => x.iID == anID) != null) { GetStatEffects().Remove(GetStatEffects().Find(x => x.iID == anID)); }
         }
 
         public void TickBuffs()
         {
-            int iFlag = 0;
+
+
+            /* I need to think about ticks and timers a little more
+             * Battle timers tick down each combat turn, stacks are indepoendant
+             * active timers tick down on "adventure" (end of combat or noncombat/move/etc...), stacks don't matter? can you get more of the same buff? seems op. Lock at 1?)
             if(myStatEffects != null && myStatEffects.Count > 0 )
             {
-                foreach (clsMageEffect e in myStatEffects)
+                foreach (StatusEffect e in myStatEffects)
                 {
-                    if (e.iTimer > 0)
-                    {
-                        if (e.sType == "MP" || e.sType == "ZC" || e.sType == "TS") { /* do nothing - these tick in battle */ }
-                        else { }
-                        e.iTimer -= 1;
-                        if (e.iTimer <= 0)
-                        {
-                            e.iTimer = 0;
-                            iFlag = 1;
-                        }
-                    }
+                    if (e.sType == "B") { e.iTimer -= 1; }
                 }
-                if (iFlag == 1)
-                {
-                    Stats.SetBuffedStats(myEquipList, myStatEffects);
-                }
+                myStatEffects.RemoveAll(x => x.iTimer <= 0);
             }
+
+
+            Stats.SetBuffedStats(myEquipList, myStatEffects);
+
+            */
         }
 
-        public int TickMagePoison()
+        public List<KeyValuePair<string, int>> TickMagePoison()
+        {
+            List<KeyValuePair<string, int>> tickInfo = new List<KeyValuePair<string, int>>();
+            int damage = 0;
+            int iTick = 1;
+            
+
+            clsMageEffect e = GetStatEffects().Find(x => x.iID == 1);
+            if (e != null )
+            {
+                if (e.iValue > 2) { iTick = (int)(Math.Ceiling(Convert.ToDouble(e.iValue) / 2)); }
+                damage = 3 * iTick; //resist?
+                e.iValue -= iTick;
+                //battletimer battle timer ??
+                e.iTimer -= 1;
+
+                if (e.iValue <= 0 || e.iTimer <= 0) { GetStatEffects().Remove(e); }
+
+                tickInfo.Add(new KeyValuePair<string, int>("damage", damage));
+                //the tick value returned should be negative, since from here on it's for chat info
+                tickInfo.Add(new KeyValuePair<string, int>("tick", iTick * -1));
+            }
+
+            return tickInfo;
+        }
+
+        public int TickMagePoisonOld()
         {
             int damage = 0;
-            foreach (clsMageEffect e in myStatEffects)
+            foreach (clsMageEffect e in GetStatEffects())
             {
-                if (e.sType == "MP") 
+                if (e.iID == 1) 
                 {
                     int iTick = 1;
                     if (e.iValue > 2)
@@ -185,7 +215,7 @@ namespace BreadMage2
                     e.iTimer -= 1;
                     if (e.iValue <= 0 || e.iTimer <= 0)
                     {
-                        RemoveEffect("MP");
+                        RemoveEffect(1);
                         break;
                     }
                 }
@@ -217,48 +247,69 @@ namespace BreadMage2
 
         public int MoldCount()
         {
-            int i = 0;
-            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "MP") { return e.iValue; } }
-            return i;
+            if (GetStatEffects().Exists(x => x.iID == 1)) { return GetStatEffects().Find(x => x.iID == 1).iValue; }
+            else return 0;
         }
         public int MoldTimer()
         {
-            int i = 0;
-            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "MP") { return e.iTimer; } }
-            return i;
+            if (GetStatEffects().Exists(x => x.iID == 1)) { return GetStatEffects().Find(x => x.iID == 1).iTimer; }
+            else return 0;
         }
 
         public int ZestCount()
         {
-            int i = 0;
-            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "ZC") { return e.iValue; } }
-            return i;
+            if (GetStatEffects().Exists(x => x.iID == 2)) { return GetStatEffects().Find(x => x.iID == 2).iValue; }
+            else return 0;
         }
         public int ZestTimer()
         {
-            int i = 0;
-            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "ZC") { return e.iTimer; } }
-            return i;
+            if (GetStatEffects().Exists(x => x.iID == 2)) { return GetStatEffects().Find(x => x.iID == 2).iTimer; }
+            else return 0;
         }
         public int TensionCount()
         {
-            int i = 0;
-            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "TS") { return e.iValue; } }
-            return i;
+            if (GetStatEffects().Exists(x => x.iID == 3)) { return GetStatEffects().Find(x => x.iID == 3).iValue; }
+            else return 0;
         }
         public int TensionTimer()
         {
-            int i = 0;
-            foreach (clsMageEffect e in myStatEffects) { if (e.sType == "TS") { return e.iTimer; } }
-            return i;
+            if (GetStatEffects().Exists(x => x.iID == 3)) { return GetStatEffects().Find(x => x.iID == 3).iTimer; }
+            else return 0;
         }
 
+
+        public string GetMageName()
+        {
+            return mySaveData.mageName;
+        }
+
+
+
+        public int TickMod(int iType = 1)
+        {
+            //if ticking harder makes it in, this will determine how much bonus tick to do
+            int iMod = 0;
+            if (iType == 1) { iMod = 2+ (int)Math.Floor((double)(MAtk() / Stats.BaseMAtk)); } //mold
+            else if (iType == 2) { iMod = (int)Math.Floor((double)(Res() / Stats.BaseRes)); } //zest
+            else if (iType == 3) { iMod = (int)Math.Floor((double)(Def() / Stats.BaseDef)); } //tension
+
+            return iMod;
+        }
+        public List<clsMageEffect> GetStatEffects()
+        {
+            return Stats.myEffects;
+        }
+
+        public void SetStatEffects(List<clsMageEffect> e)
+        {
+            Stats.myEffects = e;
+        }
 
         public bool hasQuickAttack()
         {
             try
             {
-                clsMageEffect a = myStatEffects.Find(x => x.sType.Contains("QA"));
+                clsMageEffect a = GetStatEffects().Find(x => x.iID == 7);
                 if (a.iTimer > 0 || a.iValue > 0)
                 {
                     return true;
@@ -269,25 +320,28 @@ namespace BreadMage2
         }
 
 
-        public int GetItemCount(int anItemType)
+        public int GetComponentCount(int anItemType)
         {
-            foreach (clsItem e in myInv)
-            {
-                if (anItemType == e.itemType) { return e.iCount; }
-            }
-            return 0;
+            return Stats.ComponentCount(anItemType);
 
-            /* OLD SYSTEM
-            string searchExpression = "ID = " + anItemID;
-            if (myInv != null && myInv.Rows.Count > 0)
-            {
-                DataRow r = this.myInv.Select(searchExpression).FirstOrDefault();
-                if (r != null) { return Convert.ToInt32(this.myInv.Select(searchExpression)[0]["ItemCount"].ToString()); }
-                else { return 0; }
+                    /* OLD
+                    foreach (clsGenericItem e in myInv)
+                    {
+                        if (anItemType == e.itemType) { return e.iCount; }
+                    }
+                    return 0;
+
+                    /* OLDER SYSTEM
+                    string searchExpression = "ID = " + anItemID;
+                    if (myInv != null && myInv.Rows.Count > 0)
+                    {
+                        DataRow r = this.myInv.Select(searchExpression).FirstOrDefault();
+                        if (r != null) { return Convert.ToInt32(this.myInv.Select(searchExpression)[0]["ItemCount"].ToString()); }
+                        else { return 0; }
+                    }
+                    else { return 0; }
+                    */
             }
-            else { return 0; }
-            */
-        }
 
         
 
@@ -295,7 +349,7 @@ namespace BreadMage2
         {
             try
             {
-                clsMageEffect a = myStatEffects.Find(x => x.sType.Contains("SS"));
+                clsMageEffect a = GetStatEffects().Find(x => x.iID == 8);
                 if (a.iTimer > 0 || a.iValue > 0)
                 {
                     return true;
@@ -305,6 +359,13 @@ namespace BreadMage2
             return false;
         }
 
+
+        public void RefreshStats()
+        {
+
+        }
+
+
         private void SetGameFlags(clsGameFlags loadedFlags)
         {
             myGameFlags = loadedFlags;
@@ -313,10 +374,12 @@ namespace BreadMage2
 
         private void SetEquipStats()
         {
+            /* again, more work, am I passing in a lot of differnet info?
             if(myEquipList != null && myEquipList.Count() > 0)
             {
                 Stats.SetBuffedStats(myEquipList, myStatEffects);
             }
+            */
         }
 
         //////
@@ -352,10 +415,20 @@ namespace BreadMage2
             return i;
         }
 
+        public clsSaveData GetSaveData()
+        {
+            return mySaveData;
+        }
 
         public void equipspell(clsSpell s)
         {
             mySaveData.equippedSpells.Add(s);
+        }
+
+
+        public void PrepSaveData()
+        {
+            mySaveData.stats = Stats;
         }
     }
 

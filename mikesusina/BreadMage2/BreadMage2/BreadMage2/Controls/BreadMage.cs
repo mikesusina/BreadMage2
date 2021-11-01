@@ -42,12 +42,10 @@ namespace BreadMage2
 
             s = "Mold: " + thisMage.MoldCount().ToString() + Environment.NewLine + "Timer: " + thisMage.MoldTimer().ToString();
             lblMoldCount.Text = s;
-
-            //this may get reused
-            pbSP.Minimum = 0;
-            pbSP.Maximum = 100;
-            pbSP.Value = 0;
-
+            s = "Zest: " + thisMage.ZestCount().ToString() + Environment.NewLine + "Timer: " + thisMage.ZestTimer().ToString();
+            lblZestCount.Text = s;
+            s = "Tension: " + thisMage.TensionCount().ToString() + Environment.NewLine + "Timer: " + thisMage.TensionTimer().ToString();
+            lblTensionCount.Text = s;
         }
 
         public void UpdateBars(clsMage aMage)

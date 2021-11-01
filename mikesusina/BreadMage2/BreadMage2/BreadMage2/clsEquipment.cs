@@ -41,6 +41,8 @@ namespace BreadMage2
             InitalizeEquipment();
         }
 
+        public clsEquipment() { }
+
 
         public int PAtk() { return PAtkStat; }
         public int MAtk() { return MAtkStat; }

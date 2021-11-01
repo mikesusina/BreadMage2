@@ -13,19 +13,45 @@ namespace BreadMage2
         public string spellName { get; set; }
         public string spellDescription { get; set; }
         public string ImgURL { get; set; }
-        public int spellType { get; set; }
+        public string spellType { get; set; }
+        public string chatType { get; set; } = "D";
         public int YeastCost { get; set; }
         public int SPCost { get; set; }
+        public string Power { get; set; }
 
         public List<string> SpellBlocks { get; set; } = new List<string>();
+        public List<SpellChatter> SpellChatter { get; set; } = new List<SpellChatter>();
 
         /// <summary>
-        /// "spelltype" wil determine effect, based on int
+        /// "spelltype" - 999 is item spells, use an int to base the reference for determining values [ie patk, def, etc...])
+        /// /long term - components are going to be mixed values, so each item spell will have to have a unique-ish cost. Like restoring. cost for 1 cast = whatever, determine by spell blocks?
         /// spell "tier" is going to be independent of the spells themselves
         /// 
+        /// SpellBlock Decoder ring: XY = 
+        /// X action & target
+        ///     Y effect
+        ///     Value TBD!
         /// 
-        /// 
-        /// 
+        ///[A]pply/[R]emove
+        ///     [D]amage
+        ///     [M]old
+        ///     [Z]est
+        ///     [T]ension
+        ///     [S]tun
+        ///     [Q]uick attack
+        ///     h[E]al
+        ///
+        ///     c[H]arge
+        ///     [P]arry
+        ///     [B]lock (block parry are the same, parry is high roll? Zest says yes)
+        ///     si[L] ence? Maybe an effect?
+        ///
+        ///[C]onsume/con[V]ert
+        ///     [M]old
+        ///     [Z]est
+        ///     [T]ension
+        ///     [I]tem??? AKA Stealing
+
         /// </summary>
 
 
@@ -33,24 +59,30 @@ namespace BreadMage2
         {
             spellID = Convert.ToInt32(dt.Rows[0]["SpellID"].ToString());
             spellName = dt.Rows[0]["SpellName"].ToString();
-            spellType = Convert.ToInt32(dt.Rows[0]["SpellType"].ToString());
+            spellType = dt.Rows[0]["SpellType"].ToString();
             ImgURL = dt.Rows[0]["ImgURL"].ToString();
+            chatType = dt.Rows[0]["ChatType"].ToString();
             spellDescription = dt.Rows[0]["SpellDescription"].ToString();
             YeastCost = Convert.ToInt32(dt.Rows[0]["YeastCost"].ToString());
             SPCost = Convert.ToInt32(dt.Rows[0]["SPCost"].ToString());
             ParseBlocks(dt.Rows[0]["Blocks"].ToString());
+            Power = dt.Rows[0]["Power"].ToString();
+            AddChatter(dt.Rows[0]["Chatter"].ToString());
         }
 
         public clsSpell(DataRow dr)
         {
             spellID = Convert.ToInt32(dr["SpellID"].ToString());
             spellName = dr["SpellName"].ToString();
-            spellType = Convert.ToInt32(dr["SpellType"].ToString());
+            spellType = dr["SpellType"].ToString();
+            chatType = dr["ChatType"].ToString();
             ImgURL = dr["ImgURL"].ToString();
             spellDescription = dr["SpellDescription"].ToString();
             YeastCost = Convert.ToInt32(dr["YeastCost"].ToString());
             SPCost = Convert.ToInt32(dr["SPCost"].ToString());
             ParseBlocks(dr["Blocks"].ToString());
+            Power = dr["Power"].ToString();
+            AddChatter(dr["Chatter"].ToString());
         }
 
         public clsSpell()
@@ -70,6 +102,20 @@ namespace BreadMage2
                 s = s.Substring(s.IndexOf("|") + 1);
             }
             SpellBlocks.Add(s);
+        }
+
+        private void AddChatter(string sText)
+        {
+            //full chatters are # delimited, so ability to do pre/post test is still | delmited
+
+            string s = sText;
+            while (s.IndexOf("#") > 0)
+            {
+                string temp = s.Substring(0, s.IndexOf("#"));
+                SpellChatter.Add(new SpellChatter(temp, spellType, "O", chatType, true));
+                s = s.Substring(s.IndexOf("#")+ 1);
+            }
+            SpellChatter.Add(new SpellChatter(s, spellType, "O", chatType, true));
         }
 
 

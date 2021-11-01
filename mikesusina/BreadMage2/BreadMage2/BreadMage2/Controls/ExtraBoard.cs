@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BreadMage2.Controls;
 using BreadMage2.Screens;
+using System.Reflection;
 
 namespace BreadMage2
 {
@@ -20,13 +21,14 @@ namespace BreadMage2
         public ChoiceBoard bChoice { get; set; }
         public GameScreen myGameScr { get; set; }
 
+        private int o { get; set; } = 0;
+
         public ExtraBoard(GameScreen aGameScr)
         {
             InitializeComponent();
             myGameScr = aGameScr;
             bFight = myGameScr.bFight;
             bChoice = myGameScr.bChoice;
-           
         }
 
         private void btnWander_Click(object sender, EventArgs e)
@@ -40,7 +42,7 @@ namespace BreadMage2
             {
                 if (textBox1.Text == "test")
                 {
-                    bChoice = new ChoiceBoard(myGameScr, myGameScr.gChoiceList.Find(x => x.AdvID == 1));
+                    bChoice = new ChoiceBoard(myGameScr, myGameScr.GameLibraries.ChoiceLib().Find(x => x.AdvID == 1));
                     myGameScr.Controls["pArea"].Controls.Add(bChoice);
                     myGameScr.gLock = true;
                     bChoice.Show();
@@ -48,13 +50,12 @@ namespace BreadMage2
                 else
                 {
                     //combat
-                    Control pZone = new Control();
                     bFight = new FightBoard(myGameScr);
-                    pZone = myGameScr.Controls["pArea"];
-                    pZone.Controls.Add(bFight);
+                    myGameScr.Controls["pArea"].Controls.Add(bFight);
                     myGameScr.gLock = true;
                     bFight.Show();
-                    //FightZone.Controls["FightBoard"].Show();
+                    bFight.SetChatterBox();
+                    bFight.BeginFight();
                 }
             }
             else { MessageBox.Show("Hey there's something there!"); }
@@ -76,6 +77,7 @@ namespace BreadMage2
 
         private void btnMap_Click(object sender, EventArgs e)
         {
+            /*
             if (myGameScr.gLock == false)
             {
                 Control pZone = new Control();
@@ -86,9 +88,15 @@ namespace BreadMage2
                 bMap.Show();
             }
             else { MessageBox.Show("Hey there's something there!"); }
+            */
         }
 
-
+        public void TestVar(int i)
+        {
+            Console.WriteLine("DuringBefore: {0} {1}", new object[] { o.ToString(), i.ToString() });
+            o += i;
+            Console.WriteLine("DuringAfter:" + o);
+        }
 
         //DevTools
         private void button1_Click(object sender, EventArgs e)
@@ -101,7 +109,7 @@ namespace BreadMage2
 
         private void button2_Click(object sender, EventArgs e)
         {
-
+            /*
             string s = "Mage properties:" +
                   "HP: " + myGameScr.gMage.HP +
                   "Location: " + myGameScr.gMage.Location +
@@ -109,6 +117,7 @@ namespace BreadMage2
                   "" +
                   "okay!";
             MessageBox.Show(s);
+            */
             /*
             if (textBox1.Text != null &&  int.TryParse(textBox1.Text, out int outnum) == true)
             {
@@ -133,6 +142,63 @@ namespace BreadMage2
                 myGameScr.gMage.equipspell(myGameScr.GetSpell(6));
                 myGameScr.gMage.equipspell(myGameScr.GetSpell(7));
             }
+
+            /*
+
+            o = 1;
+            engChoice c = new engChoice();
+
+            Type t = this.GetType();
+            string s = "TestVar";
+            MethodInfo mi = t.GetMethod(s);
+            Console.WriteLine("Before:" + o);
+            mi.Invoke(this, new object[] { 10 });
+            Console.WriteLine("After:" + o);
+            Console.WriteLine("Hey we made it");
+
+            */
+
+
+
+            /* this definitely works
+            engChoice c = new engChoice();
+
+            Type t = c.GetType();
+            string s = "TestMethod";
+            MethodInfo mi = t.GetMethod(s);
+
+            string a = "";
+            mi.Invoke(c, null);
+            //mi.Invoke(a, new object[] { 1, 10 });
+            Console.WriteLine("Hey we made it");
+            */
+
+
+
+            /*
+            Type t = c.GetType();
+            string s = "TestMethod";
+            MethodInfo mi = t.GetMethod(s);
+
+
+            mi.Invoke(null, new object[] { 1, 2 });
+
+
+            Type t = this.GetType();
+            t.InvokeMember(, ,, )
+            if (myGameScr.gMage != null)
+            {
+                myGameScr.gMage.GrantSpell(1);
+                myGameScr.gMage.GrantSpell(2);
+                myGameScr.gMage.GrantSpell(4);
+                myGameScr.gMage.GrantSpell(5);
+                myGameScr.gMage.GrantSpell(6);
+                myGameScr.gMage.GrantSpell(7);
+                myGameScr.gMage.equipspell(myGameScr.GetSpell(5));
+                myGameScr.gMage.equipspell(myGameScr.GetSpell(6));
+                myGameScr.gMage.equipspell(myGameScr.GetSpell(7));
+            }
+            */
 
 
             /*
@@ -171,7 +237,6 @@ namespace BreadMage2
             }
             */
         }
-
        
     }
 }

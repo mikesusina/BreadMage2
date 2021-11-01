@@ -123,6 +123,16 @@ namespace BreadMage2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Fizzard {
+            get {
+                object obj = ResourceManager.GetObject("Fizzard", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap gellea {
             get {
                 object obj = ResourceManager.GetObject("gellea", resourceCulture);
@@ -153,6 +163,16 @@ namespace BreadMage2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap plant {
+            get {
+                object obj = ResourceManager.GetObject("plant", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap potato {
             get {
                 object obj = ResourceManager.GetObject("potato", resourceCulture);
@@ -163,9 +183,9 @@ namespace BreadMage2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap slugshakers {
+        internal static System.Drawing.Bitmap tinybug {
             get {
-                object obj = ResourceManager.GetObject("slugshakers", resourceCulture);
+                object obj = ResourceManager.GetObject("tinybug", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

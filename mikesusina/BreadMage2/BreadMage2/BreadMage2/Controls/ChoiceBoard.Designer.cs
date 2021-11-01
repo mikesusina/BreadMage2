@@ -62,6 +62,7 @@
             // 
             // btnChoiceOne
             // 
+            this.btnChoiceOne.Font = new System.Drawing.Font("Trebuchet MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnChoiceOne.Location = new System.Drawing.Point(100, 436);
             this.btnChoiceOne.Name = "btnChoiceOne";
             this.btnChoiceOne.Size = new System.Drawing.Size(250, 30);
@@ -72,6 +73,7 @@
             // 
             // btnChoiceTwo
             // 
+            this.btnChoiceTwo.Font = new System.Drawing.Font("Trebuchet MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnChoiceTwo.Location = new System.Drawing.Point(100, 476);
             this.btnChoiceTwo.Name = "btnChoiceTwo";
             this.btnChoiceTwo.Size = new System.Drawing.Size(250, 30);
