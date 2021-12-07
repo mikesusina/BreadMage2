@@ -42,6 +42,19 @@ namespace BreadMage2
             }
             
         }
+        public MonsterChatter nextMageChatter(int aType)
+        {
+            try
+            {
+                List<MonsterChatter> ChatterRoll = myGameScr.gMageChatBot.ChatterList.FindAll(x => x.iType == aType);
+                int i = myGameScr.gRandom.Next(ChatterRoll.Count - 1);
+                return ChatterRoll[i];
+            }
+            catch
+            {
+                throw new IndexOutOfRangeException("No chatter list found");
+            }
+        }
 
         public EffectChatter nextEffectReactChatter(string aType)
         {
@@ -132,7 +145,7 @@ namespace BreadMage2
             {
                 int iStart = FightBox.TextLength;
                 string sText = "";
-                Font OrigFont = FightBox.Font;
+                Font OrigFont = new Font("Trebuchet MS", 10, FontStyle.Regular);
                 Font infoFont = new Font("Trebuchet MS", 8, FontStyle.Regular);
                 DamageInfoChatter b = someChatter as DamageInfoChatter;
                 chatColor = b.GetColor(b.effType);
@@ -172,6 +185,7 @@ namespace BreadMage2
                     FightBox.SelectionStart = FightBox.TextLength;
                     FightBox.SelectionFont = OrigFont;
                     FightBox.DeselectAll();
+                    FightBox.AppendText(Environment.NewLine);
                     /*
                     FightBox.SelectionStart = FightBox.GetFirstCharIndexOfCurrentLine();
                     FightBox.SelectionLength = FightBox.Lines[FightBox.Lines.Length -1 ].Length;
@@ -189,7 +203,7 @@ namespace BreadMage2
             string[] TickEffects = new string[] { "Mold", "Zest", "Tension" };
             string[] NoValEffects = new string[] { "Miss", "Block", "Parry", "Stun" };
 
-            FightBox.AppendText(Environment.NewLine + Environment.NewLine + sFlavor);
+            FightBox.AppendText(Environment.NewLine + sFlavor);
 
             ///
             // Add the flavor text first, in white
@@ -230,7 +244,7 @@ namespace BreadMage2
 
         public void AddTurnChatter()
         {
-            FightBox.SelectionColor = Color.White;
+            FightBox.SelectionColor = Color.Lime;
             Font OrigFont = FightBox.Font;
             int iStart = FightBox.TextLength;
             string sText = "'s turn:";

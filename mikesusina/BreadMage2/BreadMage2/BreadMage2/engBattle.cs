@@ -16,6 +16,7 @@ namespace BreadMage2
         private int spellTier;
         private int bDamage;
         private int bStackInfo;
+        private int battleSP = 0;
         private int iMonModifier = 1; // the mob "personality"
         private string sTurn;
 
@@ -26,12 +27,13 @@ namespace BreadMage2
         public engBattle(GameScreen aGameScr)
         {
             myGameScr = aGameScr;
-            myGameScr.bMage.UpdateBars(myGameScr.gMage);
+            myGameScr.bMage.UpdateBars();
             currentMonster = aGameScr.gMonster;
             spellSlinger = new clsSpell();
             spellSlinger = null;
             currentDamageInfo = new DamageInfoChatter();
             spellTier = 0;
+            battleSP = myGameScr.gMage.Stats.CurrentMaxSP;
         }
 
         public void LoadFight()
@@ -121,6 +123,10 @@ namespace BreadMage2
         {
             return currentMonster;
         }
+        public int GetBattleSP() { return battleSP; }
+
+        public void setSpellSlinger(clsSpell aSpell) { spellSlinger = aSpell; }
+
         /// <summary>
         /// Mage logic starts here
         /// </summary>
@@ -135,7 +141,7 @@ namespace BreadMage2
             QuickAttack();
 
             //update the bars one final time
-            myGameScr.bMage.UpdateBars(myGameScr.gMage);
+            myGameScr.bMage.UpdateBars();
         }
         
         public void MageAttack(int AtkType = 1)
@@ -172,6 +178,7 @@ namespace BreadMage2
                             currentDamageInfo = MageMAttack();
                             break;
                         case 3:
+                            //check that components/SP cost are okay before casting!
                             ComboBox b = (ComboBox)myGameScr.bFight.Controls["lstSpellBook"];
                             ComboBox t = (ComboBox)myGameScr.bFight.Controls["lstSpellTier"];
                             spellSlinger = b.SelectedItem as clsSpell;
@@ -194,13 +201,16 @@ namespace BreadMage2
                         myGameScr.bFight.AddSpellChatter(spellSlinger, bDamage);
                     }
                     else
-                    { 
-                        //need some "mage chatter" stuff. Maybe use another monster?
+                    {
+                        myGameScr.bFight.AddChatter(myGameScr.bFight.nextMageChatter(AtkType));
+                        /*
                         string s = "You gooshed it good!";
                         myGameScr.bFight.AddChatterString(s);
+                        */
                         myGameScr.bFight.AddChatter(currentDamageInfo);
                     }
-                
+
+                    spellSlinger = null;
                     // monster turn
                     MonsterAttack();
                 }
@@ -263,6 +273,10 @@ namespace BreadMage2
                     currentMonster.TensionCount += currentDamageInfo.iTick;
                     currentDamageInfo.effType = "T";
                 }
+                else if (s == "AB")
+                {
+                    myGameScr.gMage.AddEffect(10, 1);
+                }
 
             }
             if (currentDamageInfo.iDamage != 0 || currentDamageInfo.iTick != 0)
@@ -303,7 +317,7 @@ namespace BreadMage2
                         break;
                     case "Q": //quick attack
                         break;
-                    case "B": //block
+                    case "B": //block/dodge
                         break;
                     case "L": //silence
                         break;
@@ -350,6 +364,7 @@ namespace BreadMage2
 
         public void MonsterAttack(int AtkType = 1)
         {
+            bool bDodge = false;
             currentDamageInfo.ClearInfo();
             //bDamage = 0;
             //bStackInfo = 0;
@@ -396,7 +411,7 @@ namespace BreadMage2
                 case 7: // tension
                     break;
                 case 8: // stun
-                    myGameScr.gMage.AddEffect(8, 1, 1);
+                    myGameScr.gMage.AddEffect(8, 1);
                     break;
                 case 9: //charge
                     break;
@@ -404,13 +419,30 @@ namespace BreadMage2
                     break;
             }
 
-            HitMage(currentDamageInfo);
-
-            if (myGameScr.gMage.HP > 0)
+            if (myGameScr.gMage.hasEffect(10))
             {
-                MonsterChatter b = myGameScr.bFight.nextMonsterChatter(AtkType);
-                myGameScr.bFight.AddChatter(b);
-                myGameScr.bFight.AddChatter(currentDamageInfo);
+                myGameScr.gMage.TickEffect(10);
+                if (myGameScr.gRandom.Next(3) == 2)
+                {
+                    bDodge = true;
+                }
+            }
+
+            if (bDodge) { currentDamageInfo.ClearInfo(); }
+            else { HitMage(currentDamageInfo); }
+
+            if (myGameScr.gMage.Stats.HP > 0)
+            {
+
+                if (bDodge) { myGameScr.bFight.AddChatter(myGameScr.bFight.nextEffectChatter("B")); }
+                else
+                {
+                    MonsterChatter b = myGameScr.bFight.nextMonsterChatter(AtkType);
+                    myGameScr.bFight.AddChatter(b);
+                    myGameScr.bFight.AddChatter(currentDamageInfo);
+                }
+                
+
                 MageTurn();
             }
         }
@@ -464,7 +496,7 @@ namespace BreadMage2
 
             //int iStack = 3;
             bStackInfo = myGameScr.gRandom.Next(4, 8);
-            myGameScr.gMage.AddEffect(iID, bStackInfo, 3);
+            myGameScr.gMage.AddEffect(iID, bStackInfo);
             currentDamageInfo.UpdateInfo(damage, bStackInfo, effType);
 
             return currentDamageInfo;
@@ -485,10 +517,10 @@ namespace BreadMage2
         private void HitMage(DamageInfoChatter someInfo)
         {
             // number has to be final here, no more math
-            if (someInfo.iDamage != 0) { myGameScr.gMage.HP -= someInfo.iDamage; }
-            if (myGameScr.gMage.HP <= 0)
+            if (someInfo.iDamage != 0) { myGameScr.gMage.Stats.HP -= someInfo.iDamage; }
+            if (myGameScr.gMage.Stats.HP <= 0)
             {
-                myGameScr.gMage.HP = 0;
+                myGameScr.gMage.Stats.HP = 0;
                 myGameScr.GameOver();
             }
         }
@@ -503,6 +535,7 @@ namespace BreadMage2
         {
             //these chatter additions are going to use a different chatter type
             bDamage = 0;
+            currentDamageInfo.ClearInfo();
 
             if (i == 1)
             {
@@ -518,7 +551,7 @@ namespace BreadMage2
                     myGameScr.bFight.AddChatter(currentDamageInfo);
                 }
                 HitMage(currentDamageInfo);
-                myGameScr.bMage.UpdateBars(myGameScr.gMage);
+                myGameScr.bMage.UpdateBars();
             }
             else if (i == 2)
             {
@@ -582,8 +615,7 @@ namespace BreadMage2
             myGameScr.gLog.Add(s);
 
             myGameScr.gMage.TickBuffs();
-
-            
+            myGameScr.BuffHelper().EventBased("combatEnd");
 
             //give post battle info, item drops before disposing. new pop up window?
             myGameScr.gLock = false;

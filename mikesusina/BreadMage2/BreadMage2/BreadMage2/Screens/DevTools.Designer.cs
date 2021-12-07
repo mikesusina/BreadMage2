@@ -244,6 +244,7 @@
             this.Controls.Add(this.btnSetLoc);
             this.Name = "DevTools";
             this.Text = "DevTools";
+            this.Load += new System.EventHandler(this.DevTools_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

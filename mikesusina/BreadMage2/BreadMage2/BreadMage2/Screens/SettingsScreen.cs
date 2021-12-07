@@ -27,6 +27,8 @@ namespace BreadMage2.Screens
 
         private void button1_Click(object sender, EventArgs e)
         {
+
+            /* I want to make sure I don't need to reference this for updating tables, but this should go
             BreadDB BreadNet = new BreadDB();
             OleDbConnection myConn = BreadNet.BreadConnect();
             try
@@ -76,7 +78,8 @@ namespace BreadMage2.Screens
                 string s = "Can not open connection ! "+ Environment.NewLine + Environment.NewLine + "exception: " + ex.InnerException.ToString();
                 MessageBox.Show(s);
             }
-        /*
+        
+            EVEN OLDER:::
 
             connection = new OleDbConnection(connetionString);
             try
@@ -91,8 +94,9 @@ namespace BreadMage2.Screens
                 {
                     MessageBox.Show (ds.Tables[0].Rows[i].ItemArray[0] + " -- " + ds.Tables[0].Rows[i].ItemArray[1]);
                 }
-            */
+            
 
+            */
         }
 
 

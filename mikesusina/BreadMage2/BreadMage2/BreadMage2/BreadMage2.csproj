@@ -100,6 +100,12 @@
     <Compile Include="clsSpell.cs" />
     <Compile Include="clsTest.cs" />
     <Compile Include="clsUniqueItem.cs" />
+    <Compile Include="Controls\CastBoard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CastBoard.Designer.cs">
+      <DependentUpon>CastBoard.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ChoiceBoard.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -200,10 +206,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Controls\SpellBookBoard.cs">
+    <Compile Include="Controls\TownBoards\SpellBookBoard.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\SpellBookBoard.Designer.cs">
+    <Compile Include="Controls\TownBoards\SpellBookBoard.Designer.cs">
       <DependentUpon>SpellBookBoard.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\TownBoards\ShopItems.cs">
@@ -220,6 +226,9 @@
     </Compile>
     <EmbeddedResource Include="Controls\BreadMage.resx">
       <DependentUpon>BreadMage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CastBoard.resx">
+      <DependentUpon>CastBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ChoiceBoard.resx">
       <DependentUpon>ChoiceBoard.cs</DependentUpon>
@@ -242,7 +251,7 @@
     <EmbeddedResource Include="Controls\TownBoards\ShopItems.resx">
       <DependentUpon>ShopItems.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\SpellBookBoard.resx">
+    <EmbeddedResource Include="Controls\TownBoards\SpellBookBoard.resx">
       <DependentUpon>SpellBookBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Screens\ChoiceScreen.resx">
@@ -274,7 +283,9 @@
     <EmbeddedResource Include="Controls\TownBoard.resx">
       <DependentUpon>TownBoard.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Properties\app.manifest" />
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -349,6 +360,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Images\Monsters\tinybug.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\bonestemp.png" />
+    <Content Include="Resources\Images\Spells\doughfist.png" />
+    <Content Include="Resources\Images\Spells\pocketspice.png" />
+    <Content Include="Resources\Images\Spells\sporesling.png" />
+    <None Include="Resources\Images\Spells\freshbaked.png" />
+    <Content Include="Resources\Images\Icons\defend.png" />
+    <Content Include="Resources\Images\Icons\matk.png" />
+    <Content Include="Resources\Images\Icons\moldico.png" />
+    <Content Include="Resources\Images\Icons\patk.png" />
+    <Content Include="Resources\Images\Icons\tensionico.png" />
+    <Content Include="Resources\Images\Icons\zestico.png" />
+    <Content Include="Resources\Images\Items\itsnothing.png" />
+    <Content Include="Resources\Images\Items\knife.png" />
+    <Content Include="Resources\Images\Items\tin.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

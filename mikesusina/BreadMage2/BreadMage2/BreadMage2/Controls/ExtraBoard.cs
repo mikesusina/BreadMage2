@@ -42,7 +42,7 @@ namespace BreadMage2
             {
                 if (textBox1.Text == "test")
                 {
-                    bChoice = new ChoiceBoard(myGameScr, myGameScr.GameLibraries.ChoiceLib().Find(x => x.AdvID == 1));
+                    bChoice = new ChoiceBoard(myGameScr, 4);
                     myGameScr.Controls["pArea"].Controls.Add(bChoice);
                     myGameScr.gLock = true;
                     bChoice.Show();
@@ -66,7 +66,17 @@ namespace BreadMage2
             if (myGameScr.gLock == false)
             {
                 Control pZone = new Control();
-                SpellBookBoard bSpell = new SpellBookBoard(myGameScr);
+
+                Control bSpell = new Control();
+                if (textBox1.Text == "test")
+                {
+                    bSpell = new CastBoard(myGameScr);
+                }
+                else
+                {
+                    bSpell = new SpellBookBoard(myGameScr);
+                }
+
                 pZone = myGameScr.Controls["pArea"];
                 pZone.Controls.Add(bSpell);
                 myGameScr.gLock = true;
@@ -77,6 +87,19 @@ namespace BreadMage2
 
         private void btnMap_Click(object sender, EventArgs e)
         {
+            if (myGameScr.gLock == false)
+            {
+                Control pZone = new Control();
+                EquipBoard bEquip = new EquipBoard(myGameScr);
+                pZone = myGameScr.Controls["pArea"];
+                pZone.Controls.Add(bEquip);
+                myGameScr.gLock = true;
+                bEquip.Show();
+
+            }
+
+
+
             /*
             if (myGameScr.gLock == false)
             {
@@ -110,6 +133,13 @@ namespace BreadMage2
         private void button2_Click(object sender, EventArgs e)
         {
             /*
+            string s = "";
+            foreach (clsSpell p in myGameScr.gMage.EQSpells())
+            {
+                s += Environment.NewLine + p.spellName;
+            }
+            MessageBox.Show(s);
+
             string s = "Mage properties:" +
                   "HP: " + myGameScr.gMage.HP +
                   "Location: " + myGameScr.gMage.Location +
@@ -137,11 +167,21 @@ namespace BreadMage2
                 myGameScr.gMage.GrantSpell(4);
                 myGameScr.gMage.GrantSpell(5);
                 myGameScr.gMage.GrantSpell(6);
-                myGameScr.gMage.GrantSpell(7);
-                myGameScr.gMage.equipspell(myGameScr.GetSpell(5));
-                myGameScr.gMage.equipspell(myGameScr.GetSpell(6));
-                myGameScr.gMage.equipspell(myGameScr.GetSpell(7));
+                myGameScr.gMage.GrantSpell(8);
+                myGameScr.gMage.GrantSpell(10);
+                //myGameScr.gMage.EquipSpell(myGameScr.GetSpell(5));
+                myGameScr.gMage.EquipSpell(myGameScr.GetSpell(6));
+                //myGameScr.gMage.EquipSpell(myGameScr.GetSpell(7));
+
+
+                myGameScr.gMage.GetUniqueItem(4);
+                myGameScr.gMage.GetUniqueItem(3);
+                myGameScr.gMage.GetUniqueItem(5);
+                myGameScr.gMage.GetUniqueItem(7);
+                myGameScr.gMage.EquipItem(myGameScr.GameLibraries.EquipLib().Find(x => x.equipID == 4));
+                myGameScr.bMage.UpdateBars();
             }
+
 
             /*
 

@@ -30,6 +30,8 @@ namespace BreadMage2
         public string Btn4RareResult { get; set; } = "";
         public int Location { get; set; }
         public string ImgURL { get; set; }
+        public string ReplaceCondition { get; set; }
+        public int ReplaceID { get; set; }
 
         public clsChoiceAdventure(DataTable aChoiceData)
         {
@@ -58,6 +60,8 @@ namespace BreadMage2
             Condition4 = ds.Rows[0]["Condition4"].ToString();
             Btn4Result = ds.Rows[0]["Btn4Result"].ToString();
             Location = Convert.ToInt32(ds.Rows[0]["Location"].ToString());
+            ReplaceCondition = ds.Rows[0]["ReplaceCondition"].ToString();
+            ReplaceID = Convert.ToInt32(ds.Rows[0]["ReplaceID"].ToString());
             ImgURL = ds.Rows[0]["ImgURL"].ToString();
         }
 
@@ -77,6 +81,8 @@ namespace BreadMage2
             Condition4 = dr["Condition4"].ToString();
             Btn4Result = dr["Btn4Result"].ToString();
             Location = Convert.ToInt32(dr["Location"].ToString());
+            ReplaceCondition = dr["ReplaceCondition"].ToString();
+            ReplaceID = Convert.ToInt32(dr["ReplaceID"].ToString());
             ImgURL = dr["ImgURL"].ToString();
         }
 
@@ -126,6 +132,12 @@ namespace BreadMage2
         }
 
 
+
+
+        public clsChoiceAdventure ShallowCopy()
+        {
+            return (clsChoiceAdventure)this.MemberwiseClone();
+        }
 
 
         // this is definitely stolen from

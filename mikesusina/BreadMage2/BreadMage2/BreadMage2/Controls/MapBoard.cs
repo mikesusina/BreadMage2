@@ -46,7 +46,6 @@ namespace BreadMage2.Controls
 
         private void SetMapTile(clsLocation loc)
         {
-            int i = 0;
             string TileLoc = "b" + loc.LocY + loc.LocX.ToString();
             foreach (PictureBox p in MapTiles)
             {
@@ -54,7 +53,6 @@ namespace BreadMage2.Controls
                 {
                     p.Image = loc.MapTile;
                     p.Show();
-                    i = 1;
                     break;
                 }
             }

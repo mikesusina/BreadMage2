@@ -11,6 +11,7 @@ namespace BreadMage2
         // for libraries
         private List<clsMonster> gMonsterList { get; set; } = new List<clsMonster>();
         private List<clsUniqueItem> gItemBook { get; set; } = new List<clsUniqueItem>();
+        private List<clsEquipment> gEquipList { get; set; } = new List<clsEquipment>();
         private List<clsSpell> gSpellBook { get; set; } = new List<clsSpell>();
         private List<clsChoiceAdventure> gChoiceList { get; set; } = new List<clsChoiceAdventure>();
         private List<EffectChatter> gEffectChatter { get; set; } = new List<EffectChatter>();
@@ -36,6 +37,9 @@ namespace BreadMage2
         public List<clsUniqueItem> ItemLib() { return gItemBook; }
         public void SetItemLib(List<clsUniqueItem> l) { gItemBook = l; }
 
+        public List<clsEquipment> EquipLib() { return gEquipList; }
+        public void SetEquipLib(List<clsEquipment> l) { gEquipList = l; }
+
         public List<clsLocation> LocationLib() { return gLocationList; }
         public void SetLocationLib(List<clsLocation> l) { gLocationList = l; }
 
@@ -47,6 +51,5 @@ namespace BreadMage2
 
         public List<clsEffect> EffectLib() { return gEffectLib; }
         public void SetEffectLib(List<clsEffect> l) { gEffectLib = l; }
-
     }
 }

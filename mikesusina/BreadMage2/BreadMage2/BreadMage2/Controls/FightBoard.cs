@@ -20,7 +20,10 @@ namespace BreadMage2.Controls
 
         private Color c;
         private List<clsSpell> activeSpells { get; set; } = new List<clsSpell>();
-        
+
+
+        private BindingSource castingBS = new BindingSource();
+        private BindingSource itemBS = new BindingSource();
 
 
         public FightBoard(GameScreen aGameScr, int anID = 0)
@@ -90,20 +93,63 @@ namespace BreadMage2.Controls
 
         private void SetSpellUI()
         {
-            List<clsSpell> MageSpells = myGameScr.gMage.EQSpells();
-            List<clsSpell> ItemSpells = myGameScr.GetItemSpells();
-            //List<int> UnlockedItems = myGameScr.gMage.ItemSpells();
+            List<clsSpell> MageSpells = myGameScr.gMage.EQSpells(4);
+            List<clsSpell> ItemSpells = myGameScr.GetAllKnownMageSpells("I");
+            
+            castingBS.DataSource = MageSpells;
+            itemBS.DataSource = ItemSpells;
 
-            lstSpellBook.DataSource = MageSpells;
+            boxSpells.DataSource = castingBS;
+            boxSpells.DisplayMember = "spellName";
+            if (ItemSpells.Count < 1) { radioItems.Enabled = false; }
+            radioSpells.Checked = true;
+            boxSpells.ClearSelected();
+
+            barActivePoints.ForeColor = Color.Lime;
+            barActivePoints.Maximum = myGameScr.gMage.Stats.MaxSP;
+            barActivePoints.Value = BattleEngine.GetBattleSP();
+            string s = "Skill Points: " + BattleEngine.GetBattleSP().ToString() + "/" + myGameScr.gMage.Stats.MaxSP.ToString();
+            lbActiveSP.Text = s;
+
+
+            lblIngredients.Hide();
+            lblElementalMotes.Hide();
+            /*
+            lstSpellBook.DataSource = castingBS;
             lstSpellBook.DisplayMember = "spellName";
-            foreach (clsSpell s in ItemSpells)
-            {
-                if (myGameScr.gMage.AllSpells().Contains(s.spellID))
-                {
-                    lstItem.Items.Add(s);
-                }
-            }
+            lstItem.DataSource = itemBS;
             lstItem.DisplayMember = "spellName";
+            */
+        }
+
+        public void setSpellCosts(int i = 1)
+        {
+            if (i == 1)
+            {
+                lblElementalMotes.Hide();
+                lblIngredients.Hide();
+
+                barActivePoints.Maximum = myGameScr.gMage.Stats.MaxSP;
+                barActivePoints.Value = BattleEngine.GetBattleSP();
+                barActivePoints.Show();
+
+                string s = "Skill Points: " + BattleEngine.GetBattleSP().ToString() + "/" + myGameScr.gMage.Stats.MaxSP.ToString();
+                lbActiveSP.Text = s;
+            }
+            else
+            {
+                barActivePoints.Hide();
+
+                string s = "";
+                s = "Ingredients: " + myGameScr.gMage.GetComponentCount(1).ToString();
+                lblIngredients.Text = s;
+                lblIngredients.Show();
+                s = "CosmicEnergy: " + myGameScr.gMage.GetComponentCount(1).ToString();
+                lbActiveSP.Text = s;
+                s = "ElementalMotes: " + myGameScr.gMage.GetComponentCount(1).ToString();
+                lblElementalMotes.Text = s;
+                lblElementalMotes.Show();
+            }
         }
 
         public void BeginFight()
@@ -133,6 +179,10 @@ namespace BreadMage2.Controls
         public MonsterChatter nextMonsterChatter(int aType)
         {
             return ChatEngine.nextMonsterChatter(aType);
+        }
+        public MonsterChatter nextMageChatter(int aType)
+        {
+            return ChatEngine.nextMageChatter(aType);
         }
 
         public void UpdateBars(clsMonster aMonster)
@@ -313,7 +363,11 @@ namespace BreadMage2.Controls
             //when implemented, grab the highest spell tier known
             //if (cbxMaxSpellTier.Checked) { tier = max tier(); }
             //BattleEngine.MageSpell(lstSpellBook.SelectedItem as clsSpell, tier);
-            BattleEngine.MageAttack(3);
+            if (lstSpellBook.SelectedItem != null)
+            {
+                BattleEngine.MageAttack(3);
+            }
+            else { MessageBox.Show("What spell!?!?"); }
         }
 
         private void lstSpellBook_SelectedIndexChanged(object sender, EventArgs e)
@@ -323,8 +377,54 @@ namespace BreadMage2.Controls
             clsSpell s = lstSpellBook.SelectedItem as clsSpell;
             string info = s.spellName + Environment.NewLine + "Cost: " + Environment.NewLine + Environment.NewLine + s.spellDescription;
             rtbSpellBox.AppendText(info);
+            pbActionDisplay.Image = GetSpellIconImage(s);
+            pbActionDisplay.Show();
 
-            
+            BattleEngine.setSpellSlinger(s);
+        }
+
+        private void lstItem_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            rtbSpellBox.ResetText();
+            string t = lstItem.SelectedItem.ToString();
+            clsSpell s = lstItem.SelectedItem as clsSpell;
+            string info = s.spellName + Environment.NewLine + "Cost: " + Environment.NewLine + Environment.NewLine + s.spellDescription;
+            rtbSpellBox.AppendText(info);
+            pbActionDisplay.Image = GetSpellIconImage(s);
+            pbActionDisplay.Show();
+
+            BattleEngine.setSpellSlinger(s);
+        }
+
+        private Image GetSpellIconImage(clsSpell aSpell)
+        {
+            if (aSpell.ImgURL != null && aSpell.ImgURL != "")
+            {
+                object o = Properties.Resources.ResourceManager.GetObject(aSpell.ImgURL);
+                if (o is Image) { return o as Image; }
+                else return Properties.Resources.freshbaked;
+            }
+            else return Properties.Resources.freshbaked;
+        }
+
+        private void radioSpells_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioSpells.Focused && radioSpells.Checked)
+            {
+                setSpellCosts(1);
+                boxSpells.DataSource = castingBS;
+                boxSpells.ClearSelected();
+            }
+        }
+
+        private void radioItems_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioItems.Focused && radioItems.Checked)
+            {
+                setSpellCosts(2);
+                boxSpells.DataSource = itemBS;
+                boxSpells.ClearSelected();
+            }
         }
     }
 }
