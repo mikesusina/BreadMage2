@@ -13,6 +13,8 @@ namespace BreadMage2
     {
 
 
+        /* I'm pretty sure this can get removed */
+
         public void TestMethod()
         {
             Console.WriteLine("I guess this worked");

@@ -63,6 +63,7 @@ namespace BreadMage2
             o.SetChoiceLib(LoadChoiceList());
             o.SetEffectChatterLib(LoadEffectChatter());
             o.SetItemLib(LoadUniqueItemsList());
+            o.SetEquipLib(LoadEquipment());
             o.SetSpellLib(LoadSpellList());
             o.SetLocationLib(LoadLocationList());
             o.SetEffectLib(LoadEffectLibrary());
@@ -119,6 +120,23 @@ namespace BreadMage2
             foreach (DataRow d in ds.Tables[0].Rows)
             {
                 myList.Add(new clsUniqueItem(ds.Tables[0].Rows[i]));
+                i++;
+            }
+
+            return myList;
+        }
+
+        public List<clsEquipment> LoadEquipment()
+        {
+            List<clsEquipment> myList = new List<clsEquipment>();
+            DataSet ds = new DataSet();
+            string msql = "SELECT * FROM Equipment;";
+            FillDS(msql, ds);
+
+            int i = 0;
+            foreach (DataRow d in ds.Tables[0].Rows)
+            {
+                myList.Add(new clsEquipment(ds.Tables[0].Rows[i]));
                 i++;
             }
 

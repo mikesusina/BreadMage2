@@ -8,8 +8,10 @@ namespace BreadMage2
 {
     public class clsMageStats
     {
-        public int Level { get; set; }
-        public int EXP { get; set; }
+        public int HP { get; set; }
+        public int HPMax { get; set; }
+        public int MaxSP { get; set; }      
+        public int CurrentMaxSP { get; set; }
         public int BasePAtk { get; set; }
         public int BaseMAtk { get; set; }
         public int BaseDef { get; set; }
@@ -18,127 +20,127 @@ namespace BreadMage2
         public int ModMAtk { get; set; } = 0;
         public int ModDef { get; set; } = 0;
         public int ModRes { get; set; } = 0;
+        public int ModHP { get; set; } = 0;
 
-        private int HealItems { get; set; } = 0;
-        private int CombatItems { get; set; } = 0;
-        private int RestoreItems { get; set; } = 0;
-        private int MPItems { get; set; } = 0;
 
-        public List<clsMageEffect> myEffects = new List<clsMageEffect>();
+        public int EQPAtk { get; set; } = 0;
+        public int EQMAtk { get; set; } = 0;
+        public int EQDef { get; set; } = 0;
+        public int EQRes { get; set; } = 0;
+        public int EQHP { get; set; } = 0;
+
+        private int Ingredients { get; set; } = 0;
+        private int CosmicEnergy { get; set; } = 0;
+        private int ElementalMotes { get; set; } = 0;
+        //private int MPItems { get; set; } = 0;
+
+        private List<clsMageEffect> myEffects = new List<clsMageEffect>();
+        private List<clsEquipment> myEquipment = new List<clsEquipment>();
+        private List<clsSpell> myEquippedSpells = new List<clsSpell>();
 
         public clsMageStats()
         {
+            HPMax = 30;
+            HP = HPMax;
             BasePAtk = 13;
             BaseMAtk = 13;
             BaseDef = 3;
             BaseRes = 6;
 
-
-            HealItems = 3;
+            MaxSP = 10;
+            CurrentMaxSP = 10;
         }
 
-        public int PAtk()
+        public int PAtk() { return BasePAtk + ModPAtk; }
+        public int MAtk() { return BaseMAtk + ModMAtk; }
+        public int Def() { return BaseDef + ModDef; }
+        public int Res() { return BaseRes + ModRes; }
+
+        public List<clsMageEffect> CurrentEffects() { return myEffects; }
+        public List<clsEquipment> CurrentEquipment() { return myEquipment; }
+        public List<clsSpell> CurrentEQSpells() { return myEquippedSpells; }
+
+        public clsEquipment myEquipmentBySlot(int iSlot)
         {
-            return BasePAtk + ModPAtk;
+            try
+            {
+                if (myEquipment.Find(x => x.Slot == iSlot) != null) { return myEquipment.Find(x => x.Slot == iSlot); }
+                else { return null; }
+            }
+            catch { throw new ArgumentOutOfRangeException("I think you tried to search for a bad equip slot"); };
+            
         }
 
-        public int MAtk()
+        public List<clsSpell> mySpellsByType(int iType = 0)
         {
-            return BaseMAtk + ModMAtk;
+            List<clsSpell> returnSpells = new List<clsSpell>();
+            switch (iType)
+            {
+                case 0: //return all
+                    returnSpells = CurrentEQSpells();
+                    break;
+                case 1: //[C]ombat
+                    returnSpells = CurrentEQSpells().FindAll(x => x.spellType == "C");
+                    break;
+                case 2: //[P]assive
+                    returnSpells = CurrentEQSpells().FindAll(x => x.spellType == "P");
+                    break;
+                case 3: //[G]eneral / "out of combat castable"
+                    returnSpells = CurrentEQSpells().FindAll(x => x.spellType == "G");
+                    break;
+                case 4: //castable spells
+                    returnSpells.AddRange(CurrentEQSpells().FindAll(x => x.spellType == "C"));
+                    returnSpells.AddRange(CurrentEQSpells().FindAll(x => x.spellType == "G"));
+                    break;
+                case 5: //Item spells - return blank, these aren't "equipped" but this keeps consistency with master known spells
+                    break;
+            }
+            return returnSpells;
         }
 
-        public int Def()
-        {
-            return BaseDef + ModDef;
-        }
-
-        public int Res()
-        {
-            return BaseRes + ModRes;
-        }
-
-
-        public void SetBuffedStats(List<clsEquipment> myEquipList, List<clsMageEffect> myBuffList)
+        public void SetBuffedStats()
         {
             int aModPAtk = 0;
             int aModMAtk = 0;
             int aModDef = 0;
             int aModRes = 0;
+            int aModHP = 0;
 
-            if (myEquipList != null && myEquipList.Count > 0)
+            if (myEquipment != null && myEquipment.Count > 0)
             {
-                foreach (clsEquipment e in myEquipList)
+                foreach (clsEquipment e in myEquipment)
                 {
                     aModPAtk += e.PAtk();
                     aModMAtk += e.MAtk();
                     aModDef += e.Def();
                     aModRes += e.Res();
+                    aModHP += e.HP();
                 }
             }
-            /*
-            if (myBuffList != null && myBuffList.Count > 0)
-            {
-                foreach (clsMageEffect b in myBuffList)
-                {
-                    double mod = 0;
-                       switch (b.sPower)
-                    {
-                        case "D":
-                            mod = .1;
-                            break;
-                        case "C":
-                            mod = .25;
-                            break;
-                        case "B":
-                            mod = .5;
-                            break;
-                        case "A":
-                            mod = 1;
-                            break;
-                        case "S":
-                            mod = 2.5;
-                            break;
-                    }
-
-                    if (b.sType == "D") { mod *= -1; }
-                    switch (b.sTarget)
-                    {
-                        case "A": //p [A]tk
-                            aModPAtk += (int)Math.Ceiling(mod * BasePAtk);
-                            break;
-                        case "D": //[D]efence
-                            aModDef += (int)Math.Ceiling(mod * BaseDef);
-                            break;
-                        case "M": //[M]agic atk
-                            aModMAtk+= (int)Math.Ceiling(mod * BaseMAtk);
-                            break;
-                        case "R": //[R]esist
-                            aModRes += (int)Math.Ceiling(mod * BaseMAtk);
-                            break;
-                        case "Y": //ph[Y]sical stats/ pak+def
-                            aModPAtk += (int)Math.Ceiling(mod * BasePAtk);
-                            aModDef += (int)Math.Ceiling(mod * BaseDef);
-                            break;
-                        case "G": //ma[G]ic stats/ mak+res
-                            aModRes += (int)Math.Ceiling(mod * BaseMAtk);
-                            aModRes += (int)Math.Ceiling(mod * BaseRes);
-                            break;
-                        case "O": //[O]ffensive stats
-                            aModPAtk += (int)Math.Ceiling(mod * BasePAtk);
-                            aModPAtk += (int)Math.Ceiling(mod * BasePAtk);
-                            break;
-                        case "V": //defensi[V]e stats
-                            aModDef += (int)Math.Ceiling(mod * BaseDef);
-                            aModRes += (int)Math.Ceiling(mod * BaseRes);
-                            break;
-                    }
-                }
-            }
-            */
             ModPAtk = aModPAtk;
             ModMAtk = aModMAtk;
             ModDef = aModDef;
             ModRes = aModRes;
+        }
+
+        public void AddEffect(int anID, int aValue)
+        {
+            var obj = myEffects.FirstOrDefault(x => x.iID == anID);
+            if (obj != null) { obj.iValue += aValue; }
+            else { myEffects.Add(new clsMageEffect(anID, aValue)); }
+        }
+
+        public void SetEffects(List<clsMageEffect> someEffects)
+        {
+            myEffects = someEffects;
+        }
+        public void SetEquipment(List<clsEquipment> someEquipment)
+        {
+            myEquipment = someEquipment;
+        }
+        public void SetEQSpells(List<clsSpell> someSpells)
+        {
+            myEquippedSpells = someSpells;
         }
 
 
@@ -148,17 +150,30 @@ namespace BreadMage2
             switch (aType)
             {
                 case 1:
-                    return HealItems;
+                    return Ingredients;
                 case 2:
-                    return CombatItems;
+                    return CosmicEnergy;
                 case 3:
-                    return RestoreItems;
-                case 4:
-                    return MPItems;
+                    return ElementalMotes;
+                //case 4:
+                //    return MPItems;
                 default:
                     break;
             }
             return i;
+        }
+
+        public int EquippedSP()
+        {
+            int iReturn = 0;
+            if (CurrentEQSpells().Count > 0)
+            {
+                foreach (clsSpell s in CurrentEQSpells())
+                {
+                    iReturn += s.SPCost;
+                }
+            }
+            return iReturn;
         }
 
         public void AddComponents(int aType, int anAmount)
@@ -166,20 +181,21 @@ namespace BreadMage2
             switch (aType)
             {
                 case 1:
-                    HealItems += anAmount;
+                    Ingredients += anAmount;
                     break;
                 case 2:
-                    CombatItems += anAmount;
+                    CosmicEnergy += anAmount;
                     break;
                 case 3:
-                    RestoreItems += anAmount;
+                    ElementalMotes += anAmount;
                     break;
-                case 4:
-                    MPItems += anAmount;
-                    break;
+                //case 4:
+                //    MPItems += anAmount;
+                //    break;
                 default:
                     break;
             }
         }
+
     }
 }

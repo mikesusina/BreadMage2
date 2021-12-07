@@ -13,17 +13,20 @@ namespace BreadMage2
     {
         public int equipID { get; set; }
         public string ItemName { get; set; }
-        public int Slot { get; set; }
+        public int Slot { get; set; } //1 = helm 2=back 3=MH 4=OH 5=ACC, 0 is for all, for an unequip
         public string Stats { get; set; }
-        public string ExtraInfo { get; set; } //for adding abilities or other effects? idea: recycle effects like mold as add w/ weapon types and resist with armor types?
-        public string  Description { get; set; }
+        public string ExtraInfo { get; set; } // used in equip screen to detail effect info
+        public string Description { get; set; }
         public string ImgURL { get; set; }
 
 
-        private int PAtkStat { get; set; }
-        private int MAtkStat { get; set; }
-        private int DefStat { get; set; }
-        private int ResStat { get; set; }
+        private int PAtkStat { get; set; } = 0;
+        private int MAtkStat { get; set; } = 0;
+        private int DefStat { get; set; } = 0;
+        private int ResStat { get; set; } = 0;
+        private int HPStat { get; set; } = 0;
+        private int SPStat { get; set; } = 0;
+        private int PassiveInt { get; set; } = 0;
 
         private List<string> StatData { get; set; }
 
@@ -48,8 +51,17 @@ namespace BreadMage2
         public int MAtk() { return MAtkStat; }
         public int Def() { return DefStat; }
         public int Res() { return ResStat; }
+        public int HP() { return HPStat; }
+        public int SP() { return SPStat; }
+        public int PassiveEffect() { return PassiveInt; }
 
-
+        public string getStatInfo()
+        {
+            string s = "";
+            if (StatData != null)
+                { foreach (string t in StatData) { s += Environment.NewLine + t; } }
+            return s;
+        }
 
 
         private void ParseEquipmentData(DataTable ds)
@@ -124,6 +136,15 @@ namespace BreadMage2
                         break;
                     case "RES": // res
                         ResStat = Convert.ToInt32(s.Substring(4));
+                        break;
+                    case "HPM": //HP Max
+                        HPStat = Convert.ToInt32(s.Substring(4));
+                        break;
+                    case "SPM": //SP Max
+                        SPStat = Convert.ToInt32(s.Substring(4));
+                        break;
+                    case "PID": //passive ID - this is the SPELL ID
+                        PassiveInt = Convert.ToInt32(s.Substring(4));
                         break;
                     default:
                         break;

@@ -16,24 +16,29 @@ namespace BreadMage2
         //the generic class will used to hold values for save/current values data
         public int iID { get; set; }
         public int iValue { get; set; } = 0; //the "tick"
-        public int iTimer { get; set; } = 0;
 
-        
+
 
 
         public clsMageEffect() { }
 
-        public clsMageEffect(int anID, int aValue, int aTick)
+        public clsMageEffect(int anID, int aTick)
         {
             iID = anID;
-            iValue = aValue;
-            iTimer = aTick;
-        }
+            iValue = aTick;
+            }
 
 
         public clsMageEffect(List<clsMageEffect> s, int anID = 1)
         {
             s.Find(x => x.iID == anID);
+        }
+
+        public bool tickType()
+        {
+            List<int> tickTypes = new List<int> {1, 2, 3, 7, 8, 10, 11, 12};
+            if (tickTypes.Contains(iID)) { return true; }
+            else return false;
         }
         
        

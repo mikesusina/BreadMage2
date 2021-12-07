@@ -11,7 +11,9 @@ namespace BreadMage2
         public int SpellTier { get; set; } = 1;
         public int QuestTracker { get; set; } = 1;
 
-        public bool thing1 { get; set; } = true;
+        public int DayTracker { get; set; } = 0; 
+
+        public bool thing1 { get; set; } = false;
         public bool thing2 { get; set; } = true;
         public bool thing3 { get; set; } = true;
         public bool thing4 { get; set; } = true;

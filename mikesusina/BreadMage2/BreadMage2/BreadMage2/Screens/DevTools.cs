@@ -50,27 +50,30 @@ namespace BreadMage2.Screens
         {
             if (txbHeal.Text == null || txbHeal.Text == "")
             {
-                myGameScr.gMage.HP = myGameScr.gMage.HPmax;
-                myGameScr.gMage.MP = myGameScr.gMage.MPmax;
+                myGameScr.gMage.Stats.HP = myGameScr.gMage.Stats.HPMax;
                 //myGameScr.gMage.SP = myGameScr.gMage.SPmax;
-                myGameScr.bMage.UpdateBars(myGameScr.gMage);
+                myGameScr.bMage.UpdateBars();
 
 
             }
             else if (int.TryParse(txbHeal.Text, out int outnum) == true)
             {
 
-                int i = myGameScr.gMage.HP + (Convert.ToInt32(txbHeal.Text));
-                myGameScr.gMage.HP = i;
-                myGameScr.bMage.UpdateBars(myGameScr.gMage);
+                int i = myGameScr.gMage.Stats.HP + (Convert.ToInt32(txbHeal.Text));
+                myGameScr.gMage.Stats.HP = i;
+                myGameScr.bMage.UpdateBars();
             }
 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-
-        
+            //myGameScr.gMage.AddEffect(13, 1, 1);
+            //myGameScr.bMage.BuffStuff();
+            myGameScr.gMage.GetUniqueItem(4);
+            myGameScr.gMage.GetUniqueItem(3);
+            myGameScr.gMage.EquipItem(myGameScr.GameLibraries.EquipLib().Find(x => x.equipID == 4));
+            myGameScr.bMage.UpdateBars();
         }
 
         private void btnQuickSlots_Click(object sender, EventArgs e)
@@ -138,6 +141,11 @@ namespace BreadMage2.Screens
 
             string t = "ID = " + tID.ToString() + Environment.NewLine + "RT = " + tRate.ToString();
             MessageBox.Show(t);
+        }
+
+        private void DevTools_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

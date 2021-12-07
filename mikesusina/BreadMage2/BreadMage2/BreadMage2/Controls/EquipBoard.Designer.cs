@@ -34,34 +34,35 @@
             this.lb1H = new System.Windows.Forms.Label();
             this.lbBack = new System.Windows.Forms.Label();
             this.lblHelm = new System.Windows.Forms.Label();
-            this.pb2H = new System.Windows.Forms.PictureBox();
-            this.pbAcc2 = new System.Windows.Forms.PictureBox();
-            this.pbAcc1 = new System.Windows.Forms.PictureBox();
-            this.pb1H = new System.Windows.Forms.PictureBox();
-            this.pbBack = new System.Windows.Forms.PictureBox();
-            this.pbHelm = new System.Windows.Forms.PictureBox();
             this.cbHelm = new System.Windows.Forms.ComboBox();
             this.cbBack = new System.Windows.Forms.ComboBox();
             this.cb1H = new System.Windows.Forms.ComboBox();
             this.cb2H = new System.Windows.Forms.ComboBox();
             this.cbAcc1 = new System.Windows.Forms.ComboBox();
             this.cbAcc2 = new System.Windows.Forms.ComboBox();
-            this.pbSelected = new System.Windows.Forms.PictureBox();
-            this.pbEquipped = new System.Windows.Forms.PictureBox();
             this.rtbSelectedStats = new System.Windows.Forms.RichTextBox();
             this.rtbDescription = new System.Windows.Forms.RichTextBox();
             this.rtbEquippedStats = new System.Windows.Forms.RichTextBox();
             this.btnConfirm = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lbEquipped = new System.Windows.Forms.Label();
+            this.pbEquipped = new System.Windows.Forms.PictureBox();
+            this.pbSelected = new System.Windows.Forms.PictureBox();
+            this.pb2H = new System.Windows.Forms.PictureBox();
+            this.pbAcc2 = new System.Windows.Forms.PictureBox();
+            this.pbAcc1 = new System.Windows.Forms.PictureBox();
+            this.pb1H = new System.Windows.Forms.PictureBox();
+            this.pbBack = new System.Windows.Forms.PictureBox();
+            this.pbHelm = new System.Windows.Forms.PictureBox();
+            this.lbSelected = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.pbEquipped)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSelected)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2H)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbAcc2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbAcc1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1H)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbBack)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbHelm)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbSelected)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbEquipped)).BeginInit();
             this.SuspendLayout();
             // 
             // lbAcc2
@@ -118,6 +119,146 @@
             this.lblHelm.TabIndex = 19;
             this.lblHelm.Text = "Helmet";
             // 
+            // cbHelm
+            // 
+            this.cbHelm.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbHelm.FormattingEnabled = true;
+            this.cbHelm.Location = new System.Drawing.Point(49, 35);
+            this.cbHelm.Name = "cbHelm";
+            this.cbHelm.Size = new System.Drawing.Size(170, 21);
+            this.cbHelm.TabIndex = 25;
+            this.cbHelm.SelectedIndexChanged += new System.EventHandler(this.cbHelm_SelectedIndexChanged);
+            // 
+            // cbBack
+            // 
+            this.cbBack.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbBack.FormattingEnabled = true;
+            this.cbBack.Location = new System.Drawing.Point(271, 35);
+            this.cbBack.Name = "cbBack";
+            this.cbBack.Size = new System.Drawing.Size(170, 21);
+            this.cbBack.TabIndex = 26;
+            this.cbBack.SelectedIndexChanged += new System.EventHandler(this.cbBack_SelectedIndexChanged);
+            // 
+            // cb1H
+            // 
+            this.cb1H.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb1H.FormattingEnabled = true;
+            this.cb1H.Location = new System.Drawing.Point(49, 128);
+            this.cb1H.Name = "cb1H";
+            this.cb1H.Size = new System.Drawing.Size(170, 21);
+            this.cb1H.TabIndex = 27;
+            this.cb1H.SelectedIndexChanged += new System.EventHandler(this.cb1H_SelectedIndexChanged);
+            // 
+            // cb2H
+            // 
+            this.cb2H.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cb2H.FormattingEnabled = true;
+            this.cb2H.Location = new System.Drawing.Point(271, 128);
+            this.cb2H.Name = "cb2H";
+            this.cb2H.Size = new System.Drawing.Size(170, 21);
+            this.cb2H.TabIndex = 28;
+            this.cb2H.SelectedIndexChanged += new System.EventHandler(this.cb2H_SelectedIndexChanged);
+            // 
+            // cbAcc1
+            // 
+            this.cbAcc1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbAcc1.FormattingEnabled = true;
+            this.cbAcc1.Location = new System.Drawing.Point(49, 225);
+            this.cbAcc1.Name = "cbAcc1";
+            this.cbAcc1.Size = new System.Drawing.Size(170, 21);
+            this.cbAcc1.TabIndex = 29;
+            this.cbAcc1.SelectedIndexChanged += new System.EventHandler(this.cbAcc1_SelectedIndexChanged);
+            // 
+            // cbAcc2
+            // 
+            this.cbAcc2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbAcc2.FormattingEnabled = true;
+            this.cbAcc2.Location = new System.Drawing.Point(271, 225);
+            this.cbAcc2.Name = "cbAcc2";
+            this.cbAcc2.Size = new System.Drawing.Size(170, 21);
+            this.cbAcc2.TabIndex = 30;
+            this.cbAcc2.SelectedIndexChanged += new System.EventHandler(this.cbAcc2_SelectedIndexChanged);
+            // 
+            // rtbSelectedStats
+            // 
+            this.rtbSelectedStats.BackColor = System.Drawing.Color.Black;
+            this.rtbSelectedStats.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbSelectedStats.ForeColor = System.Drawing.Color.White;
+            this.rtbSelectedStats.Location = new System.Drawing.Point(13, 345);
+            this.rtbSelectedStats.Name = "rtbSelectedStats";
+            this.rtbSelectedStats.Size = new System.Drawing.Size(206, 110);
+            this.rtbSelectedStats.TabIndex = 33;
+            this.rtbSelectedStats.Text = "";
+            // 
+            // rtbDescription
+            // 
+            this.rtbDescription.BackColor = System.Drawing.Color.Black;
+            this.rtbDescription.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbDescription.ForeColor = System.Drawing.Color.White;
+            this.rtbDescription.Location = new System.Drawing.Point(13, 461);
+            this.rtbDescription.Name = "rtbDescription";
+            this.rtbDescription.Size = new System.Drawing.Size(206, 110);
+            this.rtbDescription.TabIndex = 34;
+            this.rtbDescription.Text = "";
+            // 
+            // rtbEquippedStats
+            // 
+            this.rtbEquippedStats.BackColor = System.Drawing.Color.Black;
+            this.rtbEquippedStats.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbEquippedStats.ForeColor = System.Drawing.Color.White;
+            this.rtbEquippedStats.Location = new System.Drawing.Point(235, 345);
+            this.rtbEquippedStats.Name = "rtbEquippedStats";
+            this.rtbEquippedStats.Size = new System.Drawing.Size(206, 110);
+            this.rtbEquippedStats.TabIndex = 35;
+            this.rtbEquippedStats.Text = "";
+            // 
+            // btnConfirm
+            // 
+            this.btnConfirm.Font = new System.Drawing.Font("Trebuchet MS", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnConfirm.Location = new System.Drawing.Point(230, 519);
+            this.btnConfirm.Name = "btnConfirm";
+            this.btnConfirm.Size = new System.Drawing.Size(103, 52);
+            this.btnConfirm.TabIndex = 36;
+            this.btnConfirm.Text = "Save and Exit";
+            this.btnConfirm.UseVisualStyleBackColor = true;
+            this.btnConfirm.Click += new System.EventHandler(this.btnConfirm_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Font = new System.Drawing.Font("Trebuchet MS", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancel.Location = new System.Drawing.Point(339, 519);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(102, 52);
+            this.btnCancel.TabIndex = 37;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // lbEquipped
+            // 
+            this.lbEquipped.AutoSize = true;
+            this.lbEquipped.Location = new System.Drawing.Point(232, 293);
+            this.lbEquipped.Name = "lbEquipped";
+            this.lbEquipped.Size = new System.Drawing.Size(55, 13);
+            this.lbEquipped.TabIndex = 38;
+            this.lbEquipped.Text = "Equipped:";
+            // 
+            // pbEquipped
+            // 
+            this.pbEquipped.Location = new System.Drawing.Point(235, 309);
+            this.pbEquipped.Name = "pbEquipped";
+            this.pbEquipped.Size = new System.Drawing.Size(30, 30);
+            this.pbEquipped.TabIndex = 32;
+            this.pbEquipped.TabStop = false;
+            // 
+            // pbSelected
+            // 
+            this.pbSelected.Location = new System.Drawing.Point(13, 309);
+            this.pbSelected.Name = "pbSelected";
+            this.pbSelected.Size = new System.Drawing.Size(30, 30);
+            this.pbSelected.TabIndex = 31;
+            this.pbSelected.TabStop = false;
+            // 
             // pb2H
             // 
             this.pb2H.Location = new System.Drawing.Point(235, 119);
@@ -166,131 +307,20 @@
             this.pbHelm.TabIndex = 13;
             this.pbHelm.TabStop = false;
             // 
-            // cbHelm
+            // lbSelected
             // 
-            this.cbHelm.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbHelm.FormattingEnabled = true;
-            this.cbHelm.Location = new System.Drawing.Point(49, 35);
-            this.cbHelm.Name = "cbHelm";
-            this.cbHelm.Size = new System.Drawing.Size(170, 21);
-            this.cbHelm.TabIndex = 25;
-            // 
-            // cbBack
-            // 
-            this.cbBack.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbBack.FormattingEnabled = true;
-            this.cbBack.Location = new System.Drawing.Point(271, 35);
-            this.cbBack.Name = "cbBack";
-            this.cbBack.Size = new System.Drawing.Size(170, 21);
-            this.cbBack.TabIndex = 26;
-            // 
-            // cb1H
-            // 
-            this.cb1H.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb1H.FormattingEnabled = true;
-            this.cb1H.Location = new System.Drawing.Point(49, 128);
-            this.cb1H.Name = "cb1H";
-            this.cb1H.Size = new System.Drawing.Size(170, 21);
-            this.cb1H.TabIndex = 27;
-            // 
-            // cb2H
-            // 
-            this.cb2H.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cb2H.FormattingEnabled = true;
-            this.cb2H.Location = new System.Drawing.Point(271, 128);
-            this.cb2H.Name = "cb2H";
-            this.cb2H.Size = new System.Drawing.Size(170, 21);
-            this.cb2H.TabIndex = 28;
-            // 
-            // cbAcc1
-            // 
-            this.cbAcc1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbAcc1.FormattingEnabled = true;
-            this.cbAcc1.Location = new System.Drawing.Point(49, 225);
-            this.cbAcc1.Name = "cbAcc1";
-            this.cbAcc1.Size = new System.Drawing.Size(170, 21);
-            this.cbAcc1.TabIndex = 29;
-            // 
-            // cbAcc2
-            // 
-            this.cbAcc2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbAcc2.FormattingEnabled = true;
-            this.cbAcc2.Location = new System.Drawing.Point(271, 225);
-            this.cbAcc2.Name = "cbAcc2";
-            this.cbAcc2.Size = new System.Drawing.Size(170, 21);
-            this.cbAcc2.TabIndex = 30;
-            // 
-            // pbSelected
-            // 
-            this.pbSelected.Location = new System.Drawing.Point(13, 309);
-            this.pbSelected.Name = "pbSelected";
-            this.pbSelected.Size = new System.Drawing.Size(30, 30);
-            this.pbSelected.TabIndex = 31;
-            this.pbSelected.TabStop = false;
-            // 
-            // pbEquipped
-            // 
-            this.pbEquipped.Location = new System.Drawing.Point(235, 309);
-            this.pbEquipped.Name = "pbEquipped";
-            this.pbEquipped.Size = new System.Drawing.Size(30, 30);
-            this.pbEquipped.TabIndex = 32;
-            this.pbEquipped.TabStop = false;
-            // 
-            // rtbSelectedStats
-            // 
-            this.rtbSelectedStats.Location = new System.Drawing.Point(13, 345);
-            this.rtbSelectedStats.Name = "rtbSelectedStats";
-            this.rtbSelectedStats.Size = new System.Drawing.Size(150, 78);
-            this.rtbSelectedStats.TabIndex = 33;
-            this.rtbSelectedStats.Text = "";
-            // 
-            // rtbDescription
-            // 
-            this.rtbDescription.Location = new System.Drawing.Point(13, 429);
-            this.rtbDescription.Name = "rtbDescription";
-            this.rtbDescription.Size = new System.Drawing.Size(150, 78);
-            this.rtbDescription.TabIndex = 34;
-            this.rtbDescription.Text = "";
-            // 
-            // rtbEquippedStats
-            // 
-            this.rtbEquippedStats.Location = new System.Drawing.Point(235, 345);
-            this.rtbEquippedStats.Name = "rtbEquippedStats";
-            this.rtbEquippedStats.Size = new System.Drawing.Size(150, 78);
-            this.rtbEquippedStats.TabIndex = 35;
-            this.rtbEquippedStats.Text = "";
-            // 
-            // btnConfirm
-            // 
-            this.btnConfirm.Location = new System.Drawing.Point(178, 466);
-            this.btnConfirm.Name = "btnConfirm";
-            this.btnConfirm.Size = new System.Drawing.Size(131, 41);
-            this.btnConfirm.TabIndex = 36;
-            this.btnConfirm.Text = "Confirm";
-            this.btnConfirm.UseVisualStyleBackColor = true;
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(315, 466);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(132, 41);
-            this.btnCancel.TabIndex = 37;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            // 
-            // lbEquipped
-            // 
-            this.lbEquipped.AutoSize = true;
-            this.lbEquipped.Location = new System.Drawing.Point(225, 293);
-            this.lbEquipped.Name = "lbEquipped";
-            this.lbEquipped.Size = new System.Drawing.Size(55, 13);
-            this.lbEquipped.TabIndex = 38;
-            this.lbEquipped.Text = "Equipped:";
+            this.lbSelected.AutoSize = true;
+            this.lbSelected.Location = new System.Drawing.Point(10, 293);
+            this.lbSelected.Name = "lbSelected";
+            this.lbSelected.Size = new System.Drawing.Size(52, 13);
+            this.lbSelected.TabIndex = 39;
+            this.lbSelected.Text = "Selected:";
             // 
             // EquipBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lbSelected);
             this.Controls.Add(this.lbEquipped);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnConfirm);
@@ -319,14 +349,14 @@
             this.Controls.Add(this.pbHelm);
             this.Name = "EquipBoard";
             this.Size = new System.Drawing.Size(450, 585);
+            ((System.ComponentModel.ISupportInitialize)(this.pbEquipped)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSelected)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb2H)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbAcc2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbAcc1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1H)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbBack)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbHelm)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbSelected)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbEquipped)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -360,5 +390,6 @@
         private System.Windows.Forms.Button btnConfirm;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Label lbEquipped;
+        private System.Windows.Forms.Label lbSelected;
     }
 }

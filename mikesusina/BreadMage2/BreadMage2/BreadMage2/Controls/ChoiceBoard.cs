@@ -27,12 +27,14 @@ namespace BreadMage2.Controls
         private Button btnChoiceThree { get; set; }
         private Button btnChoiceFour { get; set; }
 
-
+        /* I think this can go - 
+         * 
         public ChoiceBoard(clsChoiceAdventure anAdventure)
         {
             InitializeComponent();
 
-            tbChoiceText.Text = anAdventure.AdvText;
+            string sText = TextFixer(anAdventure.AdvText);
+            tbChoiceText.Text = sText;
 
             //load image
             //pbMonster.Image = Properties.Resources.[URL];
@@ -42,25 +44,32 @@ namespace BreadMage2.Controls
             pbChoicePic.Show();
         }
 
+        */
 
 
-
-        public ChoiceBoard(GameScreen aGS, clsChoiceAdventure anAdventure)
+        public ChoiceBoard(GameScreen aGS, int anID)
         {
             InitializeComponent();
-
-            tbChoiceText.Text = anAdventure.AdvText;
-
+            sGameScreen = aGS;
             // parse out all relevant data
             // generate any buttons if needed
             // wait for user input
 
-            cChoice = anAdventure;
-            sGameScreen = aGS;
+            clsChoiceAdventure anAdventure = aGS.GameLibraries.ChoiceLib().Find(x => x.AdvID == anID);
+            if (anAdventure.ReplaceCondition != null && CheckReplacement(anAdventure.ReplaceCondition) == true)
+            {
+                int replaceID = anAdventure.ReplaceID;
+                anAdventure = aGS.GameLibraries.ChoiceLib().Find(x => x.AdvID == replaceID);
+            }
+
+            cChoice = anAdventure.ShallowCopy();
+
+            string sText = TextFixer(cChoice.AdvText);
+            tbChoiceText.Text = sText;
 
             //buttons:
-            btnChoiceOne.Text = cChoice.Btn1;
-            btnChoiceTwo.Text = cChoice.Btn2;
+            btnChoiceOne.Text = TextFixer(cChoice.Btn1);
+            btnChoiceTwo.Text = TextFixer(cChoice.Btn2);
 
 
             //TODO: implement conditions, clean up how these are generated (ie if 3 won't exist but 4 will)
@@ -73,7 +82,7 @@ namespace BreadMage2.Controls
 
                 aButton.Size = new Size(250, 30);
                 aButton.Location = p;
-                aButton.Text = cChoice.Btn3;
+                aButton.Text = TextFixer(cChoice.Btn3);
                 aButton.Font = btnChoiceOne.Font;
                 btnChoiceThree = aButton;
 
@@ -94,7 +103,7 @@ namespace BreadMage2.Controls
 
                 aButton.Size = new Size(250, 30);
                 aButton.Location = p;
-                aButton.Text = cChoice.Btn4;
+                aButton.Text = TextFixer(cChoice.Btn4);
                 aButton.Font = btnChoiceOne.Font;
                 btnChoiceFour = aButton;
 
@@ -102,6 +111,14 @@ namespace BreadMage2.Controls
                 btnChoiceFour.Click += new EventHandler(BtnFourClick);
                 btnChoiceFour.Show();
             }
+
+
+            //load image
+            object o = Properties.Resources.ResourceManager.GetObject(cChoice.ImgURL);
+            if (o is Image) { pbChoicePic.Image = o as Image; }
+            else { pbChoicePic.Image = Properties.Resources.BreadMage2; }
+            pbChoicePic.Show();
+
         }
 
         private void ResolveChoice()
@@ -145,8 +162,8 @@ namespace BreadMage2.Controls
                 switch (s.Substring(0, 3))
                 {
                     case "FLV": // flavor text
-                        if (bFreshText) { tbChoiceText.Text = s.Substring(4); bFreshText = false; }
-                        else { tbChoiceText.AppendText(Environment.NewLine + s.Substring(4)); }
+                        if (bFreshText) { tbChoiceText.Text = TextFixer(s.Substring(4)); bFreshText = false; }
+                        else { tbChoiceText.AppendText(Environment.NewLine + TextFixer(s.Substring(4))); }
                         break;
                     case "MON": // Enter combat w/ monster ID
                         //trigger fight on window close, not before!
@@ -157,6 +174,7 @@ namespace BreadMage2.Controls
                     case "ITM": // grant item (add ability to grant more than one. Handle multiple item drops as individual tags. actually give an item??
                         int iItemID = Convert.ToInt32(s.Substring(4));
                         string t = "You got a " + sGameScreen.GetItemName(iItemID);
+                        sGameScreen.gMage.GetUniqueItem(iItemID);
                         sGameScreen.gLog.Add(t);
                         /*
                         int i = 1;
@@ -199,8 +217,8 @@ namespace BreadMage2.Controls
                     switch (s.Substring(0, 3))
                     {
                         case "FLV": // flavor text
-                            if (bFreshText) { tbChoiceText.Text = s.Substring(4); bFreshText = false; }
-                            else { tbChoiceText.AppendText(Environment.NewLine + s.Substring(4)); }
+                            if (bFreshText) { tbChoiceText.Text = TextFixer(s.Substring(4)); bFreshText = false; }
+                            else { tbChoiceText.AppendText(Environment.NewLine + TextFixer(s.Substring(4))); }
                             break;
                         case "MON": // Enter combat w/ monster ID
                             //trigger fight on window close, not before!
@@ -253,22 +271,18 @@ namespace BreadMage2.Controls
                 //remember to remove this:
                 advID = 1;
                 // if it chains, no need to wait for window close - refresh that info now
-                sGameScreen.ChoiceChain(sGameScreen.GameLibraries.ChoiceLib().Find(x => x.AdvID == advID));
+                sGameScreen.ChoiceChain(advID);
             }
             else if (bFightFlag == true)
             {
 
             }
+            btnClose.Enabled = true;
+            btnClose.Show();
+            if (bFightFlag) { btnClose.Text = "Commence the bakedown"; }
+            else { btnClose.Text = "Click to continue..."; }
 
-            {
-                btnClose.Enabled = true;
-                btnClose.Show();
-                if (bFightFlag) { btnClose.Text = "Commence the bakedown"; }
-                else { btnClose.Text = "Click to continue..."; }
-
-                //TODO: remove buttons, strip out actions
-            }
-
+            //TODO: remove buttons, strip out actions
         }
 
 
@@ -320,14 +334,34 @@ namespace BreadMage2.Controls
             return b;
         }
 
+        private bool CheckReplacement(string s)
+        {
+            bool b = false;
+            switch (s.Substring(0, 3))
+            {
+                case "ITM": // Item obtained?
+                    if (sGameScreen.gMage.GetSaveData().gottenItems.Contains(Convert.ToInt32(s.Substring(4)))) { b = true; }
+                    break;
+                case "LVL": //Level requirement
+                    break;
+                case "FLG": // Game flag check
+                    //sGameScreen.gMage.myGameFlags.CheckWhatever()
+                    break;
+                case "MTD": //custom scripts - needs updating for checking true/false?
+                    //RunMethod(s.Substring(4));
+                    break;
+                default:
+                    break;
+            }
+            return b;
+        }
+
         /// <summary>
         /// Begin custom result methods
         /// </summary>
 
         private void RunMethod(string s)
         {
-            engChoice c = new engChoice();
-
             Type t = this.GetType();
             MethodInfo mi = t.GetMethod(s, BindingFlags.NonPublic | BindingFlags.Instance);
             mi.Invoke(this, new object[] { });
@@ -355,5 +389,14 @@ namespace BreadMage2.Controls
             string s = tag + "=" + text;
             lExtraData.Add(s);
         }
+
+        private string TextFixer(string s)
+        {
+            //there will probably be more here, but jsut to get this started - 
+            s = s.Replace("%n", sGameScreen.gMage.GetSaveData().mageName);
+            return s;
+        }
+
+
     }
 }
