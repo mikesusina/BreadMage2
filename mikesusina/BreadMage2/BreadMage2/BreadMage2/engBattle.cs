@@ -1,68 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BreadMage2.Controls;
-using System.Data.OleDb;
 using System.Windows.Forms;
 
 namespace BreadMage2
 {
-    class engBattle
+    public class engBattle
     {
-        private GameScreen myGameScr;
+        private engGame myGame;
         private int MageDefend = 0;
         private int spellTier;
-        private int bDamage;
         private int bStackInfo;
         private int battleSP = 0;
         private int iMonModifier = 1; // the mob "personality"
         private string sTurn;
+        private string monsterStatus = "normal";
+        public bool newTurn = false;
+        public bool theJump = true;
 
-        private clsMonster currentMonster;
+        public string battleResult = "none";
+
+        private clsMonster currentMonster => myGame.gMonster;
         private clsSpell spellSlinger;
         private DamageInfoChatter currentDamageInfo;
 
-        public engBattle(GameScreen aGameScr)
+        public engBattle(engGame aGame)
         {
-            myGameScr = aGameScr;
-            myGameScr.bMage.UpdateBars();
-            currentMonster = aGameScr.gMonster;
+            myGame = aGame;
+            myGame.bMage.UpdateBars();
             spellSlinger = new clsSpell();
             spellSlinger = null;
             currentDamageInfo = new DamageInfoChatter();
             spellTier = 0;
-            battleSP = myGameScr.gMage.Stats.CurrentMaxSP;
+            battleSP = myGame.gMage.Stats.CurrentMaxSP;
+        }
+
+        public bool BothAlive()
+        {
+            if (myGame.gMonster.HP <= 0)
+            {
+                battleResult = "win";
+                return false;
+            }
+            if (myGame.gMage.Stats.HP <= 0)
+            {
+                battleResult = "lose";
+                return false;
+            }
+            return true;
         }
 
         public void LoadFight()
         {
-            // roll initiative - do better than a flip
-            int i = int.Parse(DateTime.Now.ToString("MM/DD/yy h:mm:ss").Substring(DateTime.Now.ToString("MM/DD/yy h:mm:ss").Length - 1, 1));
-            bool bEven = (i != 0 && i != 2 && i != 4 && i != 6 && i != 8);
-            // lost initiative - monster attacks first
-
-            //override to lose init
-            //WHATEVER IS SET HERE ACTUALLY LOSES INIT
-            //first turn flips on battle begin to add chat notification
-            //bEven = false;
-
-            if (bEven)
-            {
-                sTurn = "Monster";
-            }
-            else
-            {
-                sTurn = "Mage";
-            }
-
-
             //generate the monster personality (int)
             //common:               rare:
             //1: patk lean          6: berzerker (phys or mag boosts + lean)
             //2  matk lean          7: stout (+ hp)
-            //3  ability lean       8: lucky (flay % to dodge and separately bonus damage
+            //3  ability lean       8: lucky (flat % to dodge and separately bonus damage)
             //4  defender                   
 
             //low roll:
@@ -71,14 +65,14 @@ namespace BreadMage2
             List<int> lTypes = new List<int>();
 
             //14-19: rare type
-            if (myGameScr.gRandom.Next(21) > 14) {lTypes.AddRange(new List<int>() { 6, 7, 8 }); }
+            if (myGame.gRandom.Next(21) > 14) { lTypes.AddRange(new List<int>() { 6, 7, 8 }); }
             //2-13: common type
-            else if (myGameScr.gRandom.Next(21) > 2) { lTypes.AddRange(new List<int>() { 1, 2, 3, 4 }); }
+            else if (myGame.gRandom.Next(21) > 2) { lTypes.AddRange(new List<int>() { 1, 2, 3, 4 }); }
             //0-1: over it
             else { lTypes.Add(5); }
 
-            //iMonModifier = lTypes.ElementAt(myGameScr.gRandom.Next(lTypes.Count - 1));
-           //iMonModifier = 7;
+            //iMonModifier = lTypes.ElementAt(myGame.gRandom.Next(lTypes.Count - 1));
+            //iMonModifier = 7;
 
             if (iMonModifier == 6)
             {
@@ -97,15 +91,82 @@ namespace BreadMage2
             else if (iMonModifier == 7)
             {
                 currentMonster.ModStat(5, "D");
-                myGameScr.bFight.UpdateBars(currentMonster);
+                myGame.bFight.UpdateBars(currentMonster);
             }
+
+
+
+
+            // do better than a flip for initative, but for now...
+            int i = int.Parse(DateTime.Now.ToString("MM/DD/yy h:mm:ss").Substring(DateTime.Now.ToString("MM/DD/yy h:mm:ss").Length - 1, 1));
+            bool bEven = (i != 0 && i != 2 && i != 4 && i != 6 && i != 8);
+
+
+            if (bEven)
+            {
+                theJump = false;
+                myGame.ChatEngine.AddIntroChatter(2);
+                MonsterAttack();
+            }
+            else 
+            { 
+                theJump = true;
+                myGame.ChatEngine.AddIntroChatter(1);
+                TickPoison("mage");
+                Console.WriteLine(myGame.ChatEngine.infoQueue.Count);
+            }
+            if (myGame.ChatEngine.infoQueue.Count > 0)
+            {
+                myGame.ChatEngine.PostChatterQueue();
+                myGame.ChatEngine.ClearQueue();
+            }
+
         }
 
         private void ChangeTurn()
         {
-            if (sTurn == "Mage") { sTurn = "Monster"; }
-            else { sTurn = "Mage"; }
-            myGameScr.bFight.AddTurnChatter();
+
+            //old, current
+            //myGame.ChatEngine.AddTurnChatter();
+            //currentDamageInfo.ClearDamageInfo();
+
+            newTurn = true;
+            
+            TickPoison(sTurn);
+            
+            if (sTurn == "Mage")
+            {
+                
+                //tick mold (+message queue)
+                if (myGame.gMage.isStunned())
+                {
+                    //tick stun effect 
+                    //queue message
+                    //ChangeTurn();
+                    //end mage turn?
+
+                }
+                //is charging?
+                else
+                {
+                    WaitForMageInput();
+                }
+
+            }
+            else if (sTurn == "Monster")
+            {
+
+                if (currentMonster.StunCount > 0)
+                {
+                    //add new "stun" react clsChatter item, 0damage/tick  myGame.ChatEngine.nextEffectReactChatter("stun");
+                    currentMonster.AdjustEffect(8, -1);
+                    return;
+                }
+                else
+                {
+                    MonsterAttack();
+                }
+            }
         }
 
 
@@ -119,10 +180,6 @@ namespace BreadMage2
         {
             return currentDamageInfo;
         }
-        public clsMonster GetMonster()
-        {
-            return currentMonster;
-        }
         public int GetBattleSP() { return battleSP; }
 
         public void setSpellSlinger(clsSpell aSpell) { spellSlinger = aSpell; }
@@ -132,23 +189,21 @@ namespace BreadMage2
         /// </summary>
         /// <param name="MageAttacks"></param>
 
-        public void MageTurn()
+        public void WaitForMageInput()
         {
-            ChangeTurn();
-            //poison ticks "on start of turn" so just tick it now 
-            //*** this is where you'd implement a poison save spell - add it ass a buff? consume ticks no timer?, cast grants > 1
-            TickPoison(1);
-            QuickAttack();
-
+            myGame.ChatEngine.PostChatterQueue();
+            myGame.ChatEngine.ClearQueue();
             //update the bars one final time
-            myGameScr.bMage.UpdateBars();
+            myGame.bMage.UpdateBars();
         }
         
         public void MageAttack(int AtkType = 1)
         {
             try
             {
-                currentDamageInfo.ClearInfo();
+                DamageInfoChatter queueItem = new DamageInfoChatter();
+                currentDamageInfo.ClearDamageInfo();
+                string chatType = "physical";
 
                 // attack types//
                 // 1 = p attack
@@ -159,131 +214,168 @@ namespace BreadMage2
                 // spellbook
                 // item uses a turn?
                 // quick actions
-                if (myGameScr.gMage.isStunned())
+                switch (AtkType)
                 {
-                    //skip attack and clear status 
-                    myGameScr.gMage.RemoveEffect(8);
-                    myGameScr.bFight.nextEffectChatter("S");
-                    MonsterAttack();
-                }
-                else
-                {
-                    switch (AtkType)
-                    {
 
-                        case 1: // regular attack
-                            currentDamageInfo = MagePAttack();
-                            break;
-                        case 2:
-                            currentDamageInfo = MageMAttack();
-                            break;
-                        case 3:
-                            //check that components/SP cost are okay before casting!
-                            ComboBox b = (ComboBox)myGameScr.bFight.Controls["lstSpellBook"];
-                            ComboBox t = (ComboBox)myGameScr.bFight.Controls["lstSpellTier"];
-                            spellSlinger = b.SelectedItem as clsSpell;
-                            currentDamageInfo = CastSpell(spellSlinger, 1); // Convert.ToInt32(t.SelectedItem.ToString()));
-                            break;
-                        default:
-                            currentDamageInfo = MagePAttack();
-                            break;
-                    }
+                    case 1: // regular attack
+                        queueItem = MagePAttack();
+                        break;
+                    case 2:
+                        queueItem = MageMAttack();
+                        break;
+                    case 3:
+                        if ((myGame.bFight.Controls["boxSpells"] as ListBox).SelectedItem != null)
+                        {
+                            spellSlinger = (myGame.bFight.Controls["boxSpells"] as ListBox).SelectedItem as clsSpell;
+                            if (spellSlinger != null) { 
+                            }
+
+
+                        }//check that components/SP cost are okay before casting!
+                        //todo : validate SP cost!
+                        queueItem = CastMageSpell(spellSlinger, 1); // Convert.ToInt32(t.SelectedItem.ToString()));
+                        //queueItem.UpdateDamageInfo(currentDamageInfo.iDamage, currentDamageInfo.iTick, currentDamageInfo.chatType);
+                        break;
+                    default:
+                        currentDamageInfo = MagePAttack();
+                        break;
                 }
 
                 if (currentMonster.HP <= 0)
                 {
                     EndCombat();
                 }
-                else if (currentDamageInfo.iDamage > 0 || currentDamageInfo.iTick > 0)
+                else if (queueItem.iDamage > 0 || queueItem.iTick > 0)
                 {
                     if (spellSlinger != null && spellSlinger.spellName != "")
                     {
-                        myGameScr.bFight.AddSpellChatter(spellSlinger, bDamage);
+                        
+                        myGame.ChatEngine.nextSpellChatter(spellSlinger);
+                        myGame.ChatEngine.AddChatter(queueItem);
+
+                        queueItem.ChatText = myGame.ChatEngine.GetNextSpellChatter(spellSlinger);
+                        myGame.ChatEngine.AddChatItemToQueue(queueItem, "mage");
                     }
                     else
                     {
-                        myGameScr.bFight.AddChatter(myGameScr.bFight.nextMageChatter(AtkType));
-                        /*
-                        string s = "You gooshed it good!";
-                        myGameScr.bFight.AddChatterString(s);
-                        */
-                        myGameScr.bFight.AddChatter(currentDamageInfo);
+                        myGame.ChatEngine.nextMageChatter(chatType);
+                        myGame.ChatEngine.AddChatter(currentDamageInfo);
+
+                        queueItem.ChatText = myGame.ChatEngine.GetNextMageChatter(queueItem.chatType);
+                        myGame.ChatEngine.AddChatItemToQueue(queueItem, "mage");
                     }
-
-                    spellSlinger = null;
-                    // monster turn
-                    MonsterAttack();
                 }
-                //else if (currentDamageInfo.iDamage > 0) { /*miss stuff*/ }
-                else { spellSlinger = null;  MonsterAttack(); }
+                spellSlinger = null;
+                sTurn = "Monster";
+                ChangeTurn();
             }
-
             catch (ApplicationException ex)
             {
                 MessageBox.Show("Hey something didn't happen right with this..." + Environment.NewLine + Environment.NewLine + ex.InnerException.Message.ToString());
             }
         }
 
-        private int MagePAtkInt() { return myGameScr.gMage.PAtk() - currentMonster.PDef; }
+        private int MagePAtkInt() { return myGame.gMage.BuffedStat("PAK") - currentMonster.PDef; }
         private DamageInfoChatter MagePAttack()
         {
-            currentDamageInfo.ClearInfo();
-            currentDamageInfo.UpdateInfo(myGameScr.gMage.PAtk() - currentMonster.PDef, 0, "D");
-            HitMonster(currentDamageInfo);
+            currentDamageInfo.ClearDamageInfo();
+            currentDamageInfo.UpdateDamageInfo(myGame.gMage.BuffedStat("PAK") - currentMonster.PDef, 0, "physical");
+            HitMonster(currentDamageInfo.iDamage);
             return currentDamageInfo;
         }
 
-        private int MageMAtkInt() { return myGameScr.gMage.MAtk() - currentMonster.MDef; }
+        private int MageMAtkInt() { return myGame.gMage.BuffedStat("MAK") - currentMonster.MDef; }
         private DamageInfoChatter MageMAttack()
         {
-            currentDamageInfo.ClearInfo();
-            currentDamageInfo.UpdateInfo(myGameScr.gMage.MAtk() - currentMonster.MDef, 0, "G");
-            HitMonster(currentDamageInfo);
+            currentDamageInfo.ClearDamageInfo();
+            currentDamageInfo.UpdateDamageInfo(myGame.gMage.BuffedStat("MAK") - currentMonster.MDef, 0, "magic");
+            HitMonster(currentDamageInfo.iDamage);
             return currentDamageInfo;
         }
 
-        private DamageInfoChatter CastSpell(clsSpell aSpell, int aTier = 1)
+        private DamageInfoChatter CastMageSpell(clsSpell aSpell, int aTier = 1)
         {
-            currentDamageInfo.ClearInfo();
-            currentDamageInfo.effType = "G";
-            foreach (string s in aSpell.SpellBlocks)
-            {
-                if (s == "AD")
-                {
-                    int damage = MageMAtkInt();
-                    if (aSpell.Power == "D") { currentDamageInfo.iDamage = (int)Math.Ceiling(damage * .5); }
-                    else if (aSpell.Power == "C") { currentDamageInfo.iDamage = (int)Math.Ceiling(damage * .7); }
-                    else { currentDamageInfo.iDamage = (int)Math.Ceiling(damage * .9); }
-                }
-                else if (s == "AM")
-                {
-                    currentDamageInfo.iTick = (int)Math.Floor((double)(myGameScr.gMage.TickMod(1)));
-                    currentMonster.MoldCount += currentDamageInfo.iTick;
-                    currentDamageInfo.effType = "M";
-                }
-                else if (s == "AZ")
-                {
-                    currentDamageInfo.iTick = (int)Math.Floor((double)(myGameScr.gMage.TickMod(2)));
-                    currentMonster.ZestCount += currentDamageInfo.iTick;
-                    currentDamageInfo.effType = "Z";
-                }
-                else if (s == "AT")
-                {
-                    currentDamageInfo.iTick = (int)Math.Floor((double)(myGameScr.gMage.TickMod(3)));
-                    currentMonster.TensionCount += currentDamageInfo.iTick;
-                    currentDamageInfo.effType = "T";
-                }
-                else if (s == "AB")
-                {
-                    myGameScr.gMage.AddEffect(10, 1);
-                }
+            int FinalSP = aSpell.Power + (aTier - 1);
 
-            }
-            if (currentDamageInfo.iDamage != 0 || currentDamageInfo.iTick != 0)
+            //for casting spells and costs:
+            //tiers bump up spell power by 1/2
+            DamageInfoChatter spellDamageInfo = new DamageInfoChatter();
+                spellDamageInfo.ClearDamageInfo();
+            spellDamageInfo.chatType = "magic";
+            int iSpellPowerTick = 0;
+            double ValMod = 0;
+            switch (FinalSP)
             {
-                HitMonster(currentDamageInfo);
+                case 1:
+                    iSpellPowerTick = 1;
+                    ValMod = .5;
+                    break;
+                case 2:
+                    iSpellPowerTick = 1;
+                    ValMod = .7;
+                    break;
+                case 3:
+                    iSpellPowerTick = 2;
+                    ValMod = .9;
+                    break;
+                case 4:
+                    iSpellPowerTick = 2;
+                    ValMod = 1.2;
+                    break;
+                case 5:
+                    iSpellPowerTick = 3;
+                    ValMod = 1.75;
+                    break;
             }
-            return currentDamageInfo;
+
+            foreach (KeyValuePair<string, string> inflictItem in aSpell.SpellEffects.FindAll(x => x.Key == "inflict"))
+            {
+
+                clsEffect toAdd = new clsEffect();
+                switch (inflictItem.Value)
+                {
+                    case "physical":
+                        spellDamageInfo.iDamage += MagePAtkInt();
+                        if (spellDamageInfo.chatType == "N") { spellDamageInfo.chatType = "physical"; }
+
+                        break;
+                    case "magic":
+                        spellDamageInfo.iDamage += MageMAtkInt();
+                        if (spellDamageInfo.chatType == "N") { spellDamageInfo.chatType = "magic"; }
+                        break;
+                    case "mold":
+                    case "zest":
+                    case "tension":
+                        toAdd = myGame.GameLibraries.EffectLib().Find(x => x.sEffectName.ToLower() == inflictItem.Value).ShallowCopy();
+                        toAdd.Tick = myGame.gMage.TickMod(inflictItem.Value);
+                        myGame.gMonster.AddEffect(toAdd);
+                        spellDamageInfo.chatType = inflictItem.Value;
+                        spellDamageInfo.iTick = toAdd.Tick;
+                        break;
+                    
+                    case "stun":
+                        toAdd = myGame.GameLibraries.EffectLib().Find(x => x.sEffectName.ToLower() == inflictItem.Value).ShallowCopy();
+                        toAdd.Tick = 2;
+                        myGame.gMonster.AddEffect(toAdd);
+                        spellDamageInfo.chatType = inflictItem.Value;
+                        break;
+
+                    default:
+                        if (int.TryParse(inflictItem.Value, out int outnum) == true)  //inflict the effect ID on the enemy - debuffs basically
+                        {
+                            toAdd = myGame.GameLibraries.EffectLib().Find(x => x.iID == outnum).ShallowCopy();
+                            toAdd.Tick = 1;
+                            myGame.gMonster.AddEffect(toAdd);
+                        }
+                        break;
+
+                }
+            }
+            if (spellDamageInfo.iDamage != 0 || spellDamageInfo.iTick != 0)
+            {
+                HitMonster(spellDamageInfo.iDamage);
+            }
+            return spellDamageInfo;
 
             /*
             iApply = 0;
@@ -314,8 +406,6 @@ namespace BreadMage2
                     case "T": //tension
                         break;
                     case "S": //stun
-                        break;
-                    case "Q": //quick attack
                         break;
                     case "B": //block/dodge
                         break;
@@ -355,20 +445,19 @@ namespace BreadMage2
 
         public void MonsterTurn()
         {
-            currentDamageInfo.ClearInfo();
-            bDamage = 0;
-            bStackInfo = 0;
             ChangeTurn();
         }
 
 
-        public void MonsterAttack(int AtkType = 1)
+        public void MonsterAttack(string AtkType = "none")
         {
             bool bDodge = false;
-            currentDamageInfo.ClearInfo();
+            bool bParry = false;
+            clsChatterText queueItem = new clsChatterText();
+            List<clsChatterText> followupQueue = new List<clsChatterText>();
+
             //bDamage = 0;
             //bStackInfo = 0;
-            ChangeTurn();
 
             //potential moves:
             // attack
@@ -376,130 +465,170 @@ namespace BreadMage2
             // ability (if available? all monsters have at least one?)
             // ideas: monster healing, adding DoT attacks? enrage
 
-            //check for stun status and block an attack
-            //stun stuff
+            List<string> AttackList = currentMonster.PullAttackList();
+            //iMonModifier to be aware of:
+            //common:               rare:
+            //1: patk lean          
+            //2  matk lean          
+            //3  ability lean       8: lucky (flat % to dodge and separately bonus damage)
+            //4  defender   
+            switch (iMonModifier)
+            {
+                case 1:
+                    AttackList.Add("physical");
+                    break;
+                case 2:
+                    AttackList.Add("magic");
+                    break;
+                case 3:
+                    AttackList.Add("ability");
+                    break;
+                case 4:
+                    AttackList.Add("defend");
+                    break;
+            }
 
-            //tick poison on turn start
-            TickPoison(2);
 
-            //placeholder - utilizing m and p attack
-            /*int i = myGameScr.gRandom.Next(7);
-            if (i == 6) { AtkType = 8; }
-            else if (i == 5 ) { AtkType = 5; }
-            else if (i == 0 || i == 2|| i == 4 ) { AtkType = 1; }
-            else { AtkType = 2; }
-            */
-            //AtkType = 5;
+            //chat types are saved by the AtkType value - so 
+            AtkType = AttackList[myGame.gRandom.Next(AttackList.Count - 1)];
             switch (AtkType)
             {
-                case 1: //patk
-                    currentDamageInfo = MonsterPAttack();
+                case "physical": //patk
+                    queueItem = MonsterPAttack();
                     break;
-                case 2: //matk
-                    currentDamageInfo = MonsterMAttack();
+                case "magic": //matk
+                    queueItem = MonsterMAttack();
                     break;
-                case 3: // miss
+                case "miss": // miss
+                    queueItem = new DamageInfoChatter(0, 0);
+                    queueItem.chatType = AtkType;
                     break;
-                case 4: // defend
+                case "defend": // defend
+                    queueItem = new DamageInfoChatter(0, 0);
+                    queueItem.chatType = AtkType;
                     // bdamage = half damage? block attack completely?
                     break;
-                case 5: //mold
-                    currentDamageInfo = MonsterEffAttack("M");
+                case "block": //mold
+                    queueItem = new DamageInfoChatter(0, 0);
+                    queueItem.chatType = AtkType;
+                    //currentDamageInfo = MonsterEffAttack("M");
                     break;
-                case 6: //zest
+                case "ability": //zest
+                    queueItem = MonsterAbility();
                     break;
-                case 7: // tension
+                case "restore": // restore heal
                     break;
-                case 8: // stun
-                    myGameScr.gMage.AddEffect(8, 1);
-                    break;
-                case 9: //charge
-                    break;
-                case 10: // restore heal
-                    break;
+
+
+
             }
 
-            if (myGameScr.gMage.hasEffect(10))
+            //effect method? dodge chance(), parry chance()
+            //if (effect helper check for zest effect parry/block)
+            // passive effect check for dodge help
+            if (myGame.gMage.hasEffect(10))
             {
-                myGameScr.gMage.TickEffect(10);
-                if (myGameScr.gRandom.Next(3) == 2)
+                myGame.gMage.ProcEffect(10);
+                if (myGame.gRandom.Next(3) == 2)
                 {
                     bDodge = true;
+                    clsChatterText newFollowup = new clsChatterText();
+                    newFollowup.UpdateDamageInfo(0, 0, "dodge");
+                    newFollowup.ChatText = myGame.ChatEngine.GetNextEffectReactChatter("dodge");
+                    followupQueue.Add(newFollowup);
+                    queueItem.UpdateDamageInfo(0, 0, queueItem.chatType);
                 }
             }
+            if (myGame.gMonster.ZestCount() > 0)
+            {
+                int Roll = (3 * myGame.gMonster.ZestCount());
+                if (myGame.gRandom.Next(100) < Roll)
+                {
+                    bParry = true;
+                    clsChatterText newFollowup = new clsChatterText();
+                    newFollowup.UpdateDamageInfo((int)Math.Floor(queueItem.iDamage * .7), 0, "parry");
+                    newFollowup.ChatText = myGame.ChatEngine.GetNextEffectReactChatter("parry");
+                    followupQueue.Add(newFollowup);
+                    queueItem.iDamage = (int)Math.Floor(queueItem.iDamage * .1);
+                }
+            }
+            if (myGame.gMage.TensionCount() > 0 && false == true && queueItem.iDamage > 0)
+            {
+                //magic to figure out if it pops, and if so...
+                clsChatterText newFollowup = new clsChatterText();
+                // queueItem.UpdateDamageInfo((original damage + new tnesion pop damage), myGame.gMage.TensionCount() * -1, "tension");
+                newFollowup.UpdateDamageInfo((int)Math.Floor(myGame.gMage.TensionCount() * 1.5), myGame.gMage.TensionCount(), "tension");
+                newFollowup.ChatText = myGame.ChatEngine.GetNextEffectReactChatter("parry");
+                followupQueue.Add((newFollowup));
+                // newItem.ChatText = myGame.ChatEngine.GetNextEffectReactChatter("tension");
+                //
+                // tension = 0
+            }
 
-            if (bDodge) { currentDamageInfo.ClearInfo(); }
-            else { HitMage(currentDamageInfo); }
 
-            if (myGameScr.gMage.Stats.HP > 0)
+            if (currentMonster.HP <= 0) { EndCombat(); }
+            else { HitMage(queueItem.iDamage); }
+
+            if (myGame.gMage.Stats.HP > 0)
             {
 
-                if (bDodge) { myGameScr.bFight.AddChatter(myGameScr.bFight.nextEffectChatter("B")); }
-                else
+                //myGame.ChatEngine.nextMonsterChatter(currentDamageInfo.chatType);
+                //myGame.ChatEngine.AddChatter(currentDamageInfo);
+                queueItem.ChatText = myGame.ChatEngine.GetNextMonsterChatter(queueItem.chatType);
+                myGame.ChatEngine.AddChatItemToQueue(queueItem, "monster");
+                if (followupQueue.Count > 0)
                 {
-                    MonsterChatter b = myGameScr.bFight.nextMonsterChatter(AtkType);
-                    myGameScr.bFight.AddChatter(b);
-                    myGameScr.bFight.AddChatter(currentDamageInfo);
+                    foreach (clsChatterText c in followupQueue)
+                        { myGame.ChatEngine.AddChatItemToQueue(c, "mage"); }
                 }
-                
-
-                MageTurn();
             }
+            sTurn = "Mage";
+            ChangeTurn();
         }
 
         private DamageInfoChatter MonsterPAttack()
         {
-            currentDamageInfo.ClearInfo();
-            int damage = currentMonster.PAtk - myGameScr.gMage.Def();
+            DamageInfoChatter r = new DamageInfoChatter();
+            int damage = currentMonster.PAtk - myGame.gMage.BuffedStat("DEF");
             if (damage < 0 ) { damage = 0; }
-            currentDamageInfo.UpdateInfo(damage, 0, "P");
-            return currentDamageInfo;
+            r.UpdateDamageInfo(damage, 0, "physical");
+            return r;
         }
 
         private DamageInfoChatter MonsterMAttack()
         {
-            currentDamageInfo.ClearInfo();
-            int damage = currentMonster.MAtk - myGameScr.gMage.Res();
+            DamageInfoChatter r = new DamageInfoChatter();
+            int damage = currentMonster.MAtk - myGame.gMage.BuffedStat("RES");
             if (damage < 0) { damage = 0; }
-            currentDamageInfo.UpdateInfo(damage, 0, "G");
-            return currentDamageInfo;
+            r.UpdateDamageInfo(damage, 0, "magic");
+            return r;
         }
 
-        private DamageInfoChatter MonsterEffAttack(string effType)
+        private DamageInfoChatter MonsterAbility()
         {
-            currentDamageInfo.ClearInfo();
-            int iID = 0;
-            switch (effType)
-            {
-                case "M":
-                    iID = 1;
-                    break;
-                case "Z":
-                    iID = 2;
-                    break;
-                case "T":
-                    iID = 3;
-                    break;
-                case "S":
-                    iID = 8;
-                    break;
-                case "B":
-                    iID = 10;
-                    break;
-                case "L":
-                    iID = 11;
-                    break;
-            }
-            double baseDamage = (currentMonster.MAtk - myGameScr.gMage.Res()) / 3;
+            DamageInfoChatter r = new DamageInfoChatter();
+            string effCode = currentMonster.EffTypeList[myGame.gRandom.Next((currentMonster.EffTypeList.Count - 1))];
+            int bStackInfo = 1;
+
+
+            double baseDamage = (currentMonster.MAtk - myGame.gMage.BuffedStat("MAK")) / 3;
             if (baseDamage < 0) { baseDamage = 0; }
             int damage = (int)Math.Floor(baseDamage);
 
             //int iStack = 3;
-            bStackInfo = myGameScr.gRandom.Next(4, 8);
-            myGameScr.gMage.AddEffect(iID, bStackInfo);
-            currentDamageInfo.UpdateInfo(damage, bStackInfo, effType);
-
-            return currentDamageInfo;
+            clsEffect toAdd = myGame.GameLibraries.EffectLib().Find(x => x.sType == effCode).ShallowCopy();
+            
+            if (toAdd.sType == "M" || toAdd.sCat == "Z" || toAdd.sCat == "T") 
+            {
+                bStackInfo = myGame.gRandom.Next(4, 8); 
+                myGame.gMage.AddEffect(toAdd, bStackInfo);
+            }
+            if (toAdd.sType == "H" || toAdd.sType == "U" || toAdd.sType == "B")
+            {
+                
+            }
+            r.UpdateDamageInfo(damage, bStackInfo, myGame.ChatEngine.getEffectNamefromCode(effCode));
+            return r;
         }
 
 
@@ -514,97 +643,114 @@ namespace BreadMage2
 
         }
 
-        private void HitMage(DamageInfoChatter someInfo)
+        private void HitMage(int iDamage)
         {
+            int finalDamage = iDamage;
             // number has to be final here, no more math
-            if (someInfo.iDamage != 0) { myGameScr.gMage.Stats.HP -= someInfo.iDamage; }
-            if (myGameScr.gMage.Stats.HP <= 0)
+            if (iDamage != 0) 
             {
-                myGameScr.gMage.Stats.HP = 0;
-                myGameScr.GameOver();
+                myGame.gMage.AdjustHP(finalDamage*-1); 
+            }
+            if (myGame.gMage.Stats.HP <= 0)
+            {
+                myGame.gMage.Stats.HP = 0;
+                myGame.GameOver();
             }
         }
 
-        private void HitMonster(DamageInfoChatter someInfo)
+        private void HitMonster(int iDamage)
         {
-            currentMonster.HP -= someInfo.iDamage;
-            myGameScr.bFight.UpdateBars(currentMonster);
+            currentMonster.HP -= iDamage;
+            myGame.bFight.UpdateBars(currentMonster);
         }
 
-        private void TickPoison(int i = 0)
+        private void TickPoison(string Target = "")
         {
+            clsChatterText newItem = new clsChatterText();
             //these chatter additions are going to use a different chatter type
-            bDamage = 0;
-            currentDamageInfo.ClearInfo();
+            int bDamage = 0;
+            var list = new List<KeyValuePair<string, int>>();
 
-            if (i == 1)
+            if (Target.ToLower() == "mage")
             {
-                var list = new List<KeyValuePair<string, int>>();
-                list = myGameScr.gMage.TickMagePoison();
+                list = TickMagePoison();
                 bDamage = list.Find(x => x.Key == "damage").Value;
                 int iTick = list.Find(x => x.Key == "tick").Value;
 
                 if (bDamage > 0 || iTick > 0)
                 {
-                    currentDamageInfo.UpdateInfo(bDamage, iTick, "M");
-                    myGameScr.bFight.AddChatter(myGameScr.bFight.nextEffectChatter("M"));
-                    myGameScr.bFight.AddChatter(currentDamageInfo);
+                    newItem.UpdateDamageInfo(bDamage, iTick, "mold");
+                    newItem.ChatText = myGame.ChatEngine.GetNextEffectReactChatter("mold");
+                    myGame.ChatEngine.AddChatItemToQueue(newItem, "mage");
+
+                    /*
+                    currentDamageInfo.UpdateDamageInfo(bDamage, iTick, "magic");
+                    myGame.ChatEngine.nextEffectReactChatter("mold");
+                    myGame.ChatEngine.AddChatter(currentDamageInfo);
+                    */
                 }
-                HitMage(currentDamageInfo);
-                myGameScr.bMage.UpdateBars();
+                HitMage(newItem.iDamage);
+                myGame.bMage.UpdateBars();
             }
-            else if (i == 2)
+            else if (Target.ToLower() == "monster")
             {
+                list = currentMonster.TickMonsterPoison();
+                bDamage = list.Find(x => x.Key == "damage").Value;
+                int iTick = list.Find(x => x.Key == "tick").Value;
+                //to remove:
                 currentDamageInfo = currentMonster.TickPoison();
-                HitMonster(currentDamageInfo);
-                if (currentDamageInfo.iDamage > 0)
+
+                if (bDamage > 0 || iTick > 0)
                 {
-                    myGameScr.bFight.AddChatter(myGameScr.bFight.nextEffectChatter("M"));
-                    myGameScr.bFight.AddChatter(currentDamageInfo);
+                    newItem.UpdateDamageInfo(bDamage, iTick, "mold");
+                    newItem.ChatText = myGame.ChatEngine.GetNextEffectReactChatter("mold");
+                    myGame.ChatEngine.AddChatItemToQueue(newItem, "monster");
+
+
+                    newItem.UpdateDamageInfo(bDamage, iTick, "magic");
+                    //myGame.ChatEngine.nextEffectReactChatter("mold");
+                    //myGame.ChatEngine.AddChatter(newItem);
+                    HitMonster(newItem.iDamage);
                 }
             }
         }
 
-        private void QuickAttack()
+        public List<KeyValuePair<string, int>> TickMagePoison()
         {
-            if (myGameScr.gMage.hasQuickAttack())
+            List<KeyValuePair<string, int>> tickInfo = new List<KeyValuePair<string, int>>();
+            int damage = 0;
+            int iTick = 1;
+
+
+            clsEffect e = myGame.gMage.GetStatEffects().Find(x => x.iID == 1);
+            if (e != null)
             {
-                currentDamageInfo.ClearInfo();
-                //do this thing
-                int pdamage1 = myGameScr.gMage.PAtk() - currentMonster.PDef;
-                int pdamage2 = myGameScr.gMage.MAtk() - currentMonster.MDef;
-                if (pdamage1 >= pdamage2)
-                {
-                    currentDamageInfo.iDamage = pdamage1;
-                    currentDamageInfo.effType = "D";
-                }
-                else
-                {
-                    currentDamageInfo.iDamage = pdamage2;
-                    currentDamageInfo.effType = "G";
-                }
+                if (e.Tick > 2) { iTick = (int)(Math.Ceiling(Convert.ToDouble(e.Tick) / 2)); }
+                damage = 3 * iTick; //resist?
+                e.Tick -= iTick;
 
-                EffectChatter e = myGameScr.bFight.nextEffectChatter("Q");
-                myGameScr.bFight.AddChatter(e);
-                currentDamageInfo.effType = "Q";
-                myGameScr.bFight.AddChatter(currentDamageInfo);
+                if (e.Tick <= 0) { myGame.gMage.GetStatEffects().Remove(e); }
 
-                HitMonster(currentDamageInfo);
+                tickInfo.Add(new KeyValuePair<string, int>("damage", damage));
+                //the tick value returned should be negative, since from here on it's for chat info
+                tickInfo.Add(new KeyValuePair<string, int>("tick", iTick * -1));
             }
+
+            return tickInfo;
         }
 
+            /*
         private void ResolveTurn()
         {
-            /*
-            List<clsMageEffect> effList = myGameScr.gMage.GetStatEffects();
+            List<clsMageEffect> effList = myGame.gMage.GetStatEffects();
             foreach ( clsMageEffect e in effList)
             {
                 e.iTimer -= 1;
             }
             effList.RemoveAll(x => x.iTimer <= 0);
-            */
         }
 
+            */
 
 
         private void EndCombat()
@@ -612,15 +758,14 @@ namespace BreadMage2
             currentMonster.HP = 0;
             MessageBox.Show("It's croutons!");
             string s = "Nice work, you got " + currentMonster.EXP.ToString() + " EXP!";
-            myGameScr.gLog.Add(s);
+            myGame.gLog.Add(s);
 
-            myGameScr.gMage.TickBuffs();
-            myGameScr.BuffHelper().EventBased("combatEnd");
+            myGame.gMage.TickBuffs();
+            myGame.EventEffects("combatEnd");
 
             //give post battle info, item drops before disposing. new pop up window?
-            myGameScr.gLock = false;
-            myGameScr.bFight.Hide();
-            myGameScr.bFight.Dispose();
+            myGame.gLock = false;
+            myGame.bFight.Hide();
         }
 
 

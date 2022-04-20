@@ -13,12 +13,9 @@ namespace BreadMage2.Screens
 {
     public partial class SettingsScreen : Form
     {
-        public MainScreen scrMain;
-
-        public SettingsScreen(MainScreen scrMainScreen)
+        public SettingsScreen()
         {
             InitializeComponent();
-            scrMain = scrMainScreen;
             this.FormClosing += Form1_FormClosing;
 
 

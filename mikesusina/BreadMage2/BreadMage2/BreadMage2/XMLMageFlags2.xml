@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<clsGameFlags xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SpellTier>1</SpellTier>
+  <QuestTracker>1</QuestTracker>
+  <thing1>false</thing1>
+  <thing2>false</thing2>
+  <thing3>false</thing3>
+  <thing4>false</thing4>
+  <thing5>false</thing5>
+  <atest>
+    <magename>"Usidore the Blue"</magename>
+    <athing>7</athing>
+  </atest>
+  <aspellbook>
+   
+  </aspellbook>
+</clsGameFlags>

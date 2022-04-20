@@ -19,7 +19,7 @@ namespace BreadMage2.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -153,6 +153,16 @@ namespace BreadMage2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap equipshop {
+            get {
+                object obj = ResourceManager.GetObject("equipshop", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Fizzard {
             get {
                 object obj = ResourceManager.GetObject("Fizzard", resourceCulture);
@@ -176,6 +186,16 @@ namespace BreadMage2.Properties {
         internal static System.Drawing.Bitmap gellea {
             get {
                 object obj = ResourceManager.GetObject("gellea", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap itemshop {
+            get {
+                object obj = ResourceManager.GetObject("itemshop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -283,6 +303,16 @@ namespace BreadMage2.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap skillshop {
+            get {
+                object obj = ResourceManager.GetObject("skillshop", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap sporesling {
             get {
                 object obj = ResourceManager.GetObject("sporesling", resourceCulture);
@@ -316,6 +346,16 @@ namespace BreadMage2.Properties {
         internal static System.Drawing.Bitmap tinybug {
             get {
                 object obj = ResourceManager.GetObject("tinybug", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap townholder {
+            get {
+                object obj = ResourceManager.GetObject("townholder", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

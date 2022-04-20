@@ -30,31 +30,31 @@
         {
             this.btnConfirm = new System.Windows.Forms.Button();
             this.prevLocTag = new System.Windows.Forms.Label();
-            this.bD3 = new System.Windows.Forms.PictureBox();
-            this.bD2 = new System.Windows.Forms.PictureBox();
-            this.bD1 = new System.Windows.Forms.PictureBox();
-            this.bC3 = new System.Windows.Forms.PictureBox();
-            this.bC2 = new System.Windows.Forms.PictureBox();
-            this.bC1 = new System.Windows.Forms.PictureBox();
-            this.bB3 = new System.Windows.Forms.PictureBox();
-            this.bB2 = new System.Windows.Forms.PictureBox();
-            this.bB1 = new System.Windows.Forms.PictureBox();
-            this.bA3 = new System.Windows.Forms.PictureBox();
-            this.bA2 = new System.Windows.Forms.PictureBox();
-            this.bA1 = new System.Windows.Forms.PictureBox();
+            this.b12 = new System.Windows.Forms.PictureBox();
+            this.b11 = new System.Windows.Forms.PictureBox();
+            this.b10 = new System.Windows.Forms.PictureBox();
+            this.b9 = new System.Windows.Forms.PictureBox();
+            this.b8 = new System.Windows.Forms.PictureBox();
+            this.b7 = new System.Windows.Forms.PictureBox();
+            this.b6 = new System.Windows.Forms.PictureBox();
+            this.b5 = new System.Windows.Forms.PictureBox();
+            this.b4 = new System.Windows.Forms.PictureBox();
+            this.b3 = new System.Windows.Forms.PictureBox();
+            this.b2 = new System.Windows.Forms.PictureBox();
+            this.b1 = new System.Windows.Forms.PictureBox();
             this.zoneTag = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.bD3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bD2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bD1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bC3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bC2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bC1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bB3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bB2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bB1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bA3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bA2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bA1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b12)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b11)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b10)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b9)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b8)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b7)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnConfirm
@@ -65,6 +65,7 @@
             this.btnConfirm.TabIndex = 12;
             this.btnConfirm.Text = "Go!";
             this.btnConfirm.UseVisualStyleBackColor = true;
+            this.btnConfirm.Click += new System.EventHandler(this.btnConfirm_Click);
             // 
             // prevLocTag
             // 
@@ -75,126 +76,126 @@
             this.prevLocTag.TabIndex = 13;
             this.prevLocTag.Text = "Headed to:";
             // 
-            // bD3
+            // b12
             // 
-            this.bD3.Location = new System.Drawing.Point(277, 409);
-            this.bD3.Margin = new System.Windows.Forms.Padding(0);
-            this.bD3.Name = "bD3";
-            this.bD3.Size = new System.Drawing.Size(120, 120);
-            this.bD3.TabIndex = 11;
-            this.bD3.TabStop = false;
-            this.bD3.Click += new System.EventHandler(this.ClickD3);
+            this.b12.Location = new System.Drawing.Point(275, 410);
+            this.b12.Margin = new System.Windows.Forms.Padding(0);
+            this.b12.Name = "b12";
+            this.b12.Size = new System.Drawing.Size(120, 120);
+            this.b12.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b12.TabIndex = 11;
+            this.b12.TabStop = false;
             // 
-            // bD2
+            // b11
             // 
-            this.bD2.Location = new System.Drawing.Point(157, 409);
-            this.bD2.Margin = new System.Windows.Forms.Padding(0);
-            this.bD2.Name = "bD2";
-            this.bD2.Size = new System.Drawing.Size(120, 120);
-            this.bD2.TabIndex = 10;
-            this.bD2.TabStop = false;
-            this.bD2.Click += new System.EventHandler(this.ClickD2);
+            this.b11.Location = new System.Drawing.Point(155, 410);
+            this.b11.Margin = new System.Windows.Forms.Padding(0);
+            this.b11.Name = "b11";
+            this.b11.Size = new System.Drawing.Size(120, 120);
+            this.b11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b11.TabIndex = 10;
+            this.b11.TabStop = false;
             // 
-            // bD1
+            // b10
             // 
-            this.bD1.Location = new System.Drawing.Point(37, 409);
-            this.bD1.Margin = new System.Windows.Forms.Padding(0);
-            this.bD1.Name = "bD1";
-            this.bD1.Size = new System.Drawing.Size(120, 120);
-            this.bD1.TabIndex = 9;
-            this.bD1.TabStop = false;
-            this.bD1.Click += new System.EventHandler(this.ClickD1);
+            this.b10.Location = new System.Drawing.Point(35, 410);
+            this.b10.Margin = new System.Windows.Forms.Padding(0);
+            this.b10.Name = "b10";
+            this.b10.Size = new System.Drawing.Size(120, 120);
+            this.b10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b10.TabIndex = 9;
+            this.b10.TabStop = false;
             // 
-            // bC3
+            // b9
             // 
-            this.bC3.Location = new System.Drawing.Point(277, 289);
-            this.bC3.Margin = new System.Windows.Forms.Padding(0);
-            this.bC3.Name = "bC3";
-            this.bC3.Size = new System.Drawing.Size(120, 120);
-            this.bC3.TabIndex = 8;
-            this.bC3.TabStop = false;
-            this.bC3.Click += new System.EventHandler(this.ClickC3);
+            this.b9.Location = new System.Drawing.Point(275, 290);
+            this.b9.Margin = new System.Windows.Forms.Padding(0);
+            this.b9.Name = "b9";
+            this.b9.Size = new System.Drawing.Size(120, 120);
+            this.b9.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b9.TabIndex = 8;
+            this.b9.TabStop = false;
             // 
-            // bC2
+            // b8
             // 
-            this.bC2.Location = new System.Drawing.Point(157, 289);
-            this.bC2.Margin = new System.Windows.Forms.Padding(0);
-            this.bC2.Name = "bC2";
-            this.bC2.Size = new System.Drawing.Size(120, 120);
-            this.bC2.TabIndex = 7;
-            this.bC2.TabStop = false;
-            this.bC2.Click += new System.EventHandler(this.ClickC2);
+            this.b8.Location = new System.Drawing.Point(155, 290);
+            this.b8.Margin = new System.Windows.Forms.Padding(0);
+            this.b8.Name = "b8";
+            this.b8.Size = new System.Drawing.Size(120, 120);
+            this.b8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b8.TabIndex = 7;
+            this.b8.TabStop = false;
             // 
-            // bC1
+            // b7
             // 
-            this.bC1.Location = new System.Drawing.Point(37, 289);
-            this.bC1.Margin = new System.Windows.Forms.Padding(0);
-            this.bC1.Name = "bC1";
-            this.bC1.Size = new System.Drawing.Size(120, 120);
-            this.bC1.TabIndex = 6;
-            this.bC1.TabStop = false;
-            this.bC1.Click += new System.EventHandler(this.ClickC1);
+            this.b7.Location = new System.Drawing.Point(35, 290);
+            this.b7.Margin = new System.Windows.Forms.Padding(0);
+            this.b7.Name = "b7";
+            this.b7.Size = new System.Drawing.Size(120, 120);
+            this.b7.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b7.TabIndex = 6;
+            this.b7.TabStop = false;
             // 
-            // bB3
+            // b6
             // 
-            this.bB3.Location = new System.Drawing.Point(277, 169);
-            this.bB3.Margin = new System.Windows.Forms.Padding(0);
-            this.bB3.Name = "bB3";
-            this.bB3.Size = new System.Drawing.Size(120, 120);
-            this.bB3.TabIndex = 5;
-            this.bB3.TabStop = false;
-            this.bB3.Click += new System.EventHandler(this.ClickB3);
+            this.b6.Location = new System.Drawing.Point(275, 170);
+            this.b6.Margin = new System.Windows.Forms.Padding(0);
+            this.b6.Name = "b6";
+            this.b6.Size = new System.Drawing.Size(120, 120);
+            this.b6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b6.TabIndex = 5;
+            this.b6.TabStop = false;
             // 
-            // bB2
+            // b5
             // 
-            this.bB2.Location = new System.Drawing.Point(157, 169);
-            this.bB2.Margin = new System.Windows.Forms.Padding(0);
-            this.bB2.Name = "bB2";
-            this.bB2.Size = new System.Drawing.Size(120, 120);
-            this.bB2.TabIndex = 4;
-            this.bB2.TabStop = false;
-            this.bB2.Click += new System.EventHandler(this.ClickB2);
+            this.b5.Location = new System.Drawing.Point(155, 170);
+            this.b5.Margin = new System.Windows.Forms.Padding(0);
+            this.b5.Name = "b5";
+            this.b5.Size = new System.Drawing.Size(120, 120);
+            this.b5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b5.TabIndex = 4;
+            this.b5.TabStop = false;
             // 
-            // bB1
+            // b4
             // 
-            this.bB1.Location = new System.Drawing.Point(37, 169);
-            this.bB1.Margin = new System.Windows.Forms.Padding(0);
-            this.bB1.Name = "bB1";
-            this.bB1.Size = new System.Drawing.Size(120, 120);
-            this.bB1.TabIndex = 3;
-            this.bB1.TabStop = false;
-            this.bB1.Click += new System.EventHandler(this.ClickB1);
+            this.b4.Location = new System.Drawing.Point(35, 170);
+            this.b4.Margin = new System.Windows.Forms.Padding(0);
+            this.b4.Name = "b4";
+            this.b4.Size = new System.Drawing.Size(120, 120);
+            this.b4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b4.TabIndex = 3;
+            this.b4.TabStop = false;
             // 
-            // bA3
+            // b3
             // 
-            this.bA3.Location = new System.Drawing.Point(277, 49);
-            this.bA3.Margin = new System.Windows.Forms.Padding(0);
-            this.bA3.Name = "bA3";
-            this.bA3.Size = new System.Drawing.Size(120, 120);
-            this.bA3.TabIndex = 2;
-            this.bA3.TabStop = false;
-            this.bA3.Click += new System.EventHandler(this.ClickA3);
+            this.b3.Location = new System.Drawing.Point(275, 50);
+            this.b3.Margin = new System.Windows.Forms.Padding(0);
+            this.b3.Name = "b3";
+            this.b3.Size = new System.Drawing.Size(120, 120);
+            this.b3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b3.TabIndex = 2;
+            this.b3.TabStop = false;
             // 
-            // bA2
+            // b2
             // 
-            this.bA2.Location = new System.Drawing.Point(157, 49);
-            this.bA2.Margin = new System.Windows.Forms.Padding(0);
-            this.bA2.Name = "bA2";
-            this.bA2.Size = new System.Drawing.Size(120, 120);
-            this.bA2.TabIndex = 1;
-            this.bA2.TabStop = false;
-            this.bA2.Click += new System.EventHandler(this.ClickA2);
+            this.b2.Location = new System.Drawing.Point(155, 50);
+            this.b2.Margin = new System.Windows.Forms.Padding(0);
+            this.b2.Name = "b2";
+            this.b2.Size = new System.Drawing.Size(120, 120);
+            this.b2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b2.TabIndex = 1;
+            this.b2.TabStop = false;
             // 
-            // bA1
+            // b1
             // 
-            this.bA1.Image = global::BreadMage2.Properties.Resources.mapvoid;
-            this.bA1.Location = new System.Drawing.Point(36, 49);
-            this.bA1.Margin = new System.Windows.Forms.Padding(0);
-            this.bA1.Name = "bA1";
-            this.bA1.Size = new System.Drawing.Size(120, 120);
-            this.bA1.TabIndex = 0;
-            this.bA1.TabStop = false;
-            this.bA1.Click += new System.EventHandler(this.ClickA1);
+            this.b1.Image = global::BreadMage2.Properties.Resources.mapvoid;
+            this.b1.Location = new System.Drawing.Point(35, 50);
+            this.b1.Margin = new System.Windows.Forms.Padding(0);
+            this.b1.Name = "b1";
+            this.b1.Size = new System.Drawing.Size(120, 120);
+            this.b1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.b1.TabIndex = 0;
+            this.b1.TabStop = false;
             // 
             // zoneTag
             // 
@@ -214,32 +215,32 @@
             this.Controls.Add(this.zoneTag);
             this.Controls.Add(this.prevLocTag);
             this.Controls.Add(this.btnConfirm);
-            this.Controls.Add(this.bD3);
-            this.Controls.Add(this.bD2);
-            this.Controls.Add(this.bD1);
-            this.Controls.Add(this.bC3);
-            this.Controls.Add(this.bC2);
-            this.Controls.Add(this.bC1);
-            this.Controls.Add(this.bB3);
-            this.Controls.Add(this.bB2);
-            this.Controls.Add(this.bB1);
-            this.Controls.Add(this.bA3);
-            this.Controls.Add(this.bA2);
-            this.Controls.Add(this.bA1);
+            this.Controls.Add(this.b12);
+            this.Controls.Add(this.b11);
+            this.Controls.Add(this.b10);
+            this.Controls.Add(this.b9);
+            this.Controls.Add(this.b8);
+            this.Controls.Add(this.b7);
+            this.Controls.Add(this.b6);
+            this.Controls.Add(this.b5);
+            this.Controls.Add(this.b4);
+            this.Controls.Add(this.b3);
+            this.Controls.Add(this.b2);
+            this.Controls.Add(this.b1);
             this.Name = "MapBoard";
             this.Size = new System.Drawing.Size(450, 585);
-            ((System.ComponentModel.ISupportInitialize)(this.bD3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bD2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bD1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bC3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bC2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bC1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bB3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bB2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bB1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bA3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bA2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bA1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b12)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b11)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b10)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b9)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b8)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b7)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.b1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -247,18 +248,18 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox bA1;
-        private System.Windows.Forms.PictureBox bA2;
-        private System.Windows.Forms.PictureBox bA3;
-        private System.Windows.Forms.PictureBox bB1;
-        private System.Windows.Forms.PictureBox bB2;
-        private System.Windows.Forms.PictureBox bB3;
-        private System.Windows.Forms.PictureBox bC1;
-        private System.Windows.Forms.PictureBox bC2;
-        private System.Windows.Forms.PictureBox bC3;
-        private System.Windows.Forms.PictureBox bD1;
-        private System.Windows.Forms.PictureBox bD2;
-        private System.Windows.Forms.PictureBox bD3;
+        private System.Windows.Forms.PictureBox b1;
+        private System.Windows.Forms.PictureBox b2;
+        private System.Windows.Forms.PictureBox b3;
+        private System.Windows.Forms.PictureBox b4;
+        private System.Windows.Forms.PictureBox b5;
+        private System.Windows.Forms.PictureBox b6;
+        private System.Windows.Forms.PictureBox b7;
+        private System.Windows.Forms.PictureBox b8;
+        private System.Windows.Forms.PictureBox b9;
+        private System.Windows.Forms.PictureBox b10;
+        private System.Windows.Forms.PictureBox b11;
+        private System.Windows.Forms.PictureBox b12;
         private System.Windows.Forms.Button btnConfirm;
         private System.Windows.Forms.Label prevLocTag;
         private System.Windows.Forms.Label zoneTag;

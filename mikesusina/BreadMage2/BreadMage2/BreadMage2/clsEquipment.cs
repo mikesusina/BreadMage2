@@ -15,9 +15,10 @@ namespace BreadMage2
         public string ItemName { get; set; }
         public int Slot { get; set; } //1 = helm 2=back 3=MH 4=OH 5=ACC, 0 is for all, for an unequip
         public string Stats { get; set; }
-        public string ExtraInfo { get; set; } // used in equip screen to detail effect info
+        public List<string> ExtraInfo { get; set; } // used for misc info: equip screen to detail effect info (FLV), holding weapon chatter type (CHT)
         public string Description { get; set; }
         public string ImgURL { get; set; }
+        public clsSpell EQSpell { get; set; }
 
 
         private int PAtkStat { get; set; } = 0;
@@ -27,99 +28,23 @@ namespace BreadMage2
         private int HPStat { get; set; } = 0;
         private int SPStat { get; set; } = 0;
         private int PassiveInt { get; set; } = 0;
+        private int CombatInt { get; set; } = 0;
 
         private List<string> StatData { get; set; }
 
-        //public int HP
-
-        public clsEquipment(DataTable aItemTable)
-        {
-            ParseEquipmentData(aItemTable);
-            InitalizeEquipment();
-        }
-
-        public clsEquipment(DataRow aItemRow)
-        {
-            ParseEquipmentDataRow(aItemRow);
-            InitalizeEquipment();
-        }
-
         public clsEquipment() { }
-
-
-        public int PAtk() { return PAtkStat; }
-        public int MAtk() { return MAtkStat; }
-        public int Def() { return DefStat; }
-        public int Res() { return ResStat; }
-        public int HP() { return HPStat; }
-        public int SP() { return SPStat; }
-        public int PassiveEffect() { return PassiveInt; }
-
-        public string getStatInfo()
-        {
-            string s = "";
-            if (StatData != null)
-                { foreach (string t in StatData) { s += Environment.NewLine + t; } }
-            return s;
-        }
-
-
-        private void ParseEquipmentData(DataTable ds)
-        {
-            //  Items.ID, Equipment.ItemName, Equipment.ImgURL, Equipment.Slot, Equipment.Stats, Equipment.SP, Equipment.Restore
-
-            equipID = Convert.ToInt32(ds.Rows[0]["EquipID"].ToString());
-            ItemName = ds.Rows[0]["ItemName"].ToString();
-            Slot = Convert.ToInt32(ds.Rows[0]["Slot"].ToString());
-            Stats = ds.Rows[0]["Stats"].ToString();
-            ExtraInfo = ds.Rows[0]["ExtraInfo"].ToString();
-            Description = ds.Rows[0]["Description"].ToString();
-            ImgURL = ds.Rows[0]["ImgURL"].ToString();
-        }
-
-        private void ParseEquipmentDataRow(DataRow dr)
+        public clsEquipment(DataRow dr)
         {
             //  Items.ID, Equipment.ItemName, Equipment.ImgURL, Equipment.HP, Equipment.MP, Equipment.SP, Equipment.Restore
 
             equipID = Convert.ToInt32(dr["EquipID"].ToString());
             ItemName = dr["ItemName"].ToString();
             Slot = Convert.ToInt32(dr["Slot"].ToString());
-            Stats = dr["Stats"].ToString();
-            ExtraInfo = dr["ExtraInfo"].ToString();
-            Description = dr["Description"].ToString();
+            StatData = Program.ParseDelimitedStringToString(dr["Stats"].ToString());
+            ExtraInfo = Program.ParseDelimitedStringToString(dr["ExtraInfo"].ToString());
             ImgURL = dr["ImgURL"].ToString();
-        }
 
-        private void InitalizeEquipment()
-        {
-            ParseStatInfo(Stats);
-            SetStats();
-        }
-
-
-        private void ParseStatInfo(string sStats)
-        {
-            //for splitting out item stats
-
-            StatData = new List<string>();
-            string s = sStats;
-
-            while (s.IndexOf("|") > 0)
-            {
-                //tags are all four characters
-                string temp = s.Substring(0, s.IndexOf("|"));
-                StatData.Add(temp);
-                s = s.Substring(s.IndexOf("|") + 1);
-            }
-            StatData.Add(s);
-        }
-
-        private void SetStats()
-        {
-            // go through list of stat info
-            // see the ChoiceBoard control ResolveChoice() method for further info
-            //
-
+            //setting stat values from raw StatData
             foreach (string s in StatData)
             {
                 //decode action tag "XYZ="
@@ -146,12 +71,33 @@ namespace BreadMage2
                     case "PID": //passive ID - this is the SPELL ID
                         PassiveInt = Convert.ToInt32(s.Substring(4));
                         break;
+                    case "CID": //Combat ID - this is the SPELL ID
+                        CombatInt = Convert.ToInt32(s.Substring(4));
+                        break;
                     default:
                         break;
                 }
             }
         }
 
+        public int PAtk() { return PAtkStat; }
+        public int MAtk() { return MAtkStat; }
+        public int Def() { return DefStat; }
+        public int Res() { return ResStat; }
+        public int HP() { return HPStat; }
+        public int SP() { return SPStat; }
+        public int PassiveEffect() { return PassiveInt; }
+        public int CombatSkill() { return CombatInt; }
+
+        public string getStatInfoForTextBox()
+        {
+            string s = "";
+            if (StatData != null)
+                { foreach (string t in StatData) { s += Environment.NewLine + t; } }
+            return s;
+        }
+
+        
 
         // this is definitely stolen from
         //docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-5.0

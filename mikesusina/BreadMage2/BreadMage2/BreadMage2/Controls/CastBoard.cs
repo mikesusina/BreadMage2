@@ -12,9 +12,7 @@ namespace BreadMage2.Controls
 {
     public partial class CastBoard : UserControl
     {
-
-
-        private GameScreen sGameScreen;
+        private engGame myGame;
         private int iCap;
         private int iActive;
 
@@ -23,30 +21,35 @@ namespace BreadMage2.Controls
         private List<clsSpell> ItemSpells;
         private clsSpell spellSelector = new clsSpell();
 
-        private engBuffs BuffHelper = new engBuffs();
-
+        private engEffects EffectHelper => myGame.EffectHelper;
+        //private engSpellEngine => myGame.thespellengine?
 
         private BindingSource castingBS = new BindingSource();
         private BindingSource passiveBS = new BindingSource();
         private BindingSource itemBS = new BindingSource();
 
 
-        public CastBoard(GameScreen aGS)
+        public CastBoard(engGame aGame)
         {
             InitializeComponent();
-            sGameScreen = aGS;
-            BuffHelper = sGameScreen.BuffHelper();
+            myGame = aGame;
+            
+        }
+
+        public void LoadBoard()
+        {
             ItemSpells = new List<clsSpell>();
 
             //load spells
-            ActiveSpells = sGameScreen.gMage.EQSpells(3);
-            EQPassiveSpells = sGameScreen.gMage.EQSpells(2);
-            ItemSpells = sGameScreen.GetAllKnownMageSpells("I");
-            
+            ActiveSpells = myGame.gMage.EQSpells("global");
+            ActiveSpells.AddRange(myGame.gMage.EQSpells("castonly"));
+            EQPassiveSpells = myGame.gMage.EQSpells("passive");
+            ItemSpells = myGame.GetAllKnownMageSpells("item");
+
 
             //set the SP info
-            iCap = sGameScreen.gMage.Stats.MaxSP;
-            iActive = sGameScreen.gMage.Stats.CurrentMaxSP;
+            iCap = myGame.gMage.Stats.MaxSP;
+            iActive = myGame.gMage.Stats.CurrentMaxSP;
             barActivePoints.Maximum = iCap;
             try { barActivePoints.Value = iActive; }
             catch { barActivePoints.Value = 0; }
@@ -171,13 +174,13 @@ namespace BreadMage2.Controls
                 pbElementalMotesIcon.Show();
 
                 string s = "";
-                s = "Ingredients: " + sGameScreen.gMage.GetComponentCount(1).ToString();
+                s = "Ingredients: " + myGame.gMage.GetComponentCount(1).ToString();
                 lblIngredients.Text = s;
                 lblIngredients.Show();
-                s = "CosmicEnergy: " + sGameScreen.gMage.GetComponentCount(1).ToString();
+                s = "CosmicEnergy: " + myGame.gMage.GetComponentCount(1).ToString();
                 lblCosmicEnergy.Text = s;
                 lblCosmicEnergy.Show();
-                s = "ElementalMotes: " + sGameScreen.gMage.GetComponentCount(1).ToString();
+                s = "ElementalMotes: " + myGame.gMage.GetComponentCount(1).ToString();
                 lblElementalMotes.Text = s;
                 lblElementalMotes.Show();
 
@@ -189,13 +192,25 @@ namespace BreadMage2.Controls
         {
             if (tkCombatSpells.Checked)
             {
-                ActiveSpells = sGameScreen.gMage.EQSpells(4);
+                ActiveSpells.AddRange(myGame.gMage.EQSpells("battle"));
                 castingBS.DataSource = ActiveSpells;
+                castingBS.ResetBindings(false);
             }
             else
             {
-                ActiveSpells = sGameScreen.gMage.EQSpells(3);
+                ActiveSpells = myGame.gMage.EQSpells("global");
+                ActiveSpells.AddRange(myGame.gMage.EQSpells("castonly"));
                 castingBS.DataSource = ActiveSpells;
+                castingBS.ResetBindings(false);
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Get out of here?", "Cancel", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                myGame.gLock = false;
+                this.Hide();
             }
         }
 

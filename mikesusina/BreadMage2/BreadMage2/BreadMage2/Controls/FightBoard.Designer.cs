@@ -33,13 +33,9 @@
             this.btnCast = new System.Windows.Forms.Button();
             this.pbMonHP = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtChatter = new System.Windows.Forms.TextBox();
             this.rtbChatter = new System.Windows.Forms.RichTextBox();
-            this.lstSpellBook = new System.Windows.Forms.ComboBox();
             this.lstSpellTier = new System.Windows.Forms.ComboBox();
             this.cbxMaxSpellTier = new System.Windows.Forms.CheckBox();
-            this.btnItem = new System.Windows.Forms.Button();
-            this.lstItem = new System.Windows.Forms.ComboBox();
             this.lblMoldCounter = new System.Windows.Forms.Label();
             this.lblZestCounter = new System.Windows.Forms.Label();
             this.lblTensionCounter = new System.Windows.Forms.Label();
@@ -68,8 +64,7 @@
             // 
             // btnMAtk
             // 
-            this.btnMAtk.Image = global::BreadMage2.Properties.Resources.matk;
-            this.btnMAtk.Location = new System.Drawing.Point(102, 225);
+            this.btnMAtk.Location = new System.Drawing.Point(108, 225);
             this.btnMAtk.Name = "btnMAtk";
             this.btnMAtk.Size = new System.Drawing.Size(45, 45);
             this.btnMAtk.TabIndex = 2;
@@ -78,8 +73,7 @@
             // 
             // btnDef
             // 
-            this.btnDef.Image = global::BreadMage2.Properties.Resources.defend;
-            this.btnDef.Location = new System.Drawing.Point(175, 225);
+            this.btnDef.Location = new System.Drawing.Point(179, 225);
             this.btnDef.Name = "btnDef";
             this.btnDef.Size = new System.Drawing.Size(45, 45);
             this.btnDef.TabIndex = 3;
@@ -89,7 +83,7 @@
             // btnCast
             // 
             this.btnCast.Font = new System.Drawing.Font("Trebuchet MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCast.Location = new System.Drawing.Point(12, 306);
+            this.btnCast.Location = new System.Drawing.Point(12, 281);
             this.btnCast.Name = "btnCast";
             this.btnCast.Size = new System.Drawing.Size(68, 37);
             this.btnCast.TabIndex = 4;
@@ -101,7 +95,7 @@
             // 
             this.pbMonHP.BackColor = System.Drawing.SystemColors.Control;
             this.pbMonHP.ForeColor = System.Drawing.Color.Red;
-            this.pbMonHP.Location = new System.Drawing.Point(250, 31);
+            this.pbMonHP.Location = new System.Drawing.Point(252, 15);
             this.pbMonHP.Name = "pbMonHP";
             this.pbMonHP.Size = new System.Drawing.Size(177, 26);
             this.pbMonHP.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -116,49 +110,25 @@
             this.label1.TabIndex = 7;
             this.label1.Text = "label1";
             // 
-            // txtChatter
-            // 
-            this.txtChatter.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.txtChatter.BackColor = System.Drawing.Color.Black;
-            this.txtChatter.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtChatter.ForeColor = System.Drawing.Color.Lime;
-            this.txtChatter.Location = new System.Drawing.Point(410, 3);
-            this.txtChatter.Multiline = true;
-            this.txtChatter.Name = "txtChatter";
-            this.txtChatter.ReadOnly = true;
-            this.txtChatter.Size = new System.Drawing.Size(27, 22);
-            this.txtChatter.TabIndex = 8;
-            // 
             // rtbChatter
             // 
             this.rtbChatter.BackColor = System.Drawing.Color.Black;
             this.rtbChatter.Font = new System.Drawing.Font("Trebuchet MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbChatter.ForeColor = System.Drawing.Color.Lime;
             this.rtbChatter.HideSelection = false;
-            this.rtbChatter.Location = new System.Drawing.Point(12, 396);
+            this.rtbChatter.Location = new System.Drawing.Point(240, 107);
             this.rtbChatter.Name = "rtbChatter";
             this.rtbChatter.ReadOnly = true;
-            this.rtbChatter.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.rtbChatter.Size = new System.Drawing.Size(418, 179);
+            this.rtbChatter.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.rtbChatter.Size = new System.Drawing.Size(207, 156);
             this.rtbChatter.TabIndex = 9;
             this.rtbChatter.Text = "";
-            // 
-            // lstSpellBook
-            // 
-            this.lstSpellBook.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.lstSpellBook.FormattingEnabled = true;
-            this.lstSpellBook.IntegralHeight = false;
-            this.lstSpellBook.Location = new System.Drawing.Point(329, 5);
-            this.lstSpellBook.Name = "lstSpellBook";
-            this.lstSpellBook.Size = new System.Drawing.Size(35, 21);
-            this.lstSpellBook.TabIndex = 10;
-            this.lstSpellBook.SelectedIndexChanged += new System.EventHandler(this.lstSpellBook_SelectedIndexChanged);
             // 
             // lstSpellTier
             // 
             this.lstSpellTier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.lstSpellTier.FormattingEnabled = true;
-            this.lstSpellTier.Location = new System.Drawing.Point(12, 369);
+            this.lstSpellTier.Location = new System.Drawing.Point(282, 309);
             this.lstSpellTier.Name = "lstSpellTier";
             this.lstSpellTier.Size = new System.Drawing.Size(61, 21);
             this.lstSpellTier.TabIndex = 11;
@@ -167,36 +137,17 @@
             // 
             this.cbxMaxSpellTier.AutoSize = true;
             this.cbxMaxSpellTier.Font = new System.Drawing.Font("Trebuchet MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbxMaxSpellTier.Location = new System.Drawing.Point(12, 349);
+            this.cbxMaxSpellTier.Location = new System.Drawing.Point(282, 288);
             this.cbxMaxSpellTier.Name = "cbxMaxSpellTier";
-            this.cbxMaxSpellTier.Size = new System.Drawing.Size(70, 20);
+            this.cbxMaxSpellTier.Size = new System.Drawing.Size(69, 20);
             this.cbxMaxSpellTier.TabIndex = 12;
             this.cbxMaxSpellTier.Text = "Max Tier";
             this.cbxMaxSpellTier.UseVisualStyleBackColor = true;
             // 
-            // btnItem
-            // 
-            this.btnItem.Location = new System.Drawing.Point(289, 4);
-            this.btnItem.Name = "btnItem";
-            this.btnItem.Size = new System.Drawing.Size(34, 21);
-            this.btnItem.TabIndex = 13;
-            this.btnItem.Text = "Item";
-            this.btnItem.UseVisualStyleBackColor = true;
-            // 
-            // lstItem
-            // 
-            this.lstItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.lstItem.FormattingEnabled = true;
-            this.lstItem.Location = new System.Drawing.Point(370, 5);
-            this.lstItem.Name = "lstItem";
-            this.lstItem.Size = new System.Drawing.Size(44, 21);
-            this.lstItem.TabIndex = 14;
-            this.lstItem.SelectedIndexChanged += new System.EventHandler(this.lstItem_SelectedIndexChanged);
-            // 
             // lblMoldCounter
             // 
             this.lblMoldCounter.AutoSize = true;
-            this.lblMoldCounter.Location = new System.Drawing.Point(265, 96);
+            this.lblMoldCounter.Location = new System.Drawing.Point(265, 75);
             this.lblMoldCounter.Name = "lblMoldCounter";
             this.lblMoldCounter.Size = new System.Drawing.Size(25, 13);
             this.lblMoldCounter.TabIndex = 21;
@@ -206,7 +157,7 @@
             // lblZestCounter
             // 
             this.lblZestCounter.AutoSize = true;
-            this.lblZestCounter.Location = new System.Drawing.Point(324, 96);
+            this.lblZestCounter.Location = new System.Drawing.Point(324, 75);
             this.lblZestCounter.Name = "lblZestCounter";
             this.lblZestCounter.Size = new System.Drawing.Size(25, 13);
             this.lblZestCounter.TabIndex = 22;
@@ -216,7 +167,7 @@
             // lblTensionCounter
             // 
             this.lblTensionCounter.AutoSize = true;
-            this.lblTensionCounter.Location = new System.Drawing.Point(389, 96);
+            this.lblTensionCounter.Location = new System.Drawing.Point(389, 75);
             this.lblTensionCounter.Name = "lblTensionCounter";
             this.lblTensionCounter.Size = new System.Drawing.Size(25, 13);
             this.lblTensionCounter.TabIndex = 23;
@@ -228,9 +179,9 @@
             this.rtbSpellBox.BackColor = System.Drawing.Color.Black;
             this.rtbSpellBox.Font = new System.Drawing.Font("Trebuchet MS", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbSpellBox.ForeColor = System.Drawing.Color.White;
-            this.rtbSpellBox.Location = new System.Drawing.Point(256, 170);
+            this.rtbSpellBox.Location = new System.Drawing.Point(76, 487);
             this.rtbSpellBox.Name = "rtbSpellBox";
-            this.rtbSpellBox.Size = new System.Drawing.Size(191, 100);
+            this.rtbSpellBox.Size = new System.Drawing.Size(351, 84);
             this.rtbSpellBox.TabIndex = 24;
             this.rtbSpellBox.Text = "";
             // 
@@ -239,7 +190,7 @@
             this.lbActiveSP.AutoSize = true;
             this.lbActiveSP.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbActiveSP.ForeColor = System.Drawing.Color.Red;
-            this.lbActiveSP.Location = new System.Drawing.Point(301, 338);
+            this.lbActiveSP.Location = new System.Drawing.Point(300, 390);
             this.lbActiveSP.Name = "lbActiveSP";
             this.lbActiveSP.Size = new System.Drawing.Size(94, 18);
             this.lbActiveSP.TabIndex = 34;
@@ -250,9 +201,9 @@
             this.boxSpells.Font = new System.Drawing.Font("Trebuchet MS", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.boxSpells.FormattingEnabled = true;
             this.boxSpells.ItemHeight = 20;
-            this.boxSpells.Location = new System.Drawing.Point(88, 306);
+            this.boxSpells.Location = new System.Drawing.Point(14, 325);
             this.boxSpells.Name = "boxSpells";
-            this.boxSpells.Size = new System.Drawing.Size(182, 84);
+            this.boxSpells.Size = new System.Drawing.Size(262, 144);
             this.boxSpells.TabIndex = 33;
             // 
             // radioSpells
@@ -286,7 +237,7 @@
             this.lblElementalMotes.AutoSize = true;
             this.lblElementalMotes.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblElementalMotes.ForeColor = System.Drawing.Color.Red;
-            this.lblElementalMotes.Location = new System.Drawing.Point(301, 365);
+            this.lblElementalMotes.Location = new System.Drawing.Point(300, 417);
             this.lblElementalMotes.Name = "lblElementalMotes";
             this.lblElementalMotes.Size = new System.Drawing.Size(114, 18);
             this.lblElementalMotes.TabIndex = 40;
@@ -298,7 +249,7 @@
             this.lblIngredients.AutoSize = true;
             this.lblIngredients.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblIngredients.ForeColor = System.Drawing.Color.Red;
-            this.lblIngredients.Location = new System.Drawing.Point(301, 311);
+            this.lblIngredients.Location = new System.Drawing.Point(300, 363);
             this.lblIngredients.Name = "lblIngredients";
             this.lblIngredients.Size = new System.Drawing.Size(85, 18);
             this.lblIngredients.TabIndex = 42;
@@ -309,15 +260,15 @@
             // 
             this.panel1.Controls.Add(this.radioSpells);
             this.panel1.Controls.Add(this.radioItems);
-            this.panel1.Location = new System.Drawing.Point(88, 276);
+            this.panel1.Location = new System.Drawing.Point(154, 288);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(132, 30);
+            this.panel1.Size = new System.Drawing.Size(120, 30);
             this.panel1.TabIndex = 43;
             // 
             // barActivePoints
             // 
             this.barActivePoints.ForeColor = System.Drawing.Color.Lime;
-            this.barActivePoints.Location = new System.Drawing.Point(283, 322);
+            this.barActivePoints.Location = new System.Drawing.Point(282, 374);
             this.barActivePoints.Name = "barActivePoints";
             this.barActivePoints.Size = new System.Drawing.Size(147, 15);
             this.barActivePoints.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -325,7 +276,7 @@
             // 
             // pbActionDisplay
             // 
-            this.pbActionDisplay.Location = new System.Drawing.Point(326, 112);
+            this.pbActionDisplay.Location = new System.Drawing.Point(14, 503);
             this.pbActionDisplay.Name = "pbActionDisplay";
             this.pbActionDisplay.Size = new System.Drawing.Size(50, 50);
             this.pbActionDisplay.TabIndex = 25;
@@ -333,7 +284,7 @@
             // 
             // pictureBox3
             // 
-            this.pictureBox3.Location = new System.Drawing.Point(389, 68);
+            this.pictureBox3.Location = new System.Drawing.Point(389, 47);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(25, 25);
             this.pictureBox3.TabIndex = 20;
@@ -341,7 +292,7 @@
             // 
             // pbZestIcon
             // 
-            this.pbZestIcon.Location = new System.Drawing.Point(325, 68);
+            this.pbZestIcon.Location = new System.Drawing.Point(325, 47);
             this.pbZestIcon.Name = "pbZestIcon";
             this.pbZestIcon.Size = new System.Drawing.Size(25, 25);
             this.pbZestIcon.TabIndex = 19;
@@ -349,7 +300,7 @@
             // 
             // pbMoldIcon
             // 
-            this.pbMoldIcon.Location = new System.Drawing.Point(266, 68);
+            this.pbMoldIcon.Location = new System.Drawing.Point(266, 47);
             this.pbMoldIcon.Name = "pbMoldIcon";
             this.pbMoldIcon.Size = new System.Drawing.Size(25, 25);
             this.pbMoldIcon.TabIndex = 18;
@@ -357,7 +308,6 @@
             // 
             // btnPAtk
             // 
-            this.btnPAtk.Image = global::BreadMage2.Properties.Resources.patk;
             this.btnPAtk.Location = new System.Drawing.Point(35, 225);
             this.btnPAtk.Name = "btnPAtk";
             this.btnPAtk.Size = new System.Drawing.Size(45, 45);
@@ -393,13 +343,9 @@
             this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.pbZestIcon);
             this.Controls.Add(this.pbMoldIcon);
-            this.Controls.Add(this.lstItem);
-            this.Controls.Add(this.btnItem);
             this.Controls.Add(this.cbxMaxSpellTier);
             this.Controls.Add(this.lstSpellTier);
-            this.Controls.Add(this.lstSpellBook);
             this.Controls.Add(this.rtbChatter);
-            this.Controls.Add(this.txtChatter);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pbMonHP);
             this.Controls.Add(this.btnCast);
@@ -430,13 +376,9 @@
         private System.Windows.Forms.Button btnCast;
         public System.Windows.Forms.ProgressBar pbMonHP;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtChatter;
         private System.Windows.Forms.RichTextBox rtbChatter;
-        private System.Windows.Forms.ComboBox lstSpellBook;
         private System.Windows.Forms.ComboBox lstSpellTier;
         private System.Windows.Forms.CheckBox cbxMaxSpellTier;
-        private System.Windows.Forms.Button btnItem;
-        private System.Windows.Forms.ComboBox lstItem;
         private System.Windows.Forms.PictureBox pbMoldIcon;
         private System.Windows.Forms.PictureBox pbZestIcon;
         private System.Windows.Forms.PictureBox pictureBox3;

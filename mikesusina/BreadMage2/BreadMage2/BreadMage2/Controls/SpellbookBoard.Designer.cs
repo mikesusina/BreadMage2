@@ -1,6 +1,6 @@
 ﻿namespace BreadMage2
 {
-    partial class SpellBookBoard
+    partial class SpellbookBoard
     {
         /// <summary> 
         /// Required designer variable.
@@ -121,7 +121,7 @@
             this.rtbSpellDesc.ForeColor = System.Drawing.Color.Lime;
             this.rtbSpellDesc.Location = new System.Drawing.Point(10, 437);
             this.rtbSpellDesc.Name = "rtbSpellDesc";
-            this.rtbSpellDesc.Size = new System.Drawing.Size(291, 141);
+            this.rtbSpellDesc.Size = new System.Drawing.Size(291, 112);
             this.rtbSpellDesc.TabIndex = 9;
             this.rtbSpellDesc.Text = "";
             // 
@@ -215,7 +215,7 @@
             this.pictureBox1.TabIndex = 22;
             this.pictureBox1.TabStop = false;
             // 
-            // SpellBookBoard
+            // TownEquipSpells
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -235,7 +235,7 @@
             this.Controls.Add(this.btnMove);
             this.Controls.Add(this.boxEquipped);
             this.Controls.Add(this.boxKnown);
-            this.Name = "SpellBookBoard";
+            this.Name = "TownEquipSpells";
             this.Size = new System.Drawing.Size(450, 585);
             ((System.ComponentModel.ISupportInitialize)(this.pbSpellIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

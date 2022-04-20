@@ -10,16 +10,16 @@ using System.Windows.Forms;
 
 namespace BreadMage2
 {
-    public partial class SpellBookBoard : UserControl
+    public partial class SpellbookBoard : UserControl
     {
-        private GameScreen sGameScreen;
+        private engGame myGame;
         private int iCap;
         private int iEquipped;
 
         private List<clsSpell> OriginalSpells;
         private List<clsSpell> ActiveSpells;
         private List<clsSpell> EQPassiveSpells;
-        private List<clsSpell> SpellPool;
+        private List<clsSpell> SpellPool = new List<clsSpell>();
         private clsSpell spellSelector = new clsSpell();
 
 
@@ -28,24 +28,43 @@ namespace BreadMage2
         private BindingSource passiveBS = new BindingSource();
         private BindingSource allBS = new BindingSource();
 
-        public SpellBookBoard(GameScreen aGS)
+        public SpellbookBoard(engGame aGame)
         {
             InitializeComponent();
-            sGameScreen = aGS;
+            myGame = aGame;
+
+
+
+            /* ???? do display members and datasources update these automatically?
+
+            //populate the boxes
+            foreach (clsSpell s in SpellPool)
+            {
+                boxKnown.Items.Add(s.spellName);
+            }
+            foreach (clsSpell s in ActiveSpells)
+            {
+                boxEquipped.Items.Add(s.spellName);
+            }
+            */
+        }
+        public void LoadBoard()
+        {
+
             SpellPool = new List<clsSpell>();
 
             //load spells
-            OriginalSpells = sGameScreen.gMage.EQSpells();
-            ActiveSpells = sGameScreen.gMage.EQSpells(4);
-            EQPassiveSpells = sGameScreen.gMage.EQSpells(2);
-            foreach (clsSpell s in sGameScreen.GetAllKnownMageSpells())
+            OriginalSpells = myGame.gMage.EQSpells();
+            ActiveSpells = myGame.gMage.EQSpells("spellequip");
+            EQPassiveSpells = myGame.gMage.EQSpells("passive");
+            foreach (clsSpell s in myGame.GetAllKnownMageSpells("spellequip"))
             {
                 if (ActiveSpells.Contains(s) == false) { SpellPool.Add(s); }
             }
 
             //set the SP info
-            iCap = sGameScreen.gMage.Stats.MaxSP;
-            iEquipped = sGameScreen.gMage.EquippedSP();
+            iCap = myGame.gMage.Stats.MaxSP;
+            iEquipped = myGame.gMage.EquippedSP();
             barSkillCap.Maximum = iCap;
             try { barSkillCap.Value = iEquipped; }
             catch { barSkillCap.Value = 0; }
@@ -67,20 +86,6 @@ namespace BreadMage2
             boxKnown.ClearSelected();
             boxEquipped.ClearSelected();
             boxPassives.ClearSelected();
-
-
-            /* ???? do display members and datasources update these automatically?
-
-            //populate the boxes
-            foreach (clsSpell s in SpellPool)
-            {
-                boxKnown.Items.Add(s.spellName);
-            }
-            foreach (clsSpell s in ActiveSpells)
-            {
-                boxEquipped.Items.Add(s.spellName);
-            }
-            */
         }
         private void MoveSpell()
         {
@@ -269,18 +274,31 @@ namespace BreadMage2
             if (MessageBox.Show("Okay with these spells?", "Equip", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
                 List<clsSpell> returnSpells = new List<clsSpell>();
-                returnSpells.AddRange(ActiveSpells);
-                returnSpells.AddRange(EQPassiveSpells);
-                sGameScreen.gMage.EquipSpellSet(returnSpells);
-                sGameScreen.gLock = false;
-                this.Dispose();
-                // at some point - need to fix SP values - if maxSP drops below currentmaxSP, if somehow we gain maxSP
-                //sGameScreen.gMage.Stats.CurrentMaxSP;
+                List<clsSpell> workList = new List<clsSpell>();
+                workList.AddRange(ActiveSpells);
+                workList.AddRange(EQPassiveSpells);
+                foreach (clsSpell s in workList)
+                {
+                    returnSpells.Add(s.ShallowCopy());
+                }
 
-                sGameScreen.RefreshMage();
-                sGameScreen.gLock = false;
-                this.Hide();
-                this.Dispose();
+                myGame.EquipSpellSet(returnSpells);
+
+                // at some point - need to fix SP values - if maxSP drops below currentmaxSP, if somehow we gain maxSP
+                //sGame.gMage.Stats.CurrentMaxSP;
+
+                myGame.RefreshMage();
+
+                if (myGame.gActiveStore != null)
+                {
+                    this.Hide();
+                    myGame.BackToStore();
+                }
+                else
+                {
+                    myGame.gLock = false;
+                    this.Hide();
+                }
             }
            
         }
@@ -290,9 +308,16 @@ namespace BreadMage2
 
             if (MessageBox.Show("Get out of here?", "Cancel", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
-                sGameScreen.gLock = false;
-                this.Hide();
-                this.Dispose();
+                if (myGame.gActiveStore != null)
+                {
+                    this.Hide();
+                    myGame.BackToStore();
+                }
+                else
+                {
+                    myGame.gLock = false;
+                    this.Hide();
+                }
             }
         }
     }

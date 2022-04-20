@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<clsSaveData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <saveID>0</saveID>
+  <mageName>Walnut</mageName>
+  <Yeast>0</Yeast>
+  <EXP>0</EXP>
+  <knownSpells>
+    <int>1</int>
+    <int>2</int>
+    <int>5</int>
+  </knownSpells>
+  <gottenItems />
+  <activeEffects />
+  <equippedSpells>
+    <clsSpell>
+      <spellID>2</spellID>
+      <spellName>Generic Cure</spellName>
+      <spellDescription>testing the item spell types</spellDescription>
+      <ImgURL>butter</ImgURL>
+      <spellType>I</spellType>
+      <chatType />
+      <YeastCost>0</YeastCost>
+      <SPCost>0</SPCost>
+      <Power />
+      <SpellBlocks>
+        <string />
+      </SpellBlocks>
+      <SpellChatter>
+        <SpellChatter>
+          <ChatText>HEALED</ChatText>
+          <ChatColor />
+          <NewLineFlag>true</NewLineFlag>
+          <SpellType>I</SpellType>
+          <Target>O</Target>
+          <Element />
+        </SpellChatter>
+      </SpellChatter>
+    </clsSpell>
+    <clsSpell>
+      <spellID>5</spellID>
+      <spellName>Spore Sling</spellName>
+      <spellDescription>Curse your enemies with mold spores that will burn over time.</spellDescription>
+      <ImgURL>sporesling</ImgURL>
+      <spellType>C</spellType>
+      <chatType>M</chatType>
+      <YeastCost>100</YeastCost>
+      <SPCost>1</SPCost>
+      <Power>D</Power>
+      <SpellBlocks>
+        <string>AD</string>
+        <string>AM</string>
+      </SpellBlocks>
+      <SpellChatter>
+        <SpellChatter>
+          <ChatText />
+          <ChatColor />
+          <NewLineFlag>true</NewLineFlag>
+          <SpellType>C</SpellType>
+          <Target>O</Target>
+          <Element>M</Element>
+        </SpellChatter>
+      </SpellChatter>
+    </clsSpell>
+    <clsSpell>
+      <spellID>1</spellID>
+      <spellName>Generic Healing Item</spellName>
+      <spellDescription>healing item</spellDescription>
+      <ImgURL>butter</ImgURL>
+      <spellType>I</spellType>
+      <chatType />
+      <YeastCost>0</YeastCost>
+      <SPCost>0</SPCost>
+      <Power />
+      <SpellBlocks>
+        <string />
+      </SpellBlocks>
+      <SpellChatter>
+        <SpellChatter>
+          <ChatText>HEALPOWER</ChatText>
+          <ChatColor />
+          <NewLineFlag>true</NewLineFlag>
+          <SpellType>I</SpellType>
+          <Target>O</Target>
+          <Element />
+        </SpellChatter>
+      </SpellChatter>
+    </clsSpell>
+  </equippedSpells>
+  <equippedMent />
+  <stats>
+    <HP>24</HP>
+    <HPMax>30</HPMax>
+    <MaxSP>10</MaxSP>
+    <CurrentMaxSP>10</CurrentMaxSP>
+    <BasePAtk>13</BasePAtk>
+    <BaseMAtk>13</BaseMAtk>
+    <BaseDef>3</BaseDef>
+    <BaseRes>6</BaseRes>
+    <ModPAtk>0</ModPAtk>
+    <ModMAtk>0</ModMAtk>
+    <ModDef>0</ModDef>
+    <ModRes>0</ModRes>
+    <ModHP>0</ModHP>
+    <EQPAtk>0</EQPAtk>
+    <EQMAtk>0</EQMAtk>
+    <EQDef>0</EQDef>
+    <EQRes>0</EQRes>
+    <EQHP>0</EQHP>
+  </stats>
+</clsSaveData>/ModDef>
+    <ModRes>0</ModRes>
+  </stats>
+</clsSaveData>

@@ -14,92 +14,27 @@ namespace BreadMage2.Screens
 {
     public partial class MainScreen : Form
     {
+        public engGame mGame;
         public GameScreen scrGame;
         public SettingsScreen scrSettings;
-
-        public clsGameLibs mainLibs;
-
-        // for item libraries - avoid pulling too much game data, but this should increase new and load game performance 
-        public List<clsUniqueItem> mItemBook { get; set; }
-        public List<clsChoiceAdventure> mChoiceLib { get; set; }
-        public List<EffectChatter> mEffectChatter { get; set; }
-        public List<clsSpell> mSpellBook { get; set; }
-        public IDictionary<string, clsMageEffect> MasterEffects {get; set;}
-
-        public List<clsMonster> mMonsterList { get; set; }
 
         public MainScreen()
         {
             InitializeComponent();
-
-            BreadDB breadConn = new BreadDB();
-            mainLibs = breadConn.LoadLibraries();
-            /*
-            mMonsterList = breadConn.LoadMonsterList();
-            mItemBook = breadConn.LoadUniqueItemsList();
-            mChoiceLib = breadConn.LoadChoiceList();
-            mEffectChatter = breadConn.LoadEffectChatter();
-            */
-
-            //scrGame = new GameScreen(this, -1, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
-            scrGame = new GameScreen(this, -1, mainLibs);
-            scrSettings = new SettingsScreen(this);
-            scrGame.MdiParent = this;
-            scrSettings.MdiParent = this;
-
-
-
-            //////
-            //boot game immediately rather than new game, for testing
-            //////
-            /*
-              Point p = new Point(65, 10);
-              scrGame.Show();
-              scrGame.Location = p;
-            */
+            mGame = new engGame(this);
+            mGame.BootGame();
         }
 
-        //New Game TS
         private void newGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            if (mainLibs is null)
-            {
-                BreadDB bnet = new BreadDB();
-                mainLibs = bnet.LoadLibraries();
-            }
-            if (scrGame != null)
-            {
-                scrGame.Close();
-                //scrGame = new GameScreen(this, 0, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
-                scrGame = new GameScreen(this, 0, mainLibs);
-                scrGame.MdiParent = this;
-            }
-            Point p = new Point(65, 10);
-            scrGame.Show();
-            scrGame.Location = p;
+            mGame.NewGame();
         }
 
         //Load Game TS
         private void loadGameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (mainLibs is null)
-            {
-                BreadDB bnet = new BreadDB();
-                mainLibs = bnet.LoadLibraries();
-            }
-
-            //TODO: IMPLEMENT actually picting a save ID
-            if (scrGame != null)
-            {
-                scrGame.Close();
-                scrGame = new GameScreen(this, 1, mainLibs);
-                //scrGame = new GameScreen(this, 1, mMonsterList, mItemBook, mChoiceLib, mEffectChatter, mSpellBook);
-                scrGame.MdiParent = this;
-            }
-            Point p = new Point(65, 10);
-            scrGame.Show();
-            scrGame.Location = p;
+            //will need to act
+            mGame.LoadGame(1);
         }
 
 
@@ -109,24 +44,19 @@ namespace BreadMage2.Screens
             if (scrSettings != null)
             {
                 scrSettings.Close();
-                scrSettings = new SettingsScreen(this)
-                { MdiParent = this };
                 if (scrGame.Visible) { scrGame.Hide(); }
-                /*
-                if (scrGame.WindowState != FormWindowState.Minimized)
-                { scrGame.WindowState = FormWindowState.Minimized; }
-                */
             }
             Point p = new Point(100, 10);
+            scrSettings = new SettingsScreen() { MdiParent = this };
             scrSettings.Show();
             scrSettings.Location = p;
         }
 
         private void devToolsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(scrGame != null)
+            if(mGame != null)
             {
-                Form myform = new DevTools(scrGame);
+                Form myform = new DevTools(mGame);
                 myform.Show();
             }
             else { MessageBox.Show("You need a game to hack"); }

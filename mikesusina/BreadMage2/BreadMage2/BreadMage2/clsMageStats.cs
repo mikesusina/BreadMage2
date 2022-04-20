@@ -12,131 +12,184 @@ namespace BreadMage2
         public int HPMax { get; set; }
         public int MaxSP { get; set; }      
         public int CurrentMaxSP { get; set; }
-        public int BasePAtk { get; set; }
-        public int BaseMAtk { get; set; }
-        public int BaseDef { get; set; }
-        public int BaseRes { get; set; }
-        public int ModPAtk { get; set; } = 0;
-        public int ModMAtk { get; set; } = 0;
-        public int ModDef { get; set; } = 0;
-        public int ModRes { get; set; } = 0;
+        public int Yeast { get; set; } = 3000;
+        public int Level = 1;
+        public int EXP { get; set; }
+        public List<Stat> PlayerStats { get; set; } = new List<Stat>() { new Stat("PAK", 1), new Stat("MAK", 1), new Stat("DEF", 1), new Stat("RES", 1) };
         public int ModHP { get; set; } = 0;
 
-
-        public int EQPAtk { get; set; } = 0;
-        public int EQMAtk { get; set; } = 0;
-        public int EQDef { get; set; } = 0;
-        public int EQRes { get; set; } = 0;
-        public int EQHP { get; set; } = 0;
-
+        public int MaxSpellTier = 1;
         private int Ingredients { get; set; } = 0;
         private int CosmicEnergy { get; set; } = 0;
         private int ElementalMotes { get; set; } = 0;
-        //private int MPItems { get; set; } = 0;
+        
 
-        private List<clsMageEffect> myEffects = new List<clsMageEffect>();
-        private List<clsEquipment> myEquipment = new List<clsEquipment>();
+        private List<clsEffect> myEffects = new List<clsEffect>();
+        private List<clsEquipment> myEquipMent = new List<clsEquipment>();
         private List<clsSpell> myEquippedSpells = new List<clsSpell>();
+        private List<int> myKnownSpells = new List<int>();
+        private List<int> myCollectedItems = new List<int>();
 
         public clsMageStats()
         {
             HPMax = 30;
             HP = HPMax;
-            BasePAtk = 13;
-            BaseMAtk = 13;
-            BaseDef = 3;
-            BaseRes = 6;
+            PlayerStats.Find(x => x.Name == "PAK").BaseVal = 13;
+            PlayerStats.Find(x => x.Name == "MAK").BaseVal = 13;
+            PlayerStats.Find(x => x.Name == "DEF").BaseVal = 3;
+            PlayerStats.Find(x => x.Name == "RES").BaseVal = 6;
 
             MaxSP = 10;
             CurrentMaxSP = 10;
         }
 
-        public int PAtk() { return BasePAtk + ModPAtk; }
-        public int MAtk() { return BaseMAtk + ModMAtk; }
-        public int Def() { return BaseDef + ModDef; }
-        public int Res() { return BaseRes + ModRes; }
+        public List<clsEffect> CurrentEffects(string sType = "all") 
+        {
+            List<clsEffect> rList = new List<clsEffect>();
+            switch (sType.ToLower())
+            {
+                case "all": return myEffects;
+                case "effect":
+                    return myEffects.FindAll(x => x.sCat == "E");
+                case "buff":
+                    return myEffects.FindAll(x => x.sCat == "B");
+                case "debuff":
+                    return myEffects.FindAll(x => x.sCat == "D");
+                case "proc":
+                    return myEffects.FindAll(x => x.sCat == "P");
+                case "daytick":
+                    rList.AddRange(myEffects.FindAll(x => x.sCat == "B"));
+                    rList.AddRange(myEffects.FindAll(x => x.sCat == "D"));
+                    return rList;
+            }
 
-        public List<clsMageEffect> CurrentEffects() { return myEffects; }
-        public List<clsEquipment> CurrentEquipment() { return myEquipment; }
+            return myEffects; 
+        }
+        public List<clsEquipment> CurrentEquipment() { return myEquipMent; }
         public List<clsSpell> CurrentEQSpells() { return myEquippedSpells; }
+        public List<int> AllSpells() { return myKnownSpells; }
 
         public clsEquipment myEquipmentBySlot(int iSlot)
         {
             try
             {
-                if (myEquipment.Find(x => x.Slot == iSlot) != null) { return myEquipment.Find(x => x.Slot == iSlot); }
+                if (myEquipMent.Find(x => x.Slot == iSlot) != null) { return myEquipMent.Find(x => x.Slot == iSlot); }
                 else { return null; }
             }
             catch { throw new ArgumentOutOfRangeException("I think you tried to search for a bad equip slot"); };
             
         }
 
-        public List<clsSpell> mySpellsByType(int iType = 0)
+        public List<clsSpell> mySpellsByType(string sType = "all")
         {
-            List<clsSpell> returnSpells = new List<clsSpell>();
-            switch (iType)
-            {
-                case 0: //return all
-                    returnSpells = CurrentEQSpells();
-                    break;
-                case 1: //[C]ombat
-                    returnSpells = CurrentEQSpells().FindAll(x => x.spellType == "C");
-                    break;
-                case 2: //[P]assive
-                    returnSpells = CurrentEQSpells().FindAll(x => x.spellType == "P");
-                    break;
-                case 3: //[G]eneral / "out of combat castable"
-                    returnSpells = CurrentEQSpells().FindAll(x => x.spellType == "G");
-                    break;
-                case 4: //castable spells
-                    returnSpells.AddRange(CurrentEQSpells().FindAll(x => x.spellType == "C"));
-                    returnSpells.AddRange(CurrentEQSpells().FindAll(x => x.spellType == "G"));
-                    break;
-                case 5: //Item spells - return blank, these aren't "equipped" but this keeps consistency with master known spells
-                    break;
-            }
+            List<clsSpell> returnSpells = CurrentEQSpells();
+            if (sType.ToLower() != "all") { returnSpells = Program.FilterSpellsByType(returnSpells, sType); }
             return returnSpells;
         }
 
-        public void SetBuffedStats()
+        public void SetEquipStats()
         {
-            int aModPAtk = 0;
-            int aModMAtk = 0;
-            int aModDef = 0;
-            int aModRes = 0;
+            foreach (Stat s in PlayerStats) { s.EquipVals = 0; }
             int aModHP = 0;
 
-            if (myEquipment != null && myEquipment.Count > 0)
+            if (myEquipMent != null && myEquipMent.Count > 0)
             {
-                foreach (clsEquipment e in myEquipment)
+                foreach (clsEquipment e in myEquipMent)
                 {
-                    aModPAtk += e.PAtk();
-                    aModMAtk += e.MAtk();
-                    aModDef += e.Def();
-                    aModRes += e.Res();
+                    PlayerStats.Find(x => x.Name == "PAK").EquipVals += e.PAtk();
+                    PlayerStats.Find(x => x.Name == "MAK").EquipVals += e.MAtk();
+                    PlayerStats.Find(x => x.Name == "DEF").EquipVals += e.Def();
+                    PlayerStats.Find(x => x.Name == "RES").EquipVals += e.Res();
                     aModHP += e.HP();
                 }
             }
-            ModPAtk = aModPAtk;
-            ModMAtk = aModMAtk;
-            ModDef = aModDef;
-            ModRes = aModRes;
         }
 
-        public void AddEffect(int anID, int aValue)
+        private int GetEquipStat(string sType)
         {
-            var obj = myEffects.FirstOrDefault(x => x.iID == anID);
-            if (obj != null) { obj.iValue += aValue; }
-            else { myEffects.Add(new clsMageEffect(anID, aValue)); }
+            int iReturn = 0;
+
+            switch (sType.ToLower())
+            {
+                case "patk":
+                    break;
+                case "matk":
+                    break;
+                case "PDef":
+                    break;
+                case "Patk":
+                    break;
+            }
+            return iReturn;
         }
 
-        public void SetEffects(List<clsMageEffect> someEffects)
+        public void SetEffectStats(List<clsEffect> aList)
+        {
+            myEffects = aList;
+        }
+
+
+
+        public void AddEffect(clsEffect anEffect)
+        {
+            if (myEffects.Find(x => x.iID == anEffect.iID) != null)
+            {
+                myEffects.Find(x => x.iID == anEffect.iID).Tick += anEffect.Tick;
+            }
+            else { myEffects.Add(anEffect); }
+        }
+
+        public void SetEffects(List<clsEffect> someEffects)
         {
             myEffects = someEffects;
         }
         public void SetEquipment(List<clsEquipment> someEquipment)
         {
-            myEquipment = someEquipment;
+            myEquipMent = someEquipment;
+        }
+
+
+        /*
+        public void LearnSpell(clsSpell aSpell, bool bUnlearn = false)
+        {
+            if (!bUnlearn)
+            {
+                if (myKnownSpells.Contains(aSpell.spellID) == false)
+                    { myKnownSpells.Add(aSpell.spellID); }
+            }
+            else //if unlearning...
+            {
+                if (myKnownSpells.Contains(aSpell.spellID))
+                    { myKnownSpells.Remove(aSpell.spellID); }
+            }
+        }
+        public void LearnSpellbyID(int aSpellID, bool bUnlearn = false)
+        {
+            if (!bUnlearn)
+            {
+                if (myKnownSpells.Contains(aSpellID) == false)
+                { myKnownSpells.Add(aSpellID); }
+            }
+            else //if unlearning...
+            {
+                if (myKnownSpells.Contains(aSpellID))
+                { myKnownSpells.Remove(aSpellID); }
+            }
+        }
+        */
+
+        public void EquipSpell(clsSpell aSpell) 
+        {
+            if (myEquippedSpells.Find(x => x.spellID == aSpell.spellID) == null)
+                { myEquippedSpells.Add(aSpell.ShallowCopy()); }
+        }
+        public void UnequipSpell(clsSpell aSpell, bool bForget = false)
+        {
+            if (myEquippedSpells.Find(x => x.spellID == aSpell.spellID) != null)
+            {
+                myEquippedSpells.Remove(myEquippedSpells.Find(x => x.spellID == aSpell.spellID));
+                if (bForget && myKnownSpells.Contains(aSpell.spellID)) { myKnownSpells.Remove(aSpell.spellID); }
+            }
         }
         public void SetEQSpells(List<clsSpell> someSpells)
         {
@@ -176,26 +229,50 @@ namespace BreadMage2
             return iReturn;
         }
 
-        public void AddComponents(int aType, int anAmount)
+        public void AdjustComponent(int aType, int anAmount)
         {
             switch (aType)
             {
                 case 1:
                     Ingredients += anAmount;
+                    if (Ingredients < 0) { Ingredients = 0; }
+                    else if (Ingredients > (50 * MaxSpellTier))
+                        { Ingredients = (50 * MaxSpellTier); }
                     break;
                 case 2:
                     CosmicEnergy += anAmount;
+                    if (CosmicEnergy < 0) { CosmicEnergy = 0; }
+                    else if (CosmicEnergy > (50 * MaxSpellTier))
+                    { CosmicEnergy = (50 * MaxSpellTier); }
                     break;
                 case 3:
                     ElementalMotes += anAmount;
+                    if (ElementalMotes < 0) { ElementalMotes = 0; }
+                    else if (ElementalMotes > (50 * MaxSpellTier))
+                    { ElementalMotes = (50 * MaxSpellTier); }
                     break;
-                //case 4:
-                //    MPItems += anAmount;
-                //    break;
                 default:
                     break;
             }
         }
 
     }
+
+    public class Stat
+    {
+        public string Name { get; set; }
+        public int BaseVal { get; set; }
+        public int EquipVals { get; set; } = 0;
+        public double StatMod { get; set; } = 1;
+        public Stat() { }
+        public Stat(string aName, int aBaseVal) { Name = aName; BaseVal = aBaseVal; }
+
+        public int BuffedVal()
+        {
+            return (int)Math.Ceiling((BaseVal * StatMod)+ EquipVals);
+        }
+    }
+
+
+
 }

@@ -12,7 +12,7 @@ namespace BreadMage2.Controls
 {
     public partial class EquipBoard : UserControl
     {
-        private GameScreen myGameScr;
+        private engGame myGame;
         private int acc1;
         private int acc2;
         List<clsEquipment> HelmItems = new List<clsEquipment>();
@@ -20,21 +20,32 @@ namespace BreadMage2.Controls
         List<clsEquipment> MHItems = new List<clsEquipment>();
         List<clsEquipment> OHItems = new List<clsEquipment>();
         List<clsEquipment> AccItems = new List<clsEquipment>();
+        List<clsEquipment> PinItems = new List<clsEquipment>();
 
         clsEquipment eqHelm = new clsEquipment();
         clsEquipment eqBack = new clsEquipment();
         clsEquipment eq1H = new clsEquipment();
         clsEquipment eq2H = new clsEquipment();
-        clsEquipment eqAcc1 = new clsEquipment();
-        clsEquipment eqAcc2 = new clsEquipment();
+        clsEquipment eqAcc = new clsEquipment();
+        clsEquipment eqPin = new clsEquipment();
 
-        public EquipBoard(GameScreen aGS)
+        public EquipBoard(engGame aGame)
         {
             InitializeComponent();
-            myGameScr = aGS;
+            myGame = aGame;
+        }
+
+        public void LoadBoard()
+        {
             acc1 = 0;
             acc2 = 0;
 
+            HelmItems = new List<clsEquipment>();
+            BackItems = new List<clsEquipment>();
+            MHItems = new List<clsEquipment>();
+            OHItems = new List<clsEquipment>();
+            AccItems = new List<clsEquipment>();
+            PinItems = new List<clsEquipment>();
 
             //Have an option for unequipped slot
             clsEquipment e = new clsEquipment { ItemName = "Unequipped", Stats = "", equipID = 0, ImgURL = "itsnothing" };
@@ -44,12 +55,13 @@ namespace BreadMage2.Controls
             MHItems.Add(e);
             OHItems.Add(e);
             AccItems.Add(e);
+            PinItems.Add(e);
 
             //get all equipment objects mage has:
-            List<int> gottenEquips = myGameScr.getObtainedEquipmentIDs();
+            List<int> gottenEquips = myGame.getObtainedEquipmentIDs();
             foreach (int i in gottenEquips)
             {
-                clsEquipment cItem = myGameScr.GetEquipmentItem(i);
+                clsEquipment cItem = myGame.GetEquipmentItem(i);
                 switch (cItem.Slot)
                 {
                     case 1:
@@ -64,8 +76,11 @@ namespace BreadMage2.Controls
                     case 4: //2H weapons and off hand stuff need some work
                         OHItems.Add(cItem);
                         break;
-                    case 5: //accessories will too, as they appear in both dropdowns, need to make sure no duplicates allowed, but list is repeated?
+                    case 5: //accessories
                         AccItems.Add(cItem);
+                        break;
+                    case 6: //Lapel pin
+                        PinItems.Add(cItem);
                         break;
                 }
             }
@@ -75,92 +90,113 @@ namespace BreadMage2.Controls
             try
             {
             */
-                cbHelm.DataSource = HelmItems;
-                cbHelm.DisplayMember = "ItemName";
-                cbBack.DataSource = BackItems;
-                cbBack.DisplayMember = "ItemName";
-                cb1H.DataSource = MHItems;
-                cb1H.DisplayMember = "ItemName";
-                cb2H.DataSource = OHItems;
-                cb2H.DisplayMember = "ItemName";
-                cbAcc1.DataSource = AccItems;
-                cbAcc1.DisplayMember = "ItemName";
-                cbAcc2.DataSource = AccItems;
-                cbAcc2.DisplayMember = "ItemName";
+            cbHelm.DataSource = HelmItems;
+            cbHelm.DisplayMember = "ItemName";
+            cbBack.DataSource = BackItems;
+            cbBack.DisplayMember = "ItemName";
+            cb1H.DataSource = MHItems;
+            cb1H.DisplayMember = "ItemName";
+            cb2H.DataSource = OHItems;
+            cb2H.DisplayMember = "ItemName";
+            cbAcc1.DataSource = AccItems;
+            cbAcc1.DisplayMember = "ItemName";
+            cbAcc2.DataSource = PinItems;
+            cbAcc2.DisplayMember = "ItemName";
 
-                if (myGameScr.gMage.myEquipBySlot(1) != null)
-                {
-                    cbHelm.SelectedItem = myGameScr.gMage.myEquipBySlot(1);
-                    eqHelm = cbHelm.SelectedItem as clsEquipment;
-                }
-                else { cbHelm.SelectedIndex = 0; }
-                if (myGameScr.gMage.myEquipBySlot(2) != null)
-                {
-                    cbBack.SelectedItem = myGameScr.gMage.myEquipBySlot(2);
-                    eqBack = cbBack.SelectedItem as clsEquipment; 
-                }
-                else { cbBack.SelectedIndex = 0; }
-                if (myGameScr.gMage.myEquipBySlot(3) != null)
-                {
-                    cb1H.SelectedItem = myGameScr.gMage.myEquipBySlot(3);
-                    eq1H = cb1H.SelectedItem as clsEquipment;
-                }
-                else { cb1H.SelectedIndex = 0; }
-                if (myGameScr.gMage.myEquipBySlot(4) != null)
-                {
-                    cbHelm.SelectedItem = myGameScr.gMage.myEquipBySlot(4);
-                    eq2H = cb2H.SelectedItem as clsEquipment;
-                }
-                else { cb2H.SelectedIndex = 0; }
-                if (myGameScr.gMage.myEquipBySlot(5) != null)
-                {
-                    cbAcc1.SelectedItem = myGameScr.gMage.myEquipBySlot(5);
-                    eqAcc1 = cbAcc1.SelectedItem as clsEquipment; 
-                }
-                else { cbAcc1.SelectedIndex = 0; }
-
-                /*
-                cbAcc2.SelectedItem = myGameScr.gMage.Stats.CurrentEquipment().Find(x => x.Slot == 5);
-                if (cbAcc2.SelectedItem != null) { eqAcc2 = cbAcc2.SelectedItem as clsEquipment;
-                */
-
-                //set the images
-                if (cbHelm.SelectedItem != null)
-                {
-                    pbHelm.Image = GetEquipImage(cbHelm.SelectedItem as clsEquipment);
-                    pbHelm.Show();
-                    lblHelm.Text = "Hat: " + (cbHelm.SelectedItem as clsEquipment).ItemName;
-                }
-                if (cbBack.SelectedItem != null)
-                {
-                    pbBack.Image = GetEquipImage(cbBack.SelectedItem as clsEquipment);
-                    pbBack.Show();
-                    lbBack.Text = "Cloak: " + (cbBack.SelectedItem as clsEquipment).ItemName;
-                }
-                if (cb1H.SelectedItem != null)
-                {
-                    pb1H.Image = GetEquipImage(cb1H.SelectedItem as clsEquipment);
-                    pb1H.Show();
-                    lb1H.Text = "Main Hand: " + (cb1H.SelectedItem as clsEquipment).ItemName;
-                }
-                if (cb2H.SelectedItem != null)
-                {
-                    pb2H.Image = GetEquipImage(cb2H.SelectedItem as clsEquipment);
-                    pb2H.Show();
-                    lb2H.Text = "Off Hand: " + (cb2H.SelectedItem as clsEquipment).ItemName;
-                }
-                if (cbAcc1.SelectedItem != null)
-                {
-                    pbAcc1.Image = GetEquipImage(cbAcc1.SelectedItem as clsEquipment);
-                    pbAcc1.Show();
-                    lbAcc1.Text = "Accessory 1: " + (cbAcc1.SelectedItem as clsEquipment).ItemName;
-                }
-                /*
+            if (myGame.gMage.myEquipBySlot(1) != null)
+            {
+                cbHelm.SelectedItem = myGame.gMage.myEquipBySlot(1);
+                eqHelm = cbHelm.SelectedItem as clsEquipment;
             }
-            catch { throw new ArgumentOutOfRangeException("Setting the equipment boxes"); };
-                */
+            else { cbHelm.SelectedIndex = 0; }
+            if (myGame.gMage.myEquipBySlot(2) != null)
+            {
+                cbBack.SelectedItem = myGame.gMage.myEquipBySlot(2);
+                eqBack = cbBack.SelectedItem as clsEquipment;
+            }
+            else { cbBack.SelectedIndex = 0; }
+            if (myGame.gMage.myEquipBySlot(3) != null)
+            {
+                cb1H.SelectedItem = myGame.gMage.myEquipBySlot(3);
+                eq1H = cb1H.SelectedItem as clsEquipment;
+            }
+            else { cb1H.SelectedIndex = 0; }
+            if (myGame.gMage.myEquipBySlot(4) != null)
+            {
+                cbHelm.SelectedItem = myGame.gMage.myEquipBySlot(4);
+                eq2H = cb2H.SelectedItem as clsEquipment;
+            }
+            else { cb2H.SelectedIndex = 0; }
+            if (myGame.gMage.myEquipBySlot(5) != null)
+            {
+                cbAcc1.SelectedItem = myGame.gMage.myEquipBySlot(5);
+                eqAcc = cbAcc1.SelectedItem as clsEquipment;
+            }
+            else { cbAcc1.SelectedIndex = 0; }
+            if (myGame.gMage.myEquipBySlot(6) != null)
+            {
+                cbAcc2.SelectedItem = myGame.gMage.myEquipBySlot(6);
+                eqPin = cbAcc2.SelectedItem as clsEquipment;
+            }
+            else { cbAcc2.SelectedIndex = 0; }
+
+            /*
+            cbAcc2.SelectedItem = myGame.gMage.Stats.CurrentEquipment().Find(x => x.Slot == 5);
+            if (cbAcc2.SelectedItem != null) { eqAcc2 = cbAcc2.SelectedItem as clsEquipment;
+            */
+
+            //set the images
+            if (cbHelm.SelectedItem != null)
+            {
+                pbHelm.Image = GetEquipImage(cbHelm.SelectedItem as clsEquipment);
+                pbHelm.Show();
+                lblHelm.Text = "Hat: " + (cbHelm.SelectedItem as clsEquipment).ItemName;
+            }
+            if (cbBack.SelectedItem != null)
+            {
+                pbBack.Image = GetEquipImage(cbBack.SelectedItem as clsEquipment);
+                pbBack.Show();
+                lbBack.Text = "Cloak: " + (cbBack.SelectedItem as clsEquipment).ItemName;
+            }
+            if (cb1H.SelectedItem != null)
+            {
+                pb1H.Image = GetEquipImage(cb1H.SelectedItem as clsEquipment);
+                pb1H.Show();
+                lb1H.Text = "Main Hand: " + (cb1H.SelectedItem as clsEquipment).ItemName;
+            }
+            if (cb2H.SelectedItem != null)
+            {
+                pb2H.Image = GetEquipImage(cb2H.SelectedItem as clsEquipment);
+                pb2H.Show();
+                lb2H.Text = "Off Hand: " + (cb2H.SelectedItem as clsEquipment).ItemName;
+            }
+            if (cbAcc1.SelectedItem != null)
+            {
+                pbAcc1.Image = GetEquipImage(cbAcc1.SelectedItem as clsEquipment);
+                pbAcc1.Show();
+                lbAcc1.Text = "Accessory: " + (cbAcc1.SelectedItem as clsEquipment).ItemName;
+            }
+            if (cbAcc2.SelectedItem != null)
+            {
+                pbAcc2.Image = GetEquipImage(cbAcc2.SelectedItem as clsEquipment);
+                pbAcc2.Show();
+                lbAcc2.Text = "Lapel Pin: " + (cbAcc2.SelectedItem as clsEquipment).ItemName;
+            }
+            /*
+        }
+        catch { throw new ArgumentOutOfRangeException("Setting the equipment boxes"); };
+            */
             clearBoxes();
         }
+
+        private void addToEquipList(clsEquipment anItem)
+        {
+            if (anItem.ItemName != "Unequipped")
+            {
+
+            }
+        }
+
 
         private void clearBoxes()
         {
@@ -221,10 +257,10 @@ namespace BreadMage2.Controls
                 clsEquipment anItem = cbBack.SelectedItem as clsEquipment;
                 if (anItem != eqBack)
                 {
-                    rtbDescription.Text = anItem.Description;
+                    rtbDescription.Text = getEquipDescription(anItem);
                     rtbSelectedStats.Text = anItem.Stats;
                     pbSelected.Image = GetEquipImage(anItem);
-                    rtbEquippedStats.Text = eqBack.getStatInfo();
+                    rtbEquippedStats.Text = eqBack.getStatInfoForTextBox();
                     pbEquipped.Image = GetEquipImage(eqBack);
                     pbSelected.Show();
                     pbEquipped.Show();
@@ -234,7 +270,7 @@ namespace BreadMage2.Controls
                 }
                 else
                 {
-                    rtbEquippedStats.Text = eqBack.getStatInfo();
+                    rtbEquippedStats.Text = eqBack.getStatInfoForTextBox();
                     pbEquipped.Image = GetEquipImage(eqBack);
                     pbEquipped.Show();
                 }
@@ -280,10 +316,10 @@ namespace BreadMage2.Controls
                 clsEquipment anItem = cb2H.SelectedItem as clsEquipment;
                 if (anItem != eq2H)
                 {
-                    rtbDescription.Text = anItem.Description;
+                    rtbDescription.Text = getEquipDescription(anItem);
                     rtbSelectedStats.Text = anItem.Stats;
                     pbSelected.Image = GetEquipImage(anItem);
-                    rtbEquippedStats.Text = eq2H.getStatInfo();
+                    rtbEquippedStats.Text = eq2H.getStatInfoForTextBox();
                     pbEquipped.Image = GetEquipImage(eq2H);
                     pbSelected.Show();
                     pbEquipped.Show();
@@ -293,7 +329,7 @@ namespace BreadMage2.Controls
                 }
                 else
                 {
-                    rtbEquippedStats.Text = eq2H.getStatInfo();
+                    rtbEquippedStats.Text = eq2H.getStatInfoForTextBox();
                     pbEquipped.Image = GetEquipImage(eq2H);
                     pbEquipped.Show();
                 }
@@ -306,23 +342,23 @@ namespace BreadMage2.Controls
             if (cbAcc1.SelectedIndex != -1)
             {
                 clsEquipment anItem = cbAcc1.SelectedItem as clsEquipment;
-                if (anItem != eqAcc1)
+                if (anItem != eqAcc)
                 {
-                    rtbDescription.Text = anItem.Description;
+                    rtbDescription.Text = getEquipDescription(anItem);
                     rtbSelectedStats.Text = anItem.Stats;
                     pbSelected.Image = GetEquipImage(anItem);
-                    rtbEquippedStats.Text = eqAcc1.getStatInfo();
-                    pbEquipped.Image = GetEquipImage(eqAcc1);
+                    rtbEquippedStats.Text = eqAcc.getStatInfoForTextBox();
+                    pbEquipped.Image = GetEquipImage(eqAcc);
                     pbSelected.Show();
                     pbEquipped.Show();
 
                     lbSelected.Text = "Selected: " + anItem.ItemName;
-                    lbEquipped.Text = "Equipped: " + eqAcc1.ItemName;
+                    lbEquipped.Text = "Equipped: " + eqAcc.ItemName;
                 }
                 else
                 {
-                    rtbEquippedStats.Text = eqAcc1.getStatInfo();
-                    pbEquipped.Image = GetEquipImage(eqAcc1);
+                    rtbEquippedStats.Text = eqAcc.getStatInfoForTextBox();
+                    pbEquipped.Image = GetEquipImage(eqAcc);
                     pbEquipped.Show();
                 }
             }
@@ -334,23 +370,23 @@ namespace BreadMage2.Controls
             if (cbAcc2.SelectedIndex != -1)
             {
                 clsEquipment anItem = cbAcc2.SelectedItem as clsEquipment;
-                if (anItem != eqAcc2)
+                if (anItem != eqPin)
                 {
-                    rtbDescription.Text = anItem.Description;
+                    rtbDescription.Text = getEquipDescription(anItem);
                     rtbSelectedStats.Text = anItem.Stats;
                     pbSelected.Image = GetEquipImage(anItem);
-                    rtbEquippedStats.Text = eqAcc2.getStatInfo();
-                    pbEquipped.Image = GetEquipImage(eqAcc2);
+                    rtbEquippedStats.Text = eqPin.getStatInfoForTextBox();
+                    pbEquipped.Image = GetEquipImage(eqPin);
                     pbSelected.Show();
                     pbEquipped.Show();
 
                     lbSelected.Text = "Selected: " + anItem.ItemName;
-                    lbEquipped.Text = "Equipped: " + eqAcc2.ItemName;
+                    lbEquipped.Text = "Equipped: " + eqPin.ItemName;
                 }
                 else
                 {
-                    rtbEquippedStats.Text = eqAcc2.getStatInfo();
-                    pbEquipped.Image = GetEquipImage(eqAcc2);
+                    rtbEquippedStats.Text = eqPin.getStatInfoForTextBox();
+                    pbEquipped.Image = GetEquipImage(eqPin);
                     pbEquipped.Show();
                 }
             }
@@ -397,7 +433,16 @@ namespace BreadMage2.Controls
                 buildEffectLine(rtbEquippedStats, current);
             }
 
-            rtbDescription.Text = selected.Description;
+            rtbDescription.Text = getEquipDescription(selected);
+        }
+
+        private string getEquipDescription(clsEquipment anItem)
+        { 
+            if (anItem.equipID != 0 && myGame.flopEquipforUnique(anItem).Description != "")
+            {
+                return myGame.flopEquipforUnique(anItem).Description;
+            }
+            else return "";
         }
 
         private void buildStatLine(RichTextBox entryBox, string sStat, int iVal, int compareVal = 0)
@@ -452,8 +497,9 @@ namespace BreadMage2.Controls
 
         private string buildEffectLine(RichTextBox entryBox, clsEquipment anEquip)
         {
-            if (anEquip.ExtraInfo == null || anEquip.ExtraInfo == "") { return ""; }
-            else { return Environment.NewLine + "Effect: " + anEquip.ExtraInfo; }
+            if (anEquip.ExtraInfo != null && anEquip.ExtraInfo.Find(x => x.Substring(0, 4) == "FLV=") != null)
+            { return (anEquip.ExtraInfo.Find(x => x.Substring(0, 4) == "FLV=").Substring(4)); }
+            else return "";
         }
 
 
@@ -463,20 +509,26 @@ namespace BreadMage2.Controls
             if (MessageBox.Show("Equip this stuff?", "Equip", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
                 List<clsEquipment> newEquip = new List<clsEquipment>();
-
-                if ((cbHelm.SelectedItem as clsEquipment).equipID != 0) { newEquip.Add(cbHelm.SelectedItem as clsEquipment); }
-                if ((cbBack.SelectedItem as clsEquipment).equipID != 0) { newEquip.Add(cbBack.SelectedItem as clsEquipment); }
-                if ((cb1H.SelectedItem as clsEquipment).equipID != 0) { newEquip.Add(cb1H.SelectedItem as clsEquipment); }
-                if ((cb2H.SelectedItem as clsEquipment).equipID != 0) { newEquip.Add(cb2H.SelectedItem as clsEquipment); }
-                if ((cbAcc1.SelectedItem as clsEquipment).equipID != 0) { newEquip.Add(cbAcc1.SelectedItem as clsEquipment); }
-                if ((cbAcc2.SelectedItem as clsEquipment).equipID != 0) { newEquip.Add(cbAcc2.SelectedItem as clsEquipment); }
-
-                //List<clsEquipment> newEquip = new List<clsEquipment> { eqHelm, eqBack, eq1H, eq2H, eqAcc1, eqAcc2 };
-                myGameScr.gMage.EquipItemSet(newEquip);
-                myGameScr.RefreshMage();
-                myGameScr.gLock = false;
+                List<ComboBox> comboBoxes = new List<ComboBox>() { cbHelm, cbBack, cb1H, cb2H, cbAcc1, cbAcc2 };
+                foreach (ComboBox b in comboBoxes)
+                {
+                    if ((b.SelectedItem as clsEquipment).equipID != 0) { newEquip.Add(b.SelectedItem as clsEquipment); }
+                }
+                myGame.EquipItemSet(newEquip);
+                myGame.RefreshMage();
                 this.Hide();
-                this.Dispose();
+
+                if (myGame.gActiveStore != null)
+                {
+                    this.Hide();
+                    myGame.BackToStore();
+                }
+                else
+                {
+                    myGame.gLock = false;
+                    this.Hide();
+                }
+
             }
         }
 
@@ -484,37 +536,18 @@ namespace BreadMage2.Controls
         {
             if (MessageBox.Show("Get out of here?", "Cancel", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
-                myGameScr.gLock = false;
-                this.Hide();
-                this.Dispose();
-
+                if (myGame.gActiveStore != null)
+                {
+                    this.Hide();
+                    myGame.BackToStore();
+                }
+                else
+                {
+                    myGame.gLock = false;
+                    this.Hide();
+                }
             }
         }
 
-
-
-
-
-        // to go?
-        private void buildCompareStatLine(string sStat, clsEquipment selected, clsEquipment equipped)
-        {
-            if (selected == equipped) { rtbEquippedStats.Text = rtbSelectedStats.Text; }
-            else
-            {
-                if (selected.HP() != 0 || equipped.HP() != 0) { }
-
-                if (selected.SP() != 0 || equipped.SP() != 0) { }
-
-                if (selected.PAtk() != 0 || equipped.PAtk() != 0) { }
-
-                if (selected.MAtk() != 0 || equipped.MAtk() != 0) { }
-
-                if (selected.Def() != 0 || equipped.Def() != 0) { }
-
-                if (selected.Res() != 0 || equipped.Res() != 0) { }
-
-                if (selected.ExtraInfo != "" || equipped.ExtraInfo != "") { }
-            }
-        }
     }
 }

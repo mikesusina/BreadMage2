@@ -14,130 +14,65 @@ namespace BreadMage2
         public int  AdvID { get; set; }
         public string AdvName { get; set; }
         public string AdvText { get; set; }
-        public string Btn1 { get; set; } = "";
-        public string Btn1Result { get; set; } = "";
-        public string Btn1RareResult { get; set; } = "";
-        public string Btn2 { get; set; } = "";
-        public string Btn2Result { get; set; } = "";
-        public string Btn2RareResult { get; set; } = "";
-        public string Btn3 { get; set; } = "";
-        public string Condition3 { get; set; } = "";
-        public string Btn3Result { get; set; } = "";
-        public string Btn3RareResult { get; set; } = "";
-        public string Btn4 { get; set; } = "";
-        public string Condition4 { get; set; } = "";
-        public string Btn4Result { get; set; } = "";
-        public string Btn4RareResult { get; set; } = "";
         public int Location { get; set; }
         public string ImgURL { get; set; }
-        public string ReplaceCondition { get; set; }
+        public List<string> AppearCondition { get; set; }
+        public List<string> ReplaceCondition { get; set; }
         public int ReplaceID { get; set; }
+        public List<ResultItem> AdventureResults { get; set; } = new List<ResultItem>();
 
-        public clsChoiceAdventure(DataTable aChoiceData)
-        {
-            ParseChoiceData(aChoiceData);
-        }
-
-        public clsChoiceAdventure(DataRow aChoiceRow)
-        {
-            ParseChoiceRowData(aChoiceRow);
-        }
-
-        private void ParseChoiceData(DataTable ds)
-        {
-            AdvID = Convert.ToInt32(ds.Rows[0]["ID"].ToString());
-            AdvName = ds.Rows[0]["AdvName"].ToString();
-            AdvText = ds.Rows[0]["AdvText"].ToString();
-            Btn1 = ds.Rows[0]["Btn1"].ToString();
-            Btn1Result = ds.Rows[0]["Btn1Result"].ToString();
-            Btn1RareResult = ds.Rows[0]["Btn1Rare"].ToString();
-            Btn2 = ds.Rows[0]["Btn2"].ToString();
-            Btn2Result = ds.Rows[0]["Btn2Result"].ToString();
-            Btn3 = ds.Rows[0]["Btn3"].ToString();
-            Condition3 = ds.Rows[0]["Condition4"].ToString();
-            Btn3Result = ds.Rows[0]["Btn3Result"].ToString();
-            Btn4 = ds.Rows[0]["Btn4"].ToString();
-            Condition4 = ds.Rows[0]["Condition4"].ToString();
-            Btn4Result = ds.Rows[0]["Btn4Result"].ToString();
-            Location = Convert.ToInt32(ds.Rows[0]["Location"].ToString());
-            ReplaceCondition = ds.Rows[0]["ReplaceCondition"].ToString();
-            ReplaceID = Convert.ToInt32(ds.Rows[0]["ReplaceID"].ToString());
-            ImgURL = ds.Rows[0]["ImgURL"].ToString();
-        }
-
-        private void ParseChoiceRowData(DataRow dr)
+        public clsChoiceAdventure() { }
+        public clsChoiceAdventure(DataRow dr)
         {
             AdvID = Convert.ToInt32(dr["ID"].ToString());
             AdvName = dr["AdvName"].ToString();
             AdvText = dr["AdvText"].ToString();
-            Btn1 = dr["Btn1"].ToString();
-            Btn1Result = dr["Btn1Result"].ToString();
-            Btn2 = dr["Btn2"].ToString();
-            Btn2Result = dr["Btn2Result"].ToString();
-            Btn3 = dr["Btn3"].ToString();
-            Condition3 = dr["Condition4"].ToString();
-            Btn3Result = dr["Btn3Result"].ToString();
-            Btn4 = dr["Btn4"].ToString();
-            Condition4 = dr["Condition4"].ToString();
-            Btn4Result = dr["Btn4Result"].ToString();
             Location = Convert.ToInt32(dr["Location"].ToString());
-            ReplaceCondition = dr["ReplaceCondition"].ToString();
+            AppearCondition = Program.ParseDelimitedStringToString(dr["AppearCondition"].ToString());
+            ReplaceCondition = Program.ParseDelimitedStringToString(dr["ReplaceCondition"].ToString());
             ReplaceID = Convert.ToInt32(dr["ReplaceID"].ToString());
             ImgURL = dr["ImgURL"].ToString();
-        }
 
-        public List<string> GetResults(int i, bool b = false)
-        {
-            List<string> ResultList = new List<string>();
-
-            switch (i)
+            //create the result info objects
+            int i = 1;
+            while (i < 5)
             {
-                case 1:
-                    ResultList = ParseResult(Btn1Result);
-                    if (b && Btn1RareResult != "") { ResultList.AddRange(ParseResult(Btn1RareResult)); }
-                    break;
-                case 2:
-                    ResultList = ParseResult(Btn2Result);
-                    if (b && Btn2RareResult != "") { ResultList.AddRange(ParseResult(Btn2RareResult)); }
-                    break;
-                case 3:
-                    ResultList = ParseResult(Btn3Result);
-                    if (b && Btn3RareResult != "") { ResultList.AddRange(ParseResult(Btn3RareResult)); }
-                    break;
-                case 4:
-                    ResultList = ParseResult(Btn4Result);
-                    if (b && Btn4RareResult != "") { ResultList.AddRange(ParseResult(Btn4RareResult)); }
-                    break;
-                default:
-                    throw new Exception("Result info not found");
+                if (dr["Btn" + i.ToString()].ToString() != null)
+                {
+                    ResultItem item = new ResultItem();
+                    item.SlotID = i;
+                    item.ButtonText = dr["Btn" + i.ToString()].ToString();
+                    item.ResultData = dr["Btn" + i.ToString() + "Result"].ToString();
+                    item.RareResultData = dr["Btn" + i.ToString() + "Rare"].ToString();
+                
+                    // visibility condition will get set once the copy has been made
+                    // buttons one and two will always be available, so no conditions - DB doesn't even have columns. 
+                    if (i < 3) 
+                    { item.ResultCondition = "";
+                        item.ConditionMet = true;
+                    }
+                    else { item.ResultCondition = dr["Condition" + i.ToString()].ToString(); }
+                
+                    AdventureResults.Add(item);
+                }
+                i++;
             }
-            return ResultList;
         }
-
-        private List<string> ParseResult(string s)
-        {
-            List<string> ResultData = new List<string>();
-
-            while (s.IndexOf("|") > 0)
-            {
-                //tags are all four characters
-                string temp = s.Substring(0, s.IndexOf("|"));
-                ResultData.Add(temp);
-                s = s.Substring(s.IndexOf("|") + 1);
-            }
-
-            ResultData.Add(s);
-
-            return ResultData;
-        }
-
-
-
-
         public clsChoiceAdventure ShallowCopy()
         {
             return (clsChoiceAdventure)this.MemberwiseClone();
         }
+
+        public List<string> GetResults(ResultItem aResult, bool bRareRoll = false)
+        {
+            List<string> returnList = new List<string>();
+            if (aResult.ResultData != "")
+                { returnList.AddRange(Program.ParseDelimitedStringToString(aResult.ResultData)); }
+            if (bRareRoll && aResult.RareResultData != "") 
+                { returnList.AddRange(Program.ParseDelimitedStringToString(aResult.RareResultData)); }
+            return returnList;
+        }
+
 
 
         // this is definitely stolen from
@@ -162,5 +97,43 @@ namespace BreadMage2
             return (this.AdvID.Equals(other.AdvID));
         }
 
+    }
+
+    public class ResultItem : IEquatable<ResultItem>
+    {
+        public int SlotID { get; set; }
+        public string ButtonText { get; set; }
+        public string ResultData { get; set; }
+        public string RareResultData { get; set; }
+        public string ResultCondition { get; set; }
+        public bool ConditionMet = false;
+
+        public System.Windows.Forms.Button ResultButton { get; set; }
+
+
+        public ResultItem()
+        {
+
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            ResultItem objAsResult = obj as ResultItem;
+            if (objAsResult == null) return false;
+            else return Equals(objAsResult);
+        }
+
+        public override int GetHashCode()
+        {
+            return SlotID;
+        }
+
+        public bool Equals(ResultItem other)
+        {
+            if (other == null) return false;
+            return (this.SlotID.Equals(other.SlotID));
+        }
     }
 }

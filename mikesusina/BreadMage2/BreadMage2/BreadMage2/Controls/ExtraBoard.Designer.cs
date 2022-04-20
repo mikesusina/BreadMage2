@@ -84,6 +84,7 @@
             this.btnItems.TabIndex = 4;
             this.btnItems.Text = "Items";
             this.btnItems.UseVisualStyleBackColor = true;
+            this.btnItems.Click += new System.EventHandler(this.btnItems_Click);
             // 
             // button3
             // 

@@ -12,196 +12,97 @@ namespace BreadMage2.Controls
 {
     public partial class MapBoard : UserControl
     {
-        public GameScreen myGameScr { get; set; }
+        public engGame myGame { get; set; }
 
         private int LocalLoc { get; set; } = 0;
+        private int NewLoc { get; set; } = 0;
         private int LocalZone { get; set; } = 1;
-        private List<PictureBox> MapTiles { get; set; } = new List<PictureBox>();
+        
+        private List<clsLocation> LocalZoneLocs = new List<clsLocation>();
+        private List<MapBox> MapTiles { get; set; } = new List<MapBox>();
 
-        public MapBoard(GameScreen aGS)
+        public MapBoard(engGame aGame)
         {
             InitializeComponent();
-            myGameScr = aGS;
-
-            //create the list of tiles
-            foreach (Control c in this.Controls) {
-                if (c is PictureBox) { MapTiles.Add((PictureBox)c); }
-            }
+            myGame = aGame;
+        }
+        
+        public void LoadBoard()
+        {
 
             // get the mage's current location, but leave as is
-            LocalLoc = myGameScr.gMage.Location;
-            
-            //generate the map
-            if (myGameScr.GameLibraries.LocationLib().Exists(x => x.LocID == LocalLoc))
+            if (myGame.GameLibraries.LocationLib().Find(x => x.LocationID == myGame.gMage.Location).Zone != 0)
+            { LocalZone = myGame.GameLibraries.LocationLib().Find(x => x.LocationID == myGame.gMage.Location).Zone; }
+            else
             {
-                LocalZone = myGameScr.GameLibraries.LocationLib().Find(x => x.LocID == LocalLoc).Zone;
+                LocalZone = 0;
+                return; //need to handle if mage is out of zone?
             }
+            LocalLoc = myGame.gMage.Location;
 
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
+
+            //get the local locations
+            LocalZoneLocs = myGame.GameLibraries.LocationLib().FindAll(x => x.Zone == LocalZone);
+            if (LocalZoneLocs.Count() > 0)
             {
-                if (o.Zone == LocalZone ) { SetMapTile(o); }
-            }
-
-        }
-
-        private void SetMapTile(clsLocation loc)
-        {
-            string TileLoc = "b" + loc.LocY + loc.LocX.ToString();
-            foreach (PictureBox p in MapTiles)
-            {
-                if ( p.Name.ToString() == TileLoc)
+                int i = 1;
+                while (i < 13)
                 {
-                    p.Image = loc.MapTile;
-                    p.Show();
-                    break;
+                    MapBox box = new MapBox();
+                    if (LocalZoneLocs.Find(x => x.ZoneLocation == i) != null)
+                    {
+                        box.MapLocation = (LocalZoneLocs.Find(x => x.ZoneLocation == i));
+                    }
+                    else
+                    {
+                        box.MapLocation = new clsLocation();
+                    }
+
+                    box.pbMapBox = (Controls["b" + i.ToString()] as PictureBox);
+                    box.pbMapBox.Tag = box.MapLocation;
+
+                    MapTiles.Add(box);
+                    i++;
                 }
             }
-        }
 
-        private void ClickA1(object sender, EventArgs e)
-        {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
+            //set the tiles
+            foreach (MapBox m in MapTiles)
             {
-                if (o.Zone == LocalZone && o.LocX == 1 && o.LocY == "A")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
+                m.pbMapBox.Image = m.MapLocation.MapTile;
+                m.pbMapBox.Click += new EventHandler(pbTile_Click);
+
+                m.pbMapBox.Show();
             }
         }
 
-        private void ClickA2(object sender, EventArgs e)
+        private void pbTile_Click(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 2 && o.LocY == "A")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
+            string s = "Headed to: " + ((sender as PictureBox).Tag as clsLocation).LocationName;
+            NewLoc = ((sender as PictureBox).Tag as clsLocation).LocationID;
+            prevLocTag.Text = s;
         }
 
-        private void ClickA3(object sender, EventArgs e)
+        private void btnConfirm_Click(object sender, EventArgs e)
         {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 3 && o.LocY == "A")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
-        }
+            myGame.gLock = false;
+            if (NewLoc == 0) { NewLoc = LocalLoc; }
+            myGame.ChangeLocation(NewLoc);
+            this.Dispose();
 
-        private void ClickB1(object sender, EventArgs e)
+        }
+    }
+
+}
+namespace BreadMage2
+{
+    public class MapBox
+    {
+        public clsLocation MapLocation { get; set; }
+        public PictureBox pbMapBox { get; set; }
+        public MapBox()
         {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 1 && o.LocY == "B")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
+
         }
-
-        private void ClickB2(object sender, EventArgs e)
-        {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 2 && o.LocY == "B")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
-        }
-
-        private void ClickB3(object sender, EventArgs e)
-        {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 3 && o.LocY == "B")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
-        }
-
-        private void ClickC1(object sender, EventArgs e)
-        {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 1 && o.LocY == "C")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
-        }
-
-        private void ClickC2(object sender, EventArgs e)
-        {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 2 && o.LocY == "C")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
-        }
-
-        private void ClickC3(object sender, EventArgs e)
-        {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 3 && o.LocY == "C")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
-        }
-
-        private void ClickD1(object sender, EventArgs e)
-        {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 1 && o.LocY == "D")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
-        }
-
-        private void ClickD2(object sender, EventArgs e)
-        {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 2 && o.LocY == "D")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
-        }
-
-        private void ClickD3(object sender, EventArgs e)
-        {
-            foreach (clsLocation o in myGameScr.GameLibraries.LocationLib())
-            {
-                if (o.Zone == LocalZone && o.LocX == 3 && o.LocY == "D")
-                {
-                    string s = "Headed to: " + o.LocationName;
-                    prevLocTag.Text = s;
-                }
-            }
-        }
-
-
     }
 }

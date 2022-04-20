@@ -13,19 +13,19 @@ namespace BreadMage2
 {
     public partial class BreadMage : UserControl
     {
-        private GameScreen myGS;
+        private engGame myGame;
 
         private BindingSource effectBS = new BindingSource();
         private BindingSource passiveBS = new BindingSource();
 
-        public BreadMage(GameScreen aGS)
+        public BreadMage(engGame aGame)
         {
             InitializeComponent();
-            myGS = aGS;
+            myGame = aGame;
         }
-        public void setGame(GameScreen aGS)
+        public void setGame(engGame aGame)
         {
-            myGS = aGS;
+            myGame = aGame;
         }
 
         public void LoadScreen()
@@ -62,9 +62,9 @@ namespace BreadMage2
         {
             //hp
             pbHP.Minimum = 0;
-            pbHP.Maximum = myGS.gMage.Stats.HPMax;
-            pbHP.Value = myGS.gMage.Stats.HP;
-            string s = "HP: " + myGS.gMage.Stats.HP.ToString() + "/" + myGS.gMage.Stats.HPMax.ToString();
+            pbHP.Maximum = myGame.gMage.Stats.HPMax;
+            pbHP.Value = myGame.gMage.Stats.HP;
+            string s = "HP: " + myGame.gMage.Stats.HP.ToString() + "/" + myGame.gMage.Stats.HPMax.ToString();
             lblHPDisplay.Text = s;
 
             /*
@@ -75,18 +75,21 @@ namespace BreadMage2
 
 
             //effects
-            lblMoldTick.Text = myGS.gMage.MoldCount().ToString();
-            lblZestTick.Text = myGS.gMage.ZestCount().ToString();
-            lblTensionTick.Text = myGS.gMage.TensionCount().ToString();
+            lblMoldTick.Text = myGame.gMage.MoldCount().ToString();
+            lblZestTick.Text = myGame.gMage.ZestCount().ToString();
+            lblTensionTick.Text = myGame.gMage.TensionCount().ToString();
 
             //items
-            lblIngredients.Text = "Ingredients: " + myGS.gMage.GetComponentCount(1);
-            lblCosmicEnergy.Text = "Cosmic Energy: " + myGS.gMage.GetComponentCount(2);
-            lblElementalMotes.Text = "Elemental Motes: " + myGS.gMage.GetComponentCount(3);
+            barIngredients.Maximum = (myGame.gMage.Stats.MaxSpellTier * 50);
+            barIngredients.Value = myGame.gMage.GetComponentCount(1);
+            barCosmicEnergy.Maximum = (myGame.gMage.Stats.MaxSpellTier * 50);
+            barCosmicEnergy.Value = myGame.gMage.GetComponentCount(2);
+            barElementalMotes.Maximum = (myGame.gMage.Stats.MaxSpellTier * 50);
+            barElementalMotes.Value = myGame.gMage.GetComponentCount(3);
 
             setEffectBox();
 
-            s = "PATK: " + myGS.gMage.PAtk().ToString();
+            s = "PATK: " + myGame.gMage.BuffedStat("PAK").ToString();
             lblYeast.Text = s;
         }
 
@@ -115,12 +118,13 @@ namespace BreadMage2
 
         public void setEffectBox()
         {
-            List<clsSpell> MageEffects = new List<clsSpell>();
-            List<clsSpell> MagePassives = myGS.gMage.EQSpells(2);
+            List<clsEffect> MageEffects = myGame.gMage.GetStatEffects("daytick");
+            List<clsSpell> MagePassives = myGame.gMage.EQSpells("passive");
 
             passiveBS.DataSource = MagePassives;
             effectBS.DataSource = MageEffects;
             boxSpells.DataSource = passiveBS;
+            boxSpells.DisplayMember = "spellName";
             if (radioEffects.Checked == true) { boxSpells.DataSource = MageEffects; }
             else { boxSpells.DataSource = MagePassives; }
 
@@ -137,22 +141,18 @@ namespace BreadMage2
             this.pbHP.Value = 0;
         }
         
-        public clsMage GetMage() { return myGS.gMage; }
-
-
-
         public void BuffStuff()
         {
-            if (myGS.gMage.GetStatEffects().Count > 0)
+            if (myGame.gMage.GetStatEffects().Count > 0)
             {
                 int iX = 10;
                 int iY = 10;
 
-                List<clsEffect> types = myGS.GameLibraries.EffectLib().FindAll(x => x.sType == "B");
-                types.AddRange(myGS.GameLibraries.EffectLib().FindAll(x => x.sType == "D"));
-                types.AddRange(myGS.GameLibraries.EffectLib().FindAll(x => x.sType == "P"));
+                List<clsEffect> types = myGame.GameLibraries.EffectLib().FindAll(x => x.sType == "B");
+                types.AddRange(myGame.GameLibraries.EffectLib().FindAll(x => x.sType == "D"));
+                types.AddRange(myGame.GameLibraries.EffectLib().FindAll(x => x.sType == "P"));
 
-                foreach (clsMageEffect e in myGS.gMage.GetStatEffects())
+                foreach (clsEffect e in myGame.gMage.GetStatEffects())
                 {
                     if (types.Find(x => x.iID == e.iID) != null)
                     {
@@ -178,32 +178,29 @@ namespace BreadMage2
             }
         }
 
-        private Image GetSpellIconImage(clsSpell aSpell)
+        private void effectDisplay_CheckChanged(object sender, EventArgs e)
         {
-            if (aSpell.ImgURL != null && aSpell.ImgURL != "")
-            {
-                object o = Properties.Resources.ResourceManager.GetObject(aSpell.ImgURL);
-                if (o is Image) { return o as Image; }
-                else return Properties.Resources.bomb;
-            }
-            else return Properties.Resources.bomb;
-        }
+            RadioButton b = sender as RadioButton;
 
-        private void radioEffects_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioEffects.Focused && radioEffects.Checked)
+            if (b.Focused && b.Checked)
             {
-                boxSpells.DataSource = effectBS;
                 boxSpells.ClearSelected();
-            }
-        }
+                if (b == radioEffects) 
+                {
+                    boxSpells.DataSource = effectBS;
+                    boxSpells.DisplayMember = "sEffectName";
+                    effectBS.ResetBindings(false);
+                }
+                else if (b == radioPassives) 
+                {
+                    boxSpells.DataSource = passiveBS; 
+                    boxSpells.DisplayMember = "spellName";
+                    passiveBS.ResetBindings(false);
 
-        private void radioPassives_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioPassives.Focused && radioPassives.Checked)
-            {
-                boxSpells.DataSource = passiveBS;
-                boxSpells.ClearSelected();
+                }
+                pbEffectIcon.Image = null;
+                lblEffect.Text = "";
+                myGame.gTT.SetToolTip(pbEffectIcon, null);
             }
         }
 
@@ -214,8 +211,9 @@ namespace BreadMage2
                 try
                 {
                     clsSpell s = boxSpells.SelectedItem as clsSpell;
-                    pbEffectIcon.Image = GetSpellIconImage(s);
+                    pbEffectIcon.Image = Program.GetImage(s.ImgURL);
                     pbEffectIcon.Show();
+                    myGame.gTT.SetToolTip(pbEffectIcon, s.spellDescription);
                 }
                 catch { throw new FormatException("this thing isnt right"); }
             }

@@ -20,5 +20,9 @@ namespace BreadMage2
         {
             lstLog.Items.Insert(0, msg);
         }
+        public void ClearLog()
+        {
+            lstLog.Items.Clear();
+        }
     }
 }

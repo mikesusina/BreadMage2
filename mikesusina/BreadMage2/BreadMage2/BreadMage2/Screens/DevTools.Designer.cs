@@ -46,6 +46,8 @@
             this.button4 = new System.Windows.Forms.Button();
             this.tbDisplay = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
+            this.comboItemType = new System.Windows.Forms.ComboBox();
+            this.button6 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSetLoc
@@ -219,11 +221,37 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
+            // comboItemType
+            // 
+            this.comboItemType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboItemType.FormattingEnabled = true;
+            this.comboItemType.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4"});
+            this.comboItemType.Location = new System.Drawing.Point(384, 302);
+            this.comboItemType.Name = "comboItemType";
+            this.comboItemType.Size = new System.Drawing.Size(117, 21);
+            this.comboItemType.TabIndex = 18;
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(375, 273);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(136, 23);
+            this.button6.TabIndex = 19;
+            this.button6.Text = "See Item List By Type";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // DevTools
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button6);
+            this.Controls.Add(this.comboItemType);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.tbDisplay);
             this.Controls.Add(this.button4);
@@ -270,5 +298,7 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.TextBox tbDisplay;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.ComboBox comboItemType;
+        private System.Windows.Forms.Button button6;
     }
 }

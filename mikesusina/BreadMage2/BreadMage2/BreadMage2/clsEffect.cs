@@ -13,7 +13,11 @@ namespace BreadMage2
     {
         //this is the class for holding info related to effects
         public int iID { get; set; }
+        
+        // [E]ffects, [B]uff/[D]ebuff, [P]roc effects
+        public string sCat;
         public string sType { get; set; }
+        public int Tick {get; set;}
         public string sEffectName { get; set; }
         public string sDescription { get; set; }
         public string sQuickDesc { get; set; }
@@ -21,38 +25,31 @@ namespace BreadMage2
 
 
         // for de/buffs
-        public string sPower;
-        public string sTarget;
+        public int Power;
 
 
         public clsEffect()
         {
 
-
-        }
-
-        public clsEffect(DataTable ds)
-        {
-            iID = Convert.ToInt32(ds.Rows[0]["ID"].ToString());
-            sType = ds.Rows[0]["EffectType"].ToString();
-            sEffectName = ds.Rows[0]["EffectName"].ToString();
-            sDescription = ds.Rows[0]["EffectDescription"].ToString();
-            sQuickDesc = ds.Rows[0]["QuickDesc"].ToString();
-            ImgURL = ds.Rows[0]["ImgURL"].ToString();
-            sTarget = ds.Rows[0]["Target"].ToString();
-            sPower = ds.Rows[0]["Power"].ToString();
         }
 
         public clsEffect(DataRow dr)
         {
             iID = Convert.ToInt32(dr["ID"].ToString());
-            sType = dr["EffectType"].ToString();
+            //the "effect type" column is for category, so the Target column is usually the "effect type" within it's category
+            sCat = dr["EffectType"].ToString();
+            sType = dr["Target"].ToString();
             sEffectName = dr["EffectName"].ToString();
             sDescription = dr["EffectDescription"].ToString();
             sQuickDesc = dr["QuickDesc"].ToString();
             ImgURL = dr["ImgURL"].ToString();
-            sTarget = dr["Target"].ToString();
-            sPower = dr["Power"].ToString();
+            Power = Convert.ToInt32(dr["Power"].ToString());
+        }
+
+
+        public clsEffect ShallowCopy()
+        {
+            return (clsEffect)this.MemberwiseClone();
         }
 
 

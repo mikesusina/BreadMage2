@@ -22,65 +22,33 @@ namespace BreadMage2
         public int MDef { get; set; } = 1;
         public int EXP { get; set; } = 0;
         public bool isCharging = false;
-        public int MoldCount { get; set; } = 0;
-        public int ZestCount { get; set; } = 0;
-        public int TensionCount { get; set; } = 0;
+        public int MoldCount()
+        {
+            if (MonsterEffects.Find(x => x.iID == 1) != null) { return MonsterEffects.Find(x => x.iID == 1).Tick; }
+            else return 0; ;
+        }
+        public int ZestCount() {
+            if (MonsterEffects.Find(x => x.iID == 2) != null) { return MonsterEffects.Find(x => x.iID == 2).Tick; } 
+            else return 0; ; }
+        public int TensionCount()
+        {
+            if (MonsterEffects.Find(x => x.iID == 3) != null) { return MonsterEffects.Find(x => x.iID == 3).Tick; }
+            else return 0; ;
+        }
+        //public int StunCount => MonsterEffects.Find(x => x.iID == 8).Tick;
+        public int StunCount = 0;
         public string ImgURL { get; set; } = "BreadMage2";
         public string IntroChatter { get; set; } = "";
         public int Location { get; set; } = 1;
 
-        private DataTable rawChatter;
-
+        public List<clsEffect> MonsterEffects = new List<clsEffect>();
         public List<MonsterChatter> ChatterList { get; set; } = new List<MonsterChatter>();
-
         public List<String> EffTypeList { get; set; }
-
         public  DataTable DropList { get; set; }
 
-        //unique chatter? roll to use unique or common?
+        public clsMonster() { }
 
-
-        public clsMonster(DataTable aMonData, DataTable someChatter)
-        {
-            rawChatter = someChatter;
-            ParseMonsterData(aMonData);
-            RefreshMonster();
-        }
-
-        public clsMonster(DataRow aMonRow, DataTable someChatter)
-        {
-            rawChatter = someChatter;
-            ParseMonsterDataRow(aMonRow);
-            RefreshMonster();
-        }
-
-        public clsMonster ShallowCopy()
-        {
-            return (clsMonster)this.MemberwiseClone();
-        }
-
-        //These should be coming straight from the full Monsters table
-        private void ParseMonsterData(DataTable ds)
-        {
-            MonName = ds.Rows[0].ItemArray[0].ToString();
-            HPmax = cInt(ds.Rows[0]["HP"].ToString());
-            HP = HPmax;
-            PAtk = cInt(ds.Rows[0]["PATK"].ToString());
-            MAtk = cInt(ds.Rows[0]["MATK"].ToString());
-            PDef = cInt(ds.Rows[0]["PDEF"].ToString());
-            MDef = cInt(ds.Rows[0]["MDEF"].ToString());
-            EXP = cInt(ds.Rows[0]["EXP"].ToString());
-            ImgURL = ds.Rows[0]["ImgURL"].ToString();
-            IntroChatter = ds.Rows[0]["IntroChatter"].ToString();
-            Location = cInt(ds.Rows[0]["Location"].ToString());
-            monID = cInt(ds.Rows[0]["MonsterID"].ToString());
-            MakeDropTable(ds.Rows[0]["Drops"].ToString());
-            MakeEffectList(ds.Rows[0]["EffType"].ToString());
-
-            MakeChatterList(rawChatter);
-        }
-
-        private void ParseMonsterDataRow(DataRow dr)
+        public clsMonster(DataRow dr, List<MonsterChatter> someChatter)
         {
             MonName = dr["MonName"].ToString();
             HPmax = cInt(dr["HP"].ToString());
@@ -95,38 +63,101 @@ namespace BreadMage2
             Location = cInt(dr["Location"].ToString());
             monID = cInt(dr["MonsterID"].ToString());
             MakeDropTable(dr["Drops"].ToString());
-            MakeEffectList(dr["EffType"].ToString());
+            EffTypeList = Program.ParseDelimitedStringToString(dr["EffType"].ToString(), "|");
+            ChatterList = someChatter;
 
+            RefreshMonster();
+        }
 
-            MakeChatterList(rawChatter);
+        public clsMonster ShallowCopy()
+        {
+            return (clsMonster)this.MemberwiseClone();
+        }
+
+        public void AddEffect(clsEffect anEffect)
+        {
+            if (MonsterHasEffect(anEffect.iID, out clsEffect activeEffect))
+            {
+
+                activeEffect.Tick += anEffect.Tick;
+                if (activeEffect.Tick <= 0)
+                    { MonsterEffects.Remove(activeEffect); }
+            }
+            else { MonsterEffects.Add(anEffect.ShallowCopy()); }
+
+        }
+        public void AdjustEffect(int anID, int aTick)
+        {
+            if (MonsterHasEffect(anID, out clsEffect activeEffect))
+            {
+                activeEffect.Tick += aTick;
+                if (activeEffect.Tick <= 0)
+                { MonsterEffects.Remove(activeEffect); }
+            }
+        }
+
+        private bool MonsterHasEffect(int iID, out clsEffect ActiveEffect)
+        {
+            ActiveEffect = null;
+            if (MonsterEffects == null || MonsterEffects.Count == 0) { return false; }
+            else if (MonsterEffects.Find(x => x.iID == iID) != null)
+            {
+                ActiveEffect = MonsterEffects.Find(x => x.iID == iID);
+                return true;
+            }
+            return false;
         }
 
         public void RefreshMonster()
         {
             // if the monsters in the library get their stats goofed around
             HP = HPmax;
-            MoldCount = 0;
-            ZestCount = 0;
-            TensionCount = 0;
+            MonsterEffects.Clear();
             isCharging = false;
+        }
+
+        public List<KeyValuePair<string, int>> TickMonsterPoison()
+        {
+            List<KeyValuePair<string, int>> tickInfo = new List<KeyValuePair<string, int>>();
+            int damage = 0;
+            int iTick = 1;
+
+
+            if (MoldCount() > 0)
+            {
+                if (MoldCount() > 2)
+                {
+                    iTick = (int)Math.Ceiling(Convert.ToDouble(MoldCount()) / 2);
+                }
+                damage = 2 * iTick;
+                MonsterEffects.Find(x=>x.iID == 1).Tick -= iTick;
+                if (MoldCount() < 0) { MonsterEffects.Find(x => x.iID == 1).Tick = 0; }
+
+                tickInfo.Add(new KeyValuePair<string, int>("damage", damage));
+                //the tick value returned should be negative, since from here on it's for chat info
+                tickInfo.Add(new KeyValuePair<string, int>("tick", iTick * -1));
+            }
+
+            return tickInfo;
         }
 
         public DamageInfoChatter TickPoison()
         {
             DamageInfoChatter c = new DamageInfoChatter();
 
-            if (MoldCount <= 0) { return c; }
+
+            if (MoldCount() <= 0) { return c; }
             else
             {
                 c.iTick = 1;
-                c.effType = "M";
-                if (MoldCount > 2)
+                c.chatType = "mold";
+                if (MoldCount() > 2)
                 {
-                    c.iTick = (int)Math.Ceiling(Convert.ToDouble(MoldCount) / 2);
+                    c.iTick = (int)Math.Ceiling(Convert.ToDouble(MoldCount()) / 2);
                 }
                 c.iDamage = 2 * c.iTick;
-                MoldCount -= c.iTick;
-                if (MoldCount < 0) { MoldCount = 0; }
+                AdjustEffect(1, (c.iTick * -1));
+                
                 return c;
             }
         }
@@ -209,58 +240,22 @@ namespace BreadMage2
             }
         }
 
-
-        private void MakeChatterList(DataTable rawChatter)
+        public List<string> PullAttackList()
         {
-            foreach (DataRow r in rawChatter.Rows)
+            List<string> returnList = new List<string>()
             {
-                if (cInt(r["MonsterID"].ToString()) == monID)
-                {
-                    /*
-                    MonsterChatter b = new MonsterChatter(r["Chatter"].ToString(), (int)r["ChatType"]);
-                    MonsterChatter b = new MonsterChatter(r["Chatter"].ToString())
-                    {
-                        iType = (int)r["ChatType"]
-                    };
-                    
-                    switch (b.iType)
-                    {
-                        case 1: //patk
-                            b.ChatColor = System.Drawing.Color.Red;
-                            break;
-                        case 2: //matk
-                            b.ChatColor = System.Drawing.Color.CornflowerBlue;
-                            break;
-                        case 3: //miss
-                            b.ChatColor = System.Drawing.Color.White;
-                            break;
-                        case 4: //defend
-                            b.ChatColor = System.Drawing.Color.Aquamarine;
-                            break;
-                        case 5: //mold
-                            b.ChatColor = System.Drawing.Color.LimeGreen;
-                            break;
-                        case 6: //zest
-                            b.ChatColor = System.Drawing.Color.DarkOrange;
-                            break;
-                        case 7: //tension
-                            b.ChatColor = System.Drawing.Color.LightCoral;
-                            break;
-                        case 8: // stun
-                            b.ChatColor = System.Drawing.Color.LightCoral;
-                            break;
-                        case 9: // charge
-                            b.ChatColor = System.Drawing.Color.Gainsboro;
-                            break;
-                        case 10: // restore
-                            b.ChatColor = System.Drawing.Color.PeachPuff;
-                            break;
-                    }
-                    ChatterList.Add(b);
-                    */
-                    ChatterList.Add(new MonsterChatter(r["Chatter"].ToString(), (int)r["ChatType"]));
-                }
+                "physical", "magic", "miss", "miss"
+            };
+
+            if (PAtk > MAtk) { returnList.Add("physical"); }
+            else { returnList.Add("magic"); }
+            
+            foreach (string s in EffTypeList) 
+            {
+                returnList.Add("ability");
             }
+            
+            return returnList;
         }
 
         private void MakeDropTable(string rawData)
@@ -299,23 +294,7 @@ namespace BreadMage2
             DropList.Rows.Add(new Object[]{
                                     tID,
                                     tRate});
-        }
-
-        private void MakeEffectList(string rawEffects)
-        {
-            EffTypeList = new List<string>();
-            string s = rawEffects;
-
-            while (s.IndexOf("|") > 0)
-            {
-                string temp = s.Substring(0, s.IndexOf("|"));
-                EffTypeList.Add(temp);
-                s = s.Substring(s.IndexOf("|") + 1);
-            }
-            EffTypeList.Add(s);
-        }
-
-        
+        }        
 
 
         private int cInt(string s)

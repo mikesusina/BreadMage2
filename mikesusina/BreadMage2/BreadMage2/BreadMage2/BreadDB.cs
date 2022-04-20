@@ -38,15 +38,6 @@ namespace BreadMage2
             return cnn;
         }
 
-        private void FillDS(string msql, DataSet ds)
-        {
-            myConn = BreadConnect();
-            OleDbDataAdapter myAdap = new OleDbDataAdapter(msql, myConn);
-            myAdap.Fill(ds);
-            myAdap.Dispose();
-            myConn.Close();
-        }
-
         private void FillDT(string msql, DataTable dt)
         {
             myConn = BreadConnect();
@@ -65,28 +56,39 @@ namespace BreadMage2
             o.SetItemLib(LoadUniqueItemsList());
             o.SetEquipLib(LoadEquipment());
             o.SetSpellLib(LoadSpellList());
+            o.SetEquipSpells(); //this requires both the equip and spell library to be populated
             o.SetLocationLib(LoadLocationList());
             o.SetEffectLib(LoadEffectLibrary());
             o.SetSpellChatterLib(LoadSpellChatter());
+            o.SetWeaponChatterLib(LoadWeaponChatter());
+            o.SetTownLocationsLib(LoadTownLocationLibrary());
             return o;
         }
 
         public List<clsMonster> LoadMonsterList()
         {
-            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
             string msql = "SELECT * FROM Monsters;";
-            FillDS(msql, ds);
+            FillDT(msql, dt);
 
             DataTable rawChatter = new DataTable();
             msql = "SELECT * FROM MonsterChatter;";
             FillDT(msql, rawChatter);
 
+            //Create the master list of chatter results first
             int i = 0;
-            List<clsMonster> MonList = new List<clsMonster>();
-            foreach (DataRow d in ds.Tables[0].Rows)
+            List<MonsterChatter> MasterChatterList = new List<MonsterChatter>();
+            foreach (DataRow r in rawChatter.Rows)
             {
-                MonList.Add(new clsMonster(ds.Tables[0].Rows[i], rawChatter));
+                MasterChatterList.Add(new MonsterChatter(r["Chatter"].ToString(), r["ChatType"].ToString(), Convert.ToInt32(r["MonsterID"].ToString())));
                 i++;
+            }
+
+            //then load the monsters by row
+            List<clsMonster> MonList = new List<clsMonster>();
+            foreach (DataRow r in dt.Rows)
+            {
+                MonList.Add(new clsMonster(r, MasterChatterList.FindAll(x => x.iMonID == Convert.ToInt32(r["MonsterID"].ToString()))));
             }
 
             return MonList;
@@ -94,16 +96,17 @@ namespace BreadMage2
 
         public List<clsChoiceAdventure> LoadChoiceList()
         {
-            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
             string msql = "SELECT * FROM ChoiceLib;";
-            FillDS(msql, ds);
+            FillDT(msql, dt);
 
-            int i = 0;
             List<clsChoiceAdventure> ChoiceList = new List<clsChoiceAdventure>();
-            foreach (DataRow d in ds.Tables[0].Rows)
+            foreach (DataRow r in dt.Rows)
             {
-                ChoiceList.Add(new clsChoiceAdventure(ds.Tables[0].Rows[i]));
-                i++;
+                clsChoiceAdventure a = new clsChoiceAdventure(r);
+                Console.WriteLine(a.GetType().Name);
+                Console.WriteLine(a.GetType().FullName);
+                ChoiceList.Add(new clsChoiceAdventure(r));
             }
 
             return ChoiceList;
@@ -112,15 +115,13 @@ namespace BreadMage2
         public List<clsUniqueItem> LoadUniqueItemsList()
         {
             List<clsUniqueItem> myList = new List<clsUniqueItem>();
-            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
             string msql = "SELECT * FROM ItemBook;";
-            FillDS(msql, ds);
+            FillDT(msql, dt);
 
-            int i = 0;
-            foreach (DataRow d in ds.Tables[0].Rows)
+            foreach (DataRow r in dt.Rows)
             {
-                myList.Add(new clsUniqueItem(ds.Tables[0].Rows[i]));
-                i++;
+                myList.Add(new clsUniqueItem(r));
             }
 
             return myList;
@@ -129,15 +130,13 @@ namespace BreadMage2
         public List<clsEquipment> LoadEquipment()
         {
             List<clsEquipment> myList = new List<clsEquipment>();
-            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
             string msql = "SELECT * FROM Equipment;";
-            FillDS(msql, ds);
+            FillDT(msql, dt);
 
-            int i = 0;
-            foreach (DataRow d in ds.Tables[0].Rows)
+            foreach (DataRow r in dt.Rows)
             {
-                myList.Add(new clsEquipment(ds.Tables[0].Rows[i]));
-                i++;
+                myList.Add(new clsEquipment(r));
             }
 
             return myList;
@@ -146,15 +145,13 @@ namespace BreadMage2
         public List<clsSpell> LoadSpellList()
         {
             List<clsSpell> myList = new List<clsSpell>();
-            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
             string msql = "SELECT * FROM Spells;";
-            FillDS(msql, ds);
+            FillDT(msql, dt);
 
-            int i = 0;
-            foreach (DataRow d in ds.Tables[0].Rows)
+            foreach (DataRow r in dt.Rows)
             {
-                myList.Add(new clsSpell(ds.Tables[0].Rows[i]));
-                i++;
+                myList.Add(new clsSpell(r));
             }
 
             return myList;
@@ -163,15 +160,13 @@ namespace BreadMage2
         public List<clsLocation> LoadLocationList()
         {
             List<clsLocation> myList = new List<clsLocation>();
-            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
             string msql = "SELECT * FROM Locations;";
-            FillDS(msql, ds);
+            FillDT(msql, dt);
 
-            int i = 0;
-            foreach (DataRow d in ds.Tables[0].Rows)
+            foreach (DataRow r in dt.Rows)
             {
-                myList.Add(new clsLocation(ds.Tables[0].Rows[i]));
-                i++;
+                myList.Add(new clsLocation(r));
             }
 
             return myList;
@@ -190,7 +185,6 @@ namespace BreadMage2
                 {
                     EffectChatter e = new EffectChatter(r["ChatterText"].ToString(),
                         r["EffType"].ToString(),
-                        null,
                         true,
                         (int)r["SpeakerType"]);
                     myList.Add(e);
@@ -229,18 +223,52 @@ namespace BreadMage2
             return myList;
         }
 
+        public List<WeaponChatter> LoadWeaponChatter()
+        {
+            List<WeaponChatter> myList = new List<WeaponChatter>();
+            try
+            {
+                DataTable dt = new DataTable();
+                string msql = "SELECT * FROM WeaponChatter;";
+                FillDT(msql, dt);
+
+                foreach (DataRow r in dt.Rows)
+                {
+                    //public WeaponChatter(string sText, string aSubType, bool bFlag = true)
+                    myList.Add(new WeaponChatter(r["Chatter"].ToString(), r["SubType"].ToString()));
+                }
+            }
+            catch (ApplicationException ex)
+            {
+                string s = "Dang couldn't load that WeaponChatter Library for some reason" + Environment.NewLine + ex.InnerException.ToString();
+            }
+            return myList;
+        }
+
         public List<clsEffect> LoadEffectLibrary()
         {
             List<clsEffect> myList = new List<clsEffect>();
-            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
             string msql = "SELECT * FROM EffectLib;";
-            FillDS(msql, ds);
+            FillDT(msql, dt);
 
-            int i = 0;
-            foreach (DataRow d in ds.Tables[0].Rows)
+            foreach (DataRow r in dt.Rows)
             {
-                myList.Add(new clsEffect(ds.Tables[0].Rows[i]));
-                i++;
+                myList.Add(new clsEffect(r));
+            }
+
+            return myList;
+        }
+        public List<clsTownLot> LoadTownLocationLibrary()
+        {
+            List<clsTownLot> myList = new List<clsTownLot>();
+            DataTable dt = new DataTable();
+            string msql = "SELECT * FROM TownLocations;";
+            FillDT(msql, dt);
+
+            foreach (DataRow r in dt.Rows)
+            {
+                myList.Add(new clsTownLot(r));
             }
 
             return myList;

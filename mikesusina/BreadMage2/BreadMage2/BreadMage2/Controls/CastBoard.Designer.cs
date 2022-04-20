@@ -47,10 +47,10 @@
             this.pnlComponents = new System.Windows.Forms.Panel();
             this.lblElementalMotes = new System.Windows.Forms.Label();
             this.lblCosmicEnergy = new System.Windows.Forms.Label();
-            this.lblIngredients = new System.Windows.Forms.Label();
             this.pbElementalMotesIcon = new System.Windows.Forms.PictureBox();
             this.pbIngredientsIcon = new System.Windows.Forms.PictureBox();
             this.pbCosmicEnergyIcon = new System.Windows.Forms.PictureBox();
+            this.lblIngredients = new System.Windows.Forms.Label();
             this.pbSpellIcon = new System.Windows.Forms.PictureBox();
             this.pnlSpellSwitcher.SuspendLayout();
             this.pnlSPBar.SuspendLayout();
@@ -70,6 +70,7 @@
             this.btnCancel.TabIndex = 30;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
@@ -265,16 +266,6 @@
             this.lblCosmicEnergy.TabIndex = 25;
             this.lblCosmicEnergy.Text = "Cosmic Energy";
             // 
-            // lblIngredients
-            // 
-            this.lblIngredients.AutoSize = true;
-            this.lblIngredients.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblIngredients.Location = new System.Drawing.Point(37, 8);
-            this.lblIngredients.Name = "lblIngredients";
-            this.lblIngredients.Size = new System.Drawing.Size(70, 18);
-            this.lblIngredients.TabIndex = 21;
-            this.lblIngredients.Text = "Ingredients";
-            // 
             // pbElementalMotesIcon
             // 
             this.pbElementalMotesIcon.Location = new System.Drawing.Point(7, 68);
@@ -298,6 +289,16 @@
             this.pbCosmicEnergyIcon.Size = new System.Drawing.Size(20, 20);
             this.pbCosmicEnergyIcon.TabIndex = 22;
             this.pbCosmicEnergyIcon.TabStop = false;
+            // 
+            // lblIngredients
+            // 
+            this.lblIngredients.AutoSize = true;
+            this.lblIngredients.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblIngredients.Location = new System.Drawing.Point(37, 8);
+            this.lblIngredients.Name = "lblIngredients";
+            this.lblIngredients.Size = new System.Drawing.Size(70, 18);
+            this.lblIngredients.TabIndex = 21;
+            this.lblIngredients.Text = "Ingredients";
             // 
             // pbSpellIcon
             // 

@@ -202,4 +202,16 @@
   <data name="sporesling" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\images\spells\sporesling.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="equipshop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\icons\equipshop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="itemshop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\icons\itemshop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="skillshop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\images\icons\skillshop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="townholder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\townholder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

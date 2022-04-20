@@ -60,6 +60,9 @@
             this.lblTensionCount = new System.Windows.Forms.Label();
             this.lblTensionTick = new System.Windows.Forms.Label();
             this.lblMageName = new System.Windows.Forms.Label();
+            this.barIngredients = new System.Windows.Forms.ProgressBar();
+            this.barCosmicEnergy = new System.Windows.Forms.ProgressBar();
+            this.barElementalMotes = new System.Windows.Forms.ProgressBar();
             this.pnBuffs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbEffectIcon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbElementalMotesIcon)).BeginInit();
@@ -145,9 +148,9 @@
             this.pnBuffs.Controls.Add(this.radioEffects);
             this.pnBuffs.Controls.Add(this.radioPassives);
             this.pnBuffs.Controls.Add(this.boxSpells);
-            this.pnBuffs.Location = new System.Drawing.Point(8, 278);
+            this.pnBuffs.Location = new System.Drawing.Point(8, 254);
             this.pnBuffs.Name = "pnBuffs";
-            this.pnBuffs.Size = new System.Drawing.Size(153, 154);
+            this.pnBuffs.Size = new System.Drawing.Size(186, 178);
             this.pnBuffs.TabIndex = 12;
             // 
             // lblEffect
@@ -179,7 +182,7 @@
             this.radioEffects.TabStop = true;
             this.radioEffects.Text = "Effects";
             this.radioEffects.UseVisualStyleBackColor = true;
-            this.radioEffects.CheckedChanged += new System.EventHandler(this.radioEffects_CheckedChanged);
+            this.radioEffects.CheckedChanged += new System.EventHandler(this.effectDisplay_CheckChanged);
             // 
             // radioPassives
             // 
@@ -192,7 +195,7 @@
             this.radioPassives.TabStop = true;
             this.radioPassives.Text = "Passives";
             this.radioPassives.UseVisualStyleBackColor = true;
-            this.radioPassives.CheckedChanged += new System.EventHandler(this.radioPassives_CheckedChanged);
+            this.radioPassives.CheckedChanged += new System.EventHandler(this.effectDisplay_CheckChanged);
             // 
             // boxSpells
             // 
@@ -201,7 +204,7 @@
             this.boxSpells.ItemHeight = 20;
             this.boxSpells.Location = new System.Drawing.Point(3, 67);
             this.boxSpells.Name = "boxSpells";
-            this.boxSpells.Size = new System.Drawing.Size(138, 84);
+            this.boxSpells.Size = new System.Drawing.Size(166, 104);
             this.boxSpells.TabIndex = 39;
             this.boxSpells.SelectedIndexChanged += new System.EventHandler(this.boxSpells_SelectedIndexChanged);
             // 
@@ -211,7 +214,7 @@
             this.lblYeast.Font = new System.Drawing.Font("Trebuchet MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblYeast.Location = new System.Drawing.Point(113, 78);
             this.lblYeast.Name = "lblYeast";
-            this.lblYeast.Size = new System.Drawing.Size(36, 16);
+            this.lblYeast.Size = new System.Drawing.Size(35, 16);
             this.lblYeast.TabIndex = 13;
             this.lblYeast.Text = "Yeast";
             // 
@@ -231,7 +234,7 @@
             // 
             this.lblElementalMotes.AutoSize = true;
             this.lblElementalMotes.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblElementalMotes.Location = new System.Drawing.Point(227, 358);
+            this.lblElementalMotes.Location = new System.Drawing.Point(220, 383);
             this.lblElementalMotes.Name = "lblElementalMotes";
             this.lblElementalMotes.Size = new System.Drawing.Size(99, 18);
             this.lblElementalMotes.TabIndex = 20;
@@ -241,7 +244,7 @@
             // 
             this.lblCosmicEnergy.AutoSize = true;
             this.lblCosmicEnergy.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCosmicEnergy.Location = new System.Drawing.Point(227, 329);
+            this.lblCosmicEnergy.Location = new System.Drawing.Point(221, 338);
             this.lblCosmicEnergy.Name = "lblCosmicEnergy";
             this.lblCosmicEnergy.Size = new System.Drawing.Size(87, 18);
             this.lblCosmicEnergy.TabIndex = 19;
@@ -251,7 +254,7 @@
             // 
             this.lblIngredients.AutoSize = true;
             this.lblIngredients.Font = new System.Drawing.Font("Trebuchet MS", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblIngredients.Location = new System.Drawing.Point(227, 298);
+            this.lblIngredients.Location = new System.Drawing.Point(220, 293);
             this.lblIngredients.Name = "lblIngredients";
             this.lblIngredients.Size = new System.Drawing.Size(70, 18);
             this.lblIngredients.TabIndex = 15;
@@ -259,7 +262,7 @@
             // 
             // pbElementalMotesIcon
             // 
-            this.pbElementalMotesIcon.Location = new System.Drawing.Point(197, 358);
+            this.pbElementalMotesIcon.Location = new System.Drawing.Point(200, 390);
             this.pbElementalMotesIcon.Name = "pbElementalMotesIcon";
             this.pbElementalMotesIcon.Size = new System.Drawing.Size(20, 20);
             this.pbElementalMotesIcon.TabIndex = 18;
@@ -267,7 +270,7 @@
             // 
             // pbIngredientsIcon
             // 
-            this.pbIngredientsIcon.Location = new System.Drawing.Point(197, 298);
+            this.pbIngredientsIcon.Location = new System.Drawing.Point(200, 300);
             this.pbIngredientsIcon.Name = "pbIngredientsIcon";
             this.pbIngredientsIcon.Size = new System.Drawing.Size(20, 20);
             this.pbIngredientsIcon.TabIndex = 17;
@@ -275,7 +278,7 @@
             // 
             // pbCosmicEnergyIcon
             // 
-            this.pbCosmicEnergyIcon.Location = new System.Drawing.Point(197, 329);
+            this.pbCosmicEnergyIcon.Location = new System.Drawing.Point(200, 345);
             this.pbCosmicEnergyIcon.Name = "pbCosmicEnergyIcon";
             this.pbCosmicEnergyIcon.Size = new System.Drawing.Size(20, 20);
             this.pbCosmicEnergyIcon.TabIndex = 16;
@@ -303,7 +306,7 @@
             this.lblMoldTick.Font = new System.Drawing.Font("Trebuchet MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMoldTick.Location = new System.Drawing.Point(27, 23);
             this.lblMoldTick.Name = "lblMoldTick";
-            this.lblMoldTick.Size = new System.Drawing.Size(29, 16);
+            this.lblMoldTick.Size = new System.Drawing.Size(28, 16);
             this.lblMoldTick.TabIndex = 24;
             this.lblMoldTick.Text = "Tick";
             // 
@@ -341,7 +344,7 @@
             this.lblZestTick.Font = new System.Drawing.Font("Trebuchet MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblZestTick.Location = new System.Drawing.Point(27, 23);
             this.lblZestTick.Name = "lblZestTick";
-            this.lblZestTick.Size = new System.Drawing.Size(29, 16);
+            this.lblZestTick.Size = new System.Drawing.Size(28, 16);
             this.lblZestTick.TabIndex = 24;
             this.lblZestTick.Text = "Tick";
             // 
@@ -379,7 +382,7 @@
             this.lblTensionTick.Font = new System.Drawing.Font("Trebuchet MS", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTensionTick.Location = new System.Drawing.Point(27, 23);
             this.lblTensionTick.Name = "lblTensionTick";
-            this.lblTensionTick.Size = new System.Drawing.Size(29, 16);
+            this.lblTensionTick.Size = new System.Drawing.Size(28, 16);
             this.lblTensionTick.TabIndex = 24;
             this.lblTensionTick.Text = "Tick";
             // 
@@ -394,10 +397,40 @@
             this.lblMageName.Text = "Name";
             this.lblMageName.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
+            // barIngredients
+            // 
+            this.barIngredients.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(189)))), ((int)(((byte)(53)))));
+            this.barIngredients.Location = new System.Drawing.Point(222, 311);
+            this.barIngredients.Name = "barIngredients";
+            this.barIngredients.Size = new System.Drawing.Size(100, 12);
+            this.barIngredients.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.barIngredients.TabIndex = 29;
+            // 
+            // barCosmicEnergy
+            // 
+            this.barCosmicEnergy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(32)))), ((int)(((byte)(110)))));
+            this.barCosmicEnergy.Location = new System.Drawing.Point(222, 356);
+            this.barCosmicEnergy.Name = "barCosmicEnergy";
+            this.barCosmicEnergy.Size = new System.Drawing.Size(100, 12);
+            this.barCosmicEnergy.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.barCosmicEnergy.TabIndex = 30;
+            // 
+            // barElementalMotes
+            // 
+            this.barElementalMotes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(63)))), ((int)(((byte)(167)))), ((int)(((byte)(150)))));
+            this.barElementalMotes.Location = new System.Drawing.Point(222, 401);
+            this.barElementalMotes.Name = "barElementalMotes";
+            this.barElementalMotes.Size = new System.Drawing.Size(100, 12);
+            this.barElementalMotes.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.barElementalMotes.TabIndex = 31;
+            // 
             // BreadMage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.barElementalMotes);
+            this.Controls.Add(this.barCosmicEnergy);
+            this.Controls.Add(this.barIngredients);
             this.Controls.Add(this.lblMageName);
             this.Controls.Add(this.pnlTension);
             this.Controls.Add(this.pnlZest);
@@ -473,5 +506,8 @@
         private System.Windows.Forms.RadioButton radioPassives;
         private System.Windows.Forms.Label lblEffect;
         private System.Windows.Forms.PictureBox pbEffectIcon;
+        private System.Windows.Forms.ProgressBar barIngredients;
+        private System.Windows.Forms.ProgressBar barCosmicEnergy;
+        private System.Windows.Forms.ProgressBar barElementalMotes;
     }
 }

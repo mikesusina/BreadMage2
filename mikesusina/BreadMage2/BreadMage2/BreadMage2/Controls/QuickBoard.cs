@@ -17,7 +17,7 @@ namespace BreadMage2.Controls
 
         public BreadMage bMage { get; set; }
         public FightBoard bFight { get; set; }
-        public GameScreen myGameScr { get; set; }
+        public engGame myGame { get; set; }
         //private List<int> QuickItemIDs;
         //private List<int> QuickSpellIDs;
 
@@ -26,10 +26,10 @@ namespace BreadMage2.Controls
         private int iSlot3;
         private int iSlot4;
 
-        public QuickBoard(GameScreen aGameScreen)
+        public QuickBoard(engGame aGame)
         {
             InitializeComponent();
-            myGameScr = aGameScreen;
+            myGame = aGame;
             LoadBoard();
         }
 
@@ -159,7 +159,7 @@ namespace BreadMage2.Controls
         public void UpdateItemCount()
         {
 
-            lblQS1.Text = myGameScr.gMage.GetComponentCount(iSlot1).ToString();
+            lblQS1.Text = myGame.gMage.GetComponentCount(iSlot1).ToString();
             //lblQS2.Text = myGameScr.gMage.GetItemCount(iSlot2).ToString();
             //lblQS3.Text = myGameScr.gMage.GetItemCount(iSlot3).ToString();
             //lblQS4.Text = myGameScr.gMage.GetItemCount(iSlot4).ToString();

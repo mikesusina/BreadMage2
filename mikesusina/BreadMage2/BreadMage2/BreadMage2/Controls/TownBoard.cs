@@ -12,37 +12,33 @@ namespace BreadMage2
 {
     public partial class TownBoard : UserControl
     {
-        private GameScreen myGS;
+        private engGame myGame;
+        public Panel BuildingPanel => pnlTownZone;
+        public clsTownLot activeStore => myGame.TownEngine.activeStore;
 
 
-
-        public TownBoard(GameScreen aGS)
+        public TownBoard(engGame aGame, int townID = 0)
         {
             InitializeComponent();
-            myGS = aGS;
+            myGame = aGame;
+
         }
 
-        private void btnItemShop_Click(object sender, EventArgs e)
+        public void LoadTown()
         {
-            try
-            {
-                if (pnlTownZone.Enabled == false)
-                {
-                    pbTownImage.Hide();
-                    pbTownImage.Enabled = false;
-                    pnlTownZone.Enabled = true;
-                }
-                pnlTownZone.Controls.Clear();
-                ShopItems newShop = new ShopItems(myGS);
-                pnlTownZone.Controls.Add(newShop);
-                pnlTownZone.Show();
-                newShop.Enabled = true;
-                newShop.Show();
-            }
-            catch (ApplicationException ex)
-            {
-                string s = "We beefed loading the shop good" + Environment.NewLine + ex.InnerException.ToString();
-            }
+            pbTownImage.Image = myGame.GameLibraries.LocationLib().Find(x => x.LocationID == myGame.gMage.Location).MapTile;
+        }
+
+        public void TownLocation_Click(object sender, EventArgs e)
+        {
+            myGame.TownEngine.EnterShop((clsTownLot)(sender as Button).Tag);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            myGame.gLock = false;
+            this.Hide();
+            this.Dispose();
         }
     }
 }

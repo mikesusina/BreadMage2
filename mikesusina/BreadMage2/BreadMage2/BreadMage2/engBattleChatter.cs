@@ -10,31 +10,95 @@ using System.Windows.Forms;
 
 namespace BreadMage2
 {
-    class engBattleChatter
+    public class engBattleChatter
     {
         public List<MonsterChatter> fullMonsterChatter { get; set; } = new List<MonsterChatter>();
-        private GameScreen myGameScr;
-        private RichTextBox FightBox;
+        private engGame myGame;
+        public RichTextBox FightBox;
+        public List<clsChatterText> infoQueue = new List<clsChatterText>();
+        public int QueueTracker = 1;
+        bool AddTurnInfo = false;
 
-
-        public engBattleChatter(GameScreen aGameScreen)
+        public engBattleChatter(engGame aGame)
         {
-            myGameScr = aGameScreen;
+            myGame = aGame;
+        }
+
+        public void ClearQueue()
+        {
+            infoQueue.Clear();
+            QueueTracker = 1;
+        }
+        public void AddChatItemToQueue(clsChatterText someChatter, string aSpeaker)
+        {
+            someChatter.speaker = aSpeaker;
+            if (myGame.BattleEngine.newTurn)
+            {
+                //enable the turn label indicator for this item
+                myGame.BattleEngine.newTurn = false;
+            }
+            someChatter.iSlot = QueueTracker;
+            infoQueue.Add(someChatter);
+            QueueTracker++;
+        }
+        public string getEffectNamefromCode(string sCode = "N")
+        {
+            switch (sCode.ToLower())
+            {
+                case "M":
+                    return "mold";
+                case "Z":
+                    return "zest";
+                case "T":
+                    return "tension";
+                case "H":
+                    return "charge";
+                case "B":
+                    return "block";
+                case "S":
+                    return "stun";
+                case "L":
+                    return "silence";
+            }
+            return "";
         }
 
         public void LoadMonsterInfo(clsMonster aMonster)
         {
             fullMonsterChatter.AddRange(aMonster.ChatterList);
-            fullMonsterChatter.AddRange(myGameScr.gChatBot.ChatterList);
+            fullMonsterChatter.AddRange(myGame.gChatBot.ChatterList);
         }
 
-        public MonsterChatter nextMonsterChatter(int aType)
+        public string GetNextMonsterChatter(string aType)
         {
+            //eventually - add a monster "type" and have generics?
             try
             {
-                List<MonsterChatter> ChatterRoll = fullMonsterChatter.FindAll(x => x.iType == aType);
-                int i = myGameScr.gRandom.Next(ChatterRoll.Count - 1);
-                return ChatterRoll[i];
+                List<MonsterChatter> ChatterRoll = fullMonsterChatter.FindAll(x => x.chatType == aType);
+                if (ChatterRoll.Count > 0)
+                {
+                    int i = myGame.gRandom.Next(ChatterRoll.Count - 1);
+                    return ChatterRoll[i].ChatText;
+                }
+                return "";
+            }
+            catch
+            {
+                throw new IndexOutOfRangeException("No chatter list found");
+            }
+
+        }
+        public void nextMonsterChatter(string aType)
+        {
+            //eventually - add a monster "type" and have generics?
+            try
+            {
+                List<MonsterChatter> ChatterRoll = fullMonsterChatter.FindAll(x => x.chatType == aType);
+                if (ChatterRoll.Count > 0)
+                {
+                    int i = myGame.gRandom.Next(ChatterRoll.Count - 1);
+                    AddChatter(ChatterRoll[i]); 
+                }
             }
             catch
             {
@@ -42,39 +106,144 @@ namespace BreadMage2
             }
             
         }
-        public MonsterChatter nextMageChatter(int aType)
+        public string GetNextMageChatter(string aType)
+        //public void nextMageChatter(string aType, string anElement = "none")
         {
             try
             {
-                List<MonsterChatter> ChatterRoll = myGameScr.gMageChatBot.ChatterList.FindAll(x => x.iType == aType);
-                int i = myGameScr.gRandom.Next(ChatterRoll.Count - 1);
-                return ChatterRoll[i];
+                //eventually - change magechatter to use weaponchatter class, based on p vs m/weapon type/element alignment
+                //p atk - weapon type (crushing, poking, shooting, etc...), plus element if weapon is aligned?
+                //m atk button : magic type (and add override with elemental passives?)
+                //defend: ??
+                //List<WeaponChatter> ChatterRoll = myGame.GameLibraries.WeaponChatter.FindAll(x => x.iType == aType);
+
+
+                List<MonsterChatter> ChatterRoll = myGame.gMageChatBot.ChatterList.FindAll(x => x.chatType == aType);
+                int i = myGame.gRandom.Next(ChatterRoll.Count - 1);
+                return ChatterRoll[i].ChatText;
             }
             catch
             {
                 throw new IndexOutOfRangeException("No chatter list found");
             }
+
+        }
+        public void nextMageChatter(string aType)
+        //public void nextMageChatter(string aType, string anElement = "none")
+        {
+            try
+            {
+                //eventually - change magechatter to use weaponchatter class, based on p vs m/weapon type/element alignment
+                //p atk - weapon type (crushing, poking, shooting, etc...), plus element if weapon is aligned?
+                //m atk button : magic type (and add override with elemental passives?)
+                //defend: ??
+                //List<WeaponChatter> ChatterRoll = myGame.GameLibraries.WeaponChatter.FindAll(x => x.iType == aType);
+                
+
+                List<MonsterChatter> ChatterRoll = myGame.gMageChatBot.ChatterList.FindAll(x => x.chatType == aType);
+                int i = myGame.gRandom.Next(ChatterRoll.Count - 1);
+                AddChatter(ChatterRoll[i]);
+            }
+            catch
+            {
+                throw new IndexOutOfRangeException("No chatter list found");
+            }
+            
         }
 
-        public EffectChatter nextEffectReactChatter(string aType)
+
+        public string GetNextEffectReactChatter(string aType)
         {
-            List<EffectChatter> ChatterRoll = myGameScr.GameLibraries.EffectChatterLib().FindAll(x => x.EffType == aType);
+            List<EffectChatter> ChatterRoll = myGame.GameLibraries.EffectChatterLib().FindAll(x => x.EffType == aType);
 
             try
             {
-                if (myGameScr.bFight.GetTurn() == "Mage")
+                if (myGame.BattleEngine.GetTurn() == "Mage")
                 {
                     ChatterRoll.RemoveAll(x => x.SpeakerType == 2);
                 }
                 else { ChatterRoll.RemoveAll(x => x.SpeakerType == 1); }
 
-                int i = myGameScr.gRandom.Next(ChatterRoll.Count - 1);
-                return ChatterRoll[i];
+                int i = myGame.gRandom.Next(ChatterRoll.Count - 1);
+                return ChatterRoll[i].ChatText;
             }
             catch
             {
                 throw new IndexOutOfRangeException("No Effect chatter list found");
             }
+        }
+
+        public void nextEffectReactChatter(string aType)
+        {
+            List<EffectChatter> ChatterRoll = myGame.GameLibraries.EffectChatterLib().FindAll(x => x.EffType == aType);
+
+            try
+            {
+                if (myGame.BattleEngine.GetTurn() == "Mage")
+                {
+                    ChatterRoll.RemoveAll(x => x.SpeakerType == 2);
+                }
+                else { ChatterRoll.RemoveAll(x => x.SpeakerType == 1); }
+
+                int i = myGame.gRandom.Next(ChatterRoll.Count - 1);
+                AddChatter(ChatterRoll[i]);
+            }
+            catch
+            {
+                throw new IndexOutOfRangeException("No Effect chatter list found");
+            }
+        }
+
+        public string GetNextSpellChatter(clsSpell aSpell)
+        {
+            List<SpellChatter> ChatterRoll = new List<SpellChatter>();
+            List<SpellChatter> AllChatter = new List<SpellChatter>();
+            clsSpell s = aSpell;
+            ChatterRoll.AddRange(s.SpellChatter);
+            AllChatter = myGame.GameLibraries.SpellChatterLib().FindAll(x => x.SpellType != "I");
+
+            String[] Elementals = new string[] { "M", "Z", "T", "D" };
+            foreach (string block in s.SpellBlocks)
+            {
+                List<string> TypeList = new List<string>();
+                foreach (string sptypes in Elementals)
+                {
+                    if (block.IndexOf(sptypes) > 0 && TypeList.Contains(sptypes) == false)
+                    {
+                        ChatterRoll.AddRange(AllChatter.FindAll(x => x.Element == sptypes));
+                        TypeList.Add(sptypes);
+                    }
+                }
+            }
+
+            int i = myGame.gRandom.Next(ChatterRoll.Count);
+            return ChatterRoll[i].ChatText;
+        }
+
+        public void nextSpellChatter(clsSpell aSpell)
+        {
+            List<SpellChatter> ChatterRoll = new List<SpellChatter>();
+            List<SpellChatter> AllChatter = new List<SpellChatter>();
+            clsSpell s = aSpell;
+            ChatterRoll.AddRange(s.SpellChatter);
+            AllChatter = myGame.GameLibraries.SpellChatterLib().FindAll(x => x.SpellType != "I");
+
+            String[] Elementals = new string[] { "M", "Z", "T", "D" };
+            foreach (string block in s.SpellBlocks)
+            {
+                List<string> TypeList = new List<string>();
+                foreach (string sptypes in Elementals)
+                {
+                    if (block.IndexOf(sptypes) > 0 && TypeList.Contains(sptypes) == false)
+                    {
+                        ChatterRoll.AddRange(AllChatter.FindAll(x => x.Element == sptypes));
+                        TypeList.Add(sptypes);
+                    }
+                }
+            }
+
+            int i = myGame.gRandom.Next(ChatterRoll.Count);
+            AddChatter(ChatterRoll[i]);
         }
 
        public MonsterChatter nextIntroChatter(int iType = 1)
@@ -84,13 +253,13 @@ namespace BreadMage2
             string s = "";
             if (iType == 1)
             {
-                List<string> CommonRoll = new List<string> { "Look out, it's a $!", "Heads up! A $!", "Analysis: $ , mad as heck"
+                List<string> CommonRoll = new List<string> { "Look out, it's a $!", "Heads up! A $!", "Analysis: $, mad as heck"
                                                                 , "You're fighting a $!", "Here comes a $!", "$! It's go time!", "Sights set on $"
                                                                 , "A $ approaches!"};
                 List<string> RareRoll = new List<string> { "Hark! A $ over yonder wants to fight!", "Alart! $ spotted, ready weapon systems!"
                                                                 , "This $ is crusin' for a bruisin'", "A $ approachesthes!" };
-                if (myGameScr.gRandom.Next(21) > 15) { s = RareRoll.ElementAt(myGameScr.gRandom.Next(RareRoll.Count - 1)); }
-                else { s = CommonRoll.ElementAt(myGameScr.gRandom.Next(CommonRoll.Count - 1)); }
+                if (myGame.gRandom.Next(21) > 15) { s = RareRoll.ElementAt(myGame.gRandom.Next(RareRoll.Count - 1)); }
+                else { s = CommonRoll.ElementAt(myGame.gRandom.Next(CommonRoll.Count - 1)); }
             }
             else
             {
@@ -98,23 +267,131 @@ namespace BreadMage2
                                                                 , "Corncobs! It's a sneak attack!"};
                 List<string> RareRoll = new List<string> { "$ rushes in!", "Beans! It got you good!", "Jumpscare! You're fighting now!", "No fair, it cheated, you're sure of it!"
                                                                 , "Get those eyes checked, you walked into a fight!"};
-                if (myGameScr.gRandom.Next(21) > 15) { s = RareRoll.ElementAt(myGameScr.gRandom.Next(RareRoll.Count - 1)); }
-                else { s = CommonRoll.ElementAt(myGameScr.gRandom.Next(CommonRoll.Count - 1)); }
+                if (myGame.gRandom.Next(21) > 15) { s = RareRoll.ElementAt(myGame.gRandom.Next(RareRoll.Count - 1)); }
+                else { s = CommonRoll.ElementAt(myGame.gRandom.Next(CommonRoll.Count - 1)); }
             }
             return new MonsterChatter(s);
         }
 
+        public void PostChatterQueue()
+        {
+            if (infoQueue.Count > 0)
+            {
+                foreach (clsChatterText c in infoQueue)
+                {
+                    c.pbActionIcon = new PictureBox();
+                    c.pbActionIcon.Size = new Size(25, 25);
+                    c.pbActionIcon.SizeMode = PictureBoxSizeMode.StretchImage;
+                    //c.pbActionIcon.Image = Program.GetImage(c.imgURL);
+                    c.rtbActionText = new RichTextBox();
+                    c.rtbActionText.BackColor = Color.Black;
+                    c.rtbActionText.Font = new System.Drawing.Font("Trebuchet MS", 9.75F, System.Drawing.FontStyle.Regular,
+                        System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                    c.rtbActionText.ForeColor = Color.White;
+                    c.rtbActionText.ReadOnly = true;
+                    c.rtbActionText.MaximumSize = new Size(240, 0);
+                    c.rtbActionText.Size = new Size(240, 50);
+                    c.rtbActionText.ContentsResized += new ContentsResizedEventHandler(rtb_ContentsResized);
+
+                    c.rtbActionText.Multiline = true;
+
+                    //c.ActionPanel.Controls.Add(c.pbActionIcon);
+                    //c.ActionPanel.Controls.Add(c.rtbActionText);
+                    AddChatterNew(c);
+                }
+            }
+        }
+
+
+        public void AddChatterNew(clsChatterText someChatter)
+        {
+            string sText = "";
+            someChatter.rtbActionText.SelectionColor = Color.White;
+            someChatter.ActionPanel = new Panel();
+
+            someChatter.pbActionIcon.Image = Properties.Resources.bomb;
+            if (someChatter.speaker == "mage")
+            {
+                someChatter.pbActionIcon.Location = new Point(2, 2);
+                someChatter.rtbActionText.Location = new Point(2, 27);
+            }
+            else
+            {
+                someChatter.pbActionIcon.Location = new Point(222, 2);
+                someChatter.rtbActionText.Location = new Point(2, 27);
+            }
+
+
+            someChatter.rtbActionText.AppendText(someChatter.ChatText);
+            if (someChatter.iDamage != 0 || someChatter.iTick != 0)
+            {
+                sText = "(";
+                int iStart = someChatter.rtbActionText.TextLength;
+                Font OrigFont = new Font("Trebuchet MS", 10, FontStyle.Regular);
+                Font infoFont = new Font("Trebuchet MS", 8, FontStyle.Regular);
+                someChatter.rtbActionText.AppendText(Environment.NewLine + "(");
+                someChatter.rtbActionText.SelectionColor = someChatter.GetColor();
+                if (someChatter.GetValueChatter().Length > 0)
+                {
+                    someChatter.rtbActionText.AppendText(someChatter.GetValueChatter());
+                    sText += someChatter.GetValueChatter();
+                    if (someChatter.GetTickChatter().Length > 0)
+                    {
+                        someChatter.rtbActionText.SelectionColor = Color.White;
+                        someChatter.rtbActionText.AppendText(", ");
+                        sText += ", ";
+                    }
+                }
+                if (someChatter.GetTickChatter().Length > 0)
+                {
+                    someChatter.rtbActionText.AppendText(someChatter.GetTickChatter());
+                    sText += someChatter.GetTickChatter();
+                }
+                someChatter.rtbActionText.SelectionColor = Color.White;
+                someChatter.rtbActionText.AppendText(")");
+                sText += ")";
+
+                someChatter.rtbActionText.Find(sText, RichTextBoxFinds.Reverse);
+                someChatter.rtbActionText.SelectionStart = iStart + 1;
+                someChatter.rtbActionText.SelectionFont = infoFont;
+                someChatter.rtbActionText.SelectionStart = someChatter.rtbActionText.TextLength;
+                someChatter.rtbActionText.SelectionFont = OrigFont;
+                someChatter.rtbActionText.DeselectAll();
+
+
+            }
+                        
+            someChatter.ActionPanel.Controls.Add(someChatter.rtbActionText);
+            someChatter.ActionPanel.Controls.Add(someChatter.pbActionIcon);
+
+            someChatter.ActionPanel.Size = new Size(250, 35 + someChatter.rtbActionText.Height);
 
 
 
 
+            myGame.gGS.Controls["pMidBar"].Controls.Add(someChatter.ActionPanel);
+            if (someChatter.iSlot > 1)
+            { 
+                someChatter.ActionPanel.Location = new Point(0, infoQueue.Find(x=> x.iSlot == someChatter.iSlot- 1).ActionPanel.Location.Y + infoQueue.Find(x => x.iSlot == someChatter.iSlot - 1).ActionPanel.Height);
+            }
+            someChatter.ActionPanel.Show();
+            someChatter.pbActionIcon.Show();
+            someChatter.rtbActionText.Show();
+        }
+
+        private void rtb_ContentsResized(object sender, ContentsResizedEventArgs e)
+        {
+            ((RichTextBox)sender).Height = e.NewRectangle.Height + 5;
+        }
 
         public void AddChatter(clsChatterText someChatter)
         {
+
+
+            /*
             string sFlavor = "";
-            string sInfoType = "";
             bool NewLine = true;
-            if (FightBox is null) { FightBox = myGameScr.bFight.Controls["rtbChatter"] as RichTextBox;  }
+            if (FightBox is null) { FightBox = myGame.bFight.Controls["rtbChatter"] as RichTextBox;  }
 
 
             Color chatColor = Color.White;
@@ -123,7 +400,6 @@ namespace BreadMage2
                 MonsterChatter b = someChatter as MonsterChatter;
                 sFlavor = b.ChatText;
                 chatColor = b.ChatColor;
-                sInfoType = b.getMChatTypeInfo();
 
             }
             else if (someChatter is SpellChatter)
@@ -131,7 +407,6 @@ namespace BreadMage2
                 SpellChatter b = someChatter as SpellChatter;
                 sFlavor = b.ChatText;
                 chatColor = b.ChatColor;
-                sInfoType = b.getSChatTypeInfo();
 
             }
             else if (someChatter is EffectChatter)
@@ -139,7 +414,11 @@ namespace BreadMage2
                 EffectChatter b = someChatter as EffectChatter;
                 sFlavor = b.ChatText;
                 chatColor = b.ChatColor;
-                sInfoType = b.getEChatTypeInfo();
+            }
+            else if (someChatter is WeaponChatter)
+            {
+                WeaponChatter b = someChatter as WeaponChatter;
+                
             }
             else if (someChatter is DamageInfoChatter)
             {
@@ -148,7 +427,7 @@ namespace BreadMage2
                 Font OrigFont = new Font("Trebuchet MS", 10, FontStyle.Regular);
                 Font infoFont = new Font("Trebuchet MS", 8, FontStyle.Regular);
                 DamageInfoChatter b = someChatter as DamageInfoChatter;
-                chatColor = b.GetColor(b.effType);
+                chatColor = b.GetColor(b.chatType);
 
                 if (b.GetValueChatter().Length > 0 || b.GetTickChatter().Length > 0)
                 {
@@ -186,24 +465,24 @@ namespace BreadMage2
                     FightBox.SelectionFont = OrigFont;
                     FightBox.DeselectAll();
                     FightBox.AppendText(Environment.NewLine);
-                    /*
-                    FightBox.SelectionStart = FightBox.GetFirstCharIndexOfCurrentLine();
-                    FightBox.SelectionLength = FightBox.Lines[FightBox.Lines.Length -1 ].Length;
-                    FightBox.SelectionFont = new Font("Viner Hand ITC", 8);
-                    FightBox.Font = new Font("Trebuchet MS", 10);
-                    */
+                    
+                    //FightBox.SelectionStart = FightBox.GetFirstCharIndexOfCurrentLine();
+                    //FightBox.SelectionLength = FightBox.Lines[FightBox.Lines.Length -1 ].Length;
+                    //FightBox.SelectionFont = new Font("Viner Hand ITC", 8);
+                    //FightBox.Font = new Font("Trebuchet MS", 10);
                     return;
                 }
             }
 
+                */
 
-            FightBox.SelectionColor = Color.White;
+            //FightBox.SelectionColor = Color.White;
 
 
-            string[] TickEffects = new string[] { "Mold", "Zest", "Tension" };
-            string[] NoValEffects = new string[] { "Miss", "Block", "Parry", "Stun" };
+            //string[] TickEffects = new string[] { "Mold", "Zest", "Tension" };
+            //string[] NoValEffects = new string[] { "Miss", "Block", "Parry", "Stun" };
 
-            FightBox.AppendText(Environment.NewLine + sFlavor);
+            //FightBox.AppendText(Environment.NewLine + sFlavor);
 
             ///
             // Add the flavor text first, in white
@@ -217,23 +496,25 @@ namespace BreadMage2
             FightBox.SelectionColor = c;
             FightBox.AppendText(Environment.NewLine + newText);
             */
+
         }
 
         public void AddIntroChatter(int iType = 1)
         {
             try
             {
+                FightBox.Clear();
                 FightBox.SelectionColor = Color.White;
                 if (iType == 2)
                 {
                     MonsterChatter jumpText = nextIntroChatter(2);
-                    jumpText.ChatText = jumpText.ChatText.Replace("$", myGameScr.gMonster.MonName);
+                    jumpText.ChatText = jumpText.ChatText.Replace("$", myGame.gMonster.MonName);
                     MessageBox.Show(jumpText.ChatText);
                 }
                 MonsterChatter introText = nextIntroChatter(1);
-                introText.ChatText = introText.ChatText.Replace("$", myGameScr.gMonster.MonName);
-                introText.ChatText += Environment.NewLine + myGameScr.bFight.GetMonster().IntroChatter;
-                if (iType == 2) { introText.ChatText += "... and it gets a free hit!";  }
+                introText.ChatText = introText.ChatText.Replace("$", myGame.gMonster.MonName);
+                introText.ChatText += Environment.NewLine + Environment.NewLine + myGame.gMonster.IntroChatter;
+                //if (iType == 2) { introText.ChatText += "... and it gets a free hit!";  }
                 FightBox.AppendText(introText.ChatText);
             }
             catch
@@ -244,17 +525,18 @@ namespace BreadMage2
 
         public void AddTurnChatter()
         {
+
             FightBox.SelectionColor = Color.Lime;
             Font OrigFont = FightBox.Font;
             int iStart = FightBox.TextLength;
             string sText = "'s turn:";
-            switch (myGameScr.bFight.GetTurn())
+            switch (myGame.BattleEngine.GetTurn())
             {
                 case "Mage":
-                    sText = myGameScr.gMage.GetMageName() + sText;
+                    sText = myGame.gMage.GetMageName() + sText;
                     break;
                 case "Monster":
-                    sText = myGameScr.gMonster.MonName + sText;
+                    sText = myGame.gMonster.MonName + sText;
                     break;
             }
             FightBox.AppendText(Environment.NewLine + sText);

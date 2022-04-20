@@ -13,16 +13,11 @@ namespace BreadMage2
         public string saveName { get; set; }
         public string mageName { get; set; } = "Walnut";
 
-        public int Yeast { get; set; }
-        public int EXP { get; set; }
-
         public List<int> knownSpells { get; set; } = new List<int>();
         public List<int> gottenItems { get; set; } = new List<int>();
-        public List<clsMageEffect> activeEffects { get; set; } = new List<clsMageEffect>();
-        public List<clsSpell> equippedSpells { get; set; } = new List<clsSpell>();
         public List<clsEquipment> equippedMent { get; set; } = new List<clsEquipment>();
         public clsMageStats stats { get; set; } = new clsMageStats();
-
+        public clsGameFlags gameFlags { get; set; } = new clsGameFlags();
         public clsSaveData()
         {
 

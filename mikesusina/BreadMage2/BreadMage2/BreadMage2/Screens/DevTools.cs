@@ -12,13 +12,13 @@ namespace BreadMage2.Screens
 {
     public partial class DevTools : Form
     {
-        GameScreen myGameScr { get; set; }
+        engGame myGame { get; set; }
 
-        public DevTools(GameScreen aGameScr)
+        public DevTools(engGame aGame)
         {
             InitializeComponent();
 
-            myGameScr = aGameScr;
+            myGame = aGame;
         }
 
         private void btnSetLoc_Click(object sender, EventArgs e)
@@ -26,22 +26,22 @@ namespace BreadMage2.Screens
             if (txbLoc.Text != null && int.TryParse(txbLoc.Text, out int outnum) == true)
             {
 
-                myGameScr.gMage.Location = Convert.ToInt32(txbLoc.Text);
+                myGame.gMage.Location = Convert.ToInt32(txbLoc.Text);
                 MessageBox.Show((Convert.ToInt32(txbLoc.Text)).ToString());
             }
         }
 
         private void btnClrEventArea_Click(object sender, EventArgs e)
         {
-            if (myGameScr != null && myGameScr.Controls["pArea"] != null)
+            if (myGame != null && myGame.gGS.Controls["pArea"] != null)
             {
-                foreach (Control item in myGameScr.Controls["pArea"].Controls)
+                foreach (Control item in myGame.gGS.Controls["pArea"].Controls)
                 {
                     // if (item.Name == "FightBoard") {}
-                    myGameScr.Controls["pArea"].Controls.Remove(item);
-                    item.Dispose();
+                    item.Hide();
+                    myGame.gGS.Controls["pArea"].Controls.Remove(item);
                 }
-                myGameScr.gLock = false;
+                myGame.gLock = false;
             }
 
         }
@@ -50,30 +50,30 @@ namespace BreadMage2.Screens
         {
             if (txbHeal.Text == null || txbHeal.Text == "")
             {
-                myGameScr.gMage.Stats.HP = myGameScr.gMage.Stats.HPMax;
-                //myGameScr.gMage.SP = myGameScr.gMage.SPmax;
-                myGameScr.bMage.UpdateBars();
+                myGame.gMage.Stats.HP = myGame.gMage.Stats.HPMax;
+                //myGame.gMage.SP = myGame.gMage.SPmax;
+                myGame.bMage.UpdateBars();
 
 
             }
             else if (int.TryParse(txbHeal.Text, out int outnum) == true)
             {
 
-                int i = myGameScr.gMage.Stats.HP + (Convert.ToInt32(txbHeal.Text));
-                myGameScr.gMage.Stats.HP = i;
-                myGameScr.bMage.UpdateBars();
+                int i = myGame.gMage.Stats.HP + (Convert.ToInt32(txbHeal.Text));
+                myGame.gMage.AdjustHP(i);
+                myGame.bMage.UpdateBars();
             }
 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //myGameScr.gMage.AddEffect(13, 1, 1);
-            //myGameScr.bMage.BuffStuff();
-            myGameScr.gMage.GetUniqueItem(4);
-            myGameScr.gMage.GetUniqueItem(3);
-            myGameScr.gMage.EquipItem(myGameScr.GameLibraries.EquipLib().Find(x => x.equipID == 4));
-            myGameScr.bMage.UpdateBars();
+            //myGame.gMage.AddEffect(13, 1, 1);
+            //myGame.bMage.BuffStuff();
+            myGame.GrantUniqueItem(4);
+            myGame.GrantUniqueItem(3);
+            myGame.EquipItem(myGame.GameLibraries.EquipLib().Find(x => x.equipID == 4));
+            myGame.bMage.UpdateBars();
         }
 
         private void btnQuickSlots_Click(object sender, EventArgs e)
@@ -81,9 +81,9 @@ namespace BreadMage2.Screens
             if (tbAmount != null && tbItemID != null && int.TryParse(tbAmount.Text, out int outnum) == true 
                     && int.TryParse(tbItemID.Text, out int outnum2) == true)
             {
-                if (myGameScr != null && myGameScr.Controls["pQuickBoard"].Controls["QuickBoard"] != null)
+                if (myGame != null && myGame.gGS.Controls["pQuickBoard"].Controls["QuickBoard"] != null)
                 {
-                    myGameScr.gMage.GetComponents(Convert.ToInt32(tbItemID.Text.ToString()), Convert.ToInt32(tbAmount.Text.ToString()));
+                    myGame.gMage.AdjustComponent(Convert.ToInt32(tbItemID.Text.ToString()), Convert.ToInt32(tbAmount.Text.ToString()));
                 }
             }
                 
@@ -93,11 +93,11 @@ namespace BreadMage2.Screens
         private void button2_Click(object sender, EventArgs e)
         {
             //checking gMage Inventory status
-            if (myGameScr.gMage != null)
+            if (myGame.gMage != null)
             {
                 /*
                 string s = "okay + ";
-                foreach (DataRow r in myGameScr.gMage.myInv.Rows)
+                foreach (DataRow r in myGame.gMage.myInv.Rows)
                 {
                     s = s + Environment.NewLine + "ItemID: " + r[1].ToString() + " Count: " +  r[2].ToString();
                 }
@@ -108,13 +108,13 @@ namespace BreadMage2.Screens
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (myGameScr.gMage != null)
+            if (myGame.gMage != null)
             {
                 BreadDB BN = new BreadDB();
-                myGameScr.gMage.PrepSaveData();
-                BN.SaveData(myGameScr.gMage.GetSaveData());
-               // BN.SavePlayerInv(myGameScr.gMage.SaveID, myGameScr.gMage.myInv);
-               // BN.SaveMageEffectList(myGameScr.gMage.SaveID, myGameScr.gMage.myStatEffects);
+                myGame.gMage.PrepSaveData();
+                BN.SaveData(myGame.gMage.GetSaveData());
+               // BN.SavePlayerInv(myGame.gMage.SaveID, myGame.gMage.myInv);
+               // BN.SaveMageEffectList(myGame.gMage.SaveID, myGame.gMage.myStatEffects);
             }
         }
 
@@ -125,8 +125,8 @@ namespace BreadMage2.Screens
             BreadDB bnet = new BreadDB();
             List<clsSpell> sb = new List<clsSpell>();
             
-            myGameScr.gMage.myGameFlags.aspellbook = sb;
-            bnet.SaveGameFlags(myGameScr.gMage.myGameFlags);
+            myGame.gMage.myGameFlags.aspellbook = sb;
+            bnet.SaveGameFlags(myGame.gMage.myGameFlags);
             */
         }
 
@@ -145,6 +145,31 @@ namespace BreadMage2.Screens
 
         private void DevTools_Load(object sender, EventArgs e)
         {
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (comboItemType.SelectedItem != null)
+            {
+                int i = Convert.ToInt32(comboItemType.SelectedItem.ToString());
+                List<clsUniqueItem> list = new List<clsUniqueItem>();
+                foreach (int i2 in myGame.gMage.GetSaveData().gottenItems)
+                {
+                    clsUniqueItem o = myGame.GetUniqueItem(i2);
+                    if (o.itemType == i) { list.Add(o); }
+                }
+                if (list.Count > 0)
+                {
+                    string s = "";
+                    foreach (clsUniqueItem o in list)
+                    {
+                       s += o.ItemName + Environment.NewLine; 
+                    }
+                    tbDisplay.Text = s;
+                }
+
+            }
 
         }
     }

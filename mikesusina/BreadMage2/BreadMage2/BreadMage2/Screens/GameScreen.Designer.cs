@@ -33,7 +33,7 @@
             this.pArea = new System.Windows.Forms.Panel();
             this.pExtraInfo = new System.Windows.Forms.Panel();
             this.pQuickBoard = new System.Windows.Forms.Panel();
-            this.pSB = new System.Windows.Forms.Panel();
+            this.pMidBar = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // pMageZone
@@ -74,25 +74,26 @@
             // pQuickBoard
             // 
             this.pQuickBoard.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pQuickBoard.Location = new System.Drawing.Point(530, 266);
+            this.pQuickBoard.Location = new System.Drawing.Point(758, 14);
             this.pQuickBoard.Name = "pQuickBoard";
-            this.pQuickBoard.Size = new System.Drawing.Size(250, 333);
+            this.pQuickBoard.Size = new System.Drawing.Size(22, 13);
             this.pQuickBoard.TabIndex = 8;
             // 
-            // pSB
+            // pMidBar
             // 
-            this.pSB.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pSB.Location = new System.Drawing.Point(530, 135);
-            this.pSB.Name = "pSB";
-            this.pSB.Size = new System.Drawing.Size(250, 125);
-            this.pSB.TabIndex = 9;
+            this.pMidBar.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pMidBar.AutoScroll = true;
+            this.pMidBar.Location = new System.Drawing.Point(530, 135);
+            this.pMidBar.Name = "pMidBar";
+            this.pMidBar.Size = new System.Drawing.Size(250, 461);
+            this.pMidBar.TabIndex = 9;
             // 
             // GameScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1254, 611);
-            this.Controls.Add(this.pSB);
+            this.Controls.Add(this.pMidBar);
             this.Controls.Add(this.pQuickBoard);
             this.Controls.Add(this.pExtraInfo);
             this.Controls.Add(this.pArea);
@@ -113,7 +114,7 @@
         private System.Windows.Forms.Panel pArea;
         private System.Windows.Forms.Panel pExtraInfo;
         private System.Windows.Forms.Panel pQuickBoard;
-        private System.Windows.Forms.Panel pSB;
+        private System.Windows.Forms.Panel pMidBar;
     }
 }
 

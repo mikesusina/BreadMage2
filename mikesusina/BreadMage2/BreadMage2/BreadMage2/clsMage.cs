@@ -17,6 +17,7 @@ namespace BreadMage2
 
 
         public int Location { get; set; } = 1;
+        public string LastLoc { get; set; } = "";
         public int SaveID { get; set; }
         public Action RefreshInvNumbers;
 
@@ -33,9 +34,16 @@ namespace BreadMage2
 
         public void RefreshStats()
         {
-            Stats.SetBuffedStats();
+            Stats.SetEquipStats();
+            
         }
 
+        public void AdjustHP(int aValue)
+        {
+            Stats.HP += aValue;
+            if (Stats.HP > Stats.HPMax) { Stats.HP = Stats.HPMax; }
+            else if (Stats.HP < 0) { Stats.HP = 0; }
+        }
 
         /// <summary>
         /// Tick stuff
@@ -65,353 +73,245 @@ namespace BreadMage2
             */
         }
 
-        public int TickMod(int iType = 1)
+        public int TickMod(string sType)
         {
-            //if ticking harder makes it in, this will determine how much bonus tick to do
+            //to do: check effects(?)/equipment for things that add to certain tick mods
+            // base numbers are spell power based - this is just adding to them with equipped stuff
             int iMod = 0;
-            if (iType == 1) { iMod = 2 + (int)Math.Floor((double)(MAtk() / Stats.BaseMAtk)); } //mold
-            else if (iType == 2) { iMod = (int)Math.Floor((double)(Res() / Stats.BaseRes)); } //zest
-            else if (iType == 3) { iMod = (int)Math.Floor((double)(Def() / Stats.BaseDef)); } //tension
+            if (sType.ToLower() == "mold") { iMod = 0; } //+ (int)Math.Floor((double)(MAtk() / Stats.BaseMAtk)); } //mold
+            else if (sType.ToLower() == "zest") { iMod = 0; } //(int)Math.Floor((double)(Res() / Stats.BaseRes)); } //zest
+            else if (sType.ToLower() == "tension") { iMod = 0; } //(int)Math.Floor((double)(Def() / Stats.BaseDef)); } //tension
 
             return iMod;
-        }
-
-        public List<KeyValuePair<string, int>> TickMagePoison()
-        {
-            List<KeyValuePair<string, int>> tickInfo = new List<KeyValuePair<string, int>>();
-            int damage = 0;
-            int iTick = 1;
-            
-
-            clsMageEffect e = GetStatEffects().Find(x => x.iID == 1);
-            if (e != null )
-            {
-                if (e.iValue > 2) { iTick = (int)(Math.Ceiling(Convert.ToDouble(e.iValue) / 2)); }
-                damage = 3 * iTick; //resist?
-                e.iValue -= iTick;
-
-                if (e.iValue <= 0 ) { GetStatEffects().Remove(e); }
-
-                tickInfo.Add(new KeyValuePair<string, int>("damage", damage));
-                //the tick value returned should be negative, since from here on it's for chat info
-                tickInfo.Add(new KeyValuePair<string, int>("tick", iTick * -1));
             }
 
-            return tickInfo;
-        }
 
-        public void TickEffect(int anID)
-        {
-            //this is used to tick effects that tick once (dodge, stun, quick attack, silence? inherent actions on tick, not determining a number of ticks to consume
-            clsMageEffect e = GetStatEffects().Find(x => x.iID == anID);
-            if (e != null && e.iValue >= 1)
-            {
-                e.iValue -= 1;
-                if (e.iValue <= 0 ) { GetStatEffects().Remove(e); }
-            }
-
-        }
-
-        /// <summary>
-        /// Stats and info
-        /// </summary>
-        /// <returns></returns>
-        
-        public string GetMageName()
-        {
-            return mySaveData.mageName;
-        }
-
-        public int PAtk() { return Stats.PAtk(); }
-        public int MAtk() { return Stats.MAtk(); }
-        public int Def() { return Stats.Def(); }
-        public int Res() { return Stats.Res(); }
-
-        public int MoldCount()
-        {
-            if (GetStatEffects().Exists(x => x.iID == 1)) { return GetStatEffects().Find(x => x.iID == 1).iValue; }
-            else return 0;
-        }
-        public int ZestCount()
-        {
-            if (GetStatEffects().Exists(x => x.iID == 2)) { return GetStatEffects().Find(x => x.iID == 2).iValue; }
-            else return 0;
-        }
-        public int TensionCount()
-        {
-            if (GetStatEffects().Exists(x => x.iID == 3)) { return GetStatEffects().Find(x => x.iID == 3).iValue; }
-            else return 0;
-        }
-
-        public void GetComponents(int aType, int anAmount = 1)
-        {
-            Stats.AddComponents(aType, anAmount);
-            this.RefreshInvNumbers();
-        }
-
-        public int GetComponentCount(int anItemType)
-        {
-            return Stats.ComponentCount(anItemType);
-
-            /* OLD
-            foreach (clsGenericItem e in myInv)
-            {
-                if (anItemType == e.itemType) { return e.iCount; }
-            }
-            return 0;
-
-            /* OLDER SYSTEM
-            string searchExpression = "ID = " + anItemID;
-            if (myInv != null && myInv.Rows.Count > 0)
-            {
-                DataRow r = this.myInv.Select(searchExpression).FirstOrDefault();
-                if (r != null) { return Convert.ToInt32(this.myInv.Select(searchExpression)[0]["ItemCount"].ToString()); }
-                else { return 0; }
-            }
-            else { return 0; }
-            */
-        }
-
-
-
-        /// <summary>
-        /// Effects
-        /// </summary>
-        /// <param name="anID"></param>
-        /// <param name="aValue"></param>
-
-
-
-
-        public void AddEffect(int anID, int aValue)
-        {
-            var obj = GetStatEffects().FirstOrDefault(x => x.iID == anID);
-            if (obj != null) { obj.iValue += aValue; }
-            else { Stats.AddEffect(anID, aValue); }
-        }
-
-        public void RemoveEffect(int anID)
-        {
-            if (GetStatEffects().Find(x => x.iID == anID) != null) { GetStatEffects().Remove(GetStatEffects().Find(x => x.iID == anID)); }
-        }
-
-
-        public List<clsMageEffect> GetStatEffects()
-        {
-            return Stats.CurrentEffects();
-        }
-
-        public void SetStatEffects(List<clsMageEffect> e)
-        {
-            Stats.SetEffects(e);
-        }
-        public bool hasEffect(int anID)
-        {
-            if (Stats.CurrentEffects().Find(x => x.iID == anID) != null) { return true; }
-            else { return false; }
-        }
-
-
-        public bool hasQuickAttack()
-        {
-            try
-            {
-                clsMageEffect a = GetStatEffects().Find(x => x.iID == 7);
-                if (a.iValue > 0)
+                public void ProcEffect(int anID)
                 {
-                    return true;
+                    //this is used to tick effects that tick once (dodge, stun, quick attack, silence? inherent actions on tick, not determining a number of ticks to consume
+                    clsEffect e = GetStatEffects().Find(x => x.iID == anID);
+                    if (e != null && e.Tick >= 1) { GetStatEffects().Remove(e); }
+
+                }
+
+                public void TickMageDayEffects(int anAmount)
+                {
+                    foreach (clsEffect e in Stats.CurrentEffects())
+                    {
+                        if (e.sType == "B" || e.sType == "D")
+                        {
+                            e.Tick -= anAmount;
+                        }
+                    }
+                    Stats.CurrentEffects().RemoveAll(x => x.Tick <= 0);
+                }
+
+                /// <summary>
+                /// Stats and info
+                /// </summary>
+                /// <returns></returns>
+
+                public string GetMageName()
+                {
+                    return mySaveData.mageName;
+                }
+
+                public int BuffedStat(string aType) { return Stats.PlayerStats.Find(x => x.Name == aType).BuffedVal(); }
+
+                public int MoldCount()
+                {
+                    if (GetStatEffects().Exists(x => x.iID == 1)) { return GetStatEffects().Find(x => x.iID == 1).Tick; }
+                    else return 0;
+                }
+                public int ZestCount()
+                {
+                    if (GetStatEffects().Exists(x => x.iID == 2)) { return GetStatEffects().Find(x => x.iID == 2).Tick; }
+                    else return 0;
+                }
+                public int TensionCount()
+                {
+                    if (GetStatEffects().Exists(x => x.iID == 3)) { return GetStatEffects().Find(x => x.iID == 3).Tick; }
+                    else return 0;
+                }
+
+                public void AdjustComponent(int aType, int anAmount = 1)
+                {
+                    Stats.AdjustComponent(aType, anAmount);
+                    RefreshInvNumbers();
+                }
+
+                public int GetComponentCount(int anItemType)
+                {
+                    return Stats.ComponentCount(anItemType);
+
+                    /* OLD
+                    foreach (clsGenericItem e in myInv)
+                    {
+                        if (anItemType == e.itemType) { return e.iCount; }
+                    }
+                    return 0;
+
+                    /* OLDER SYSTEM
+                    string searchExpression = "ID = " + anItemID;
+                    if (myInv != null && myInv.Rows.Count > 0)
+                    {
+                        DataRow r = this.myInv.Select(searchExpression).FirstOrDefault();
+                        if (r != null) { return Convert.ToInt32(this.myInv.Select(searchExpression)[0]["ItemCount"].ToString()); }
+                        else { return 0; }
+                    }
+                    else { return 0; }
+                    */
+                }
+
+
+
+                /// <summary>
+                /// Effects
+                /// </summary>
+                /// <param name="anID"></param>
+                /// <param name="aValue"></param>
+
+
+
+
+                public void AddEffect(clsEffect anEffect, int aValue = 1)
+                {
+                    anEffect.Tick = aValue;
+                    Stats.AddEffect(anEffect);
+                }
+
+                public void RemoveEffect(int anID)
+                {
+                    if (GetStatEffects().Find(x => x.iID == anID) != null) { GetStatEffects().Remove(GetStatEffects().Find(x => x.iID == anID)); }
+                }
+
+
+                public List<clsEffect> GetStatEffects(string sType = "all")
+                {
+                    return Stats.CurrentEffects(sType);
+                }
+
+                public void SetStatEffects(List<clsEffect> e)
+                {
+                    Stats.SetEffects(e);
+                }
+                public bool hasEffect(int anID)
+                {
+                    if (Stats.CurrentEffects().Find(x => x.iID == anID) != null) { return true; }
+                    else { return false; }
+                }
+
+
+                public bool hasQuickAttack()
+                {
+                    try
+                    {
+                        if (Stats.CurrentEffects().Find(x => x.iID == 7) != null)
+                        {
+                            return true;
+                        }
+                    }
+                    catch { return false; }
+                    return false;
+                }
+
+                public bool isStunned()
+                {
+                    try
+                    {
+                        if (Stats.CurrentEffects().Find(x => x.iID == 8) != null)
+                        {
+                            return true;
+                        }
+                    }
+                    catch { return false; }
+                    return false;
+                }
+
+                //////
+                /// SaveData stuff
+                //////
+                ///
+
+
+
+
+
+                private void SetGameFlags(clsGameFlags loadedFlags)
+                {
+                    myGameFlags = loadedFlags;
+                }
+
+
+                private void SetEquipStats()
+                {
+                    /* again, more work, am I passing in a lot of differnet info?
+                    if(myEquipList != null && myEquipList.Count() > 0)
+                    {
+                        Stats.SetBuffedStats(myEquipList, myStatEffects);
+                    }
+                    */
+                }
+                public List<int> AllItems()
+                {
+                    return mySaveData.gottenItems;
+                }
+
+                public int EquippedSP()
+                {
+                    return Stats.EquippedSP();
+                }
+
+                public clsSaveData GetSaveData()
+                {
+                    return mySaveData;
+                }
+
+
+
+
+                public List<int> AllSpells()
+                {
+                    //NEEDS WORK FOR PASSIVES
+                    return Stats.AllSpells();
+                }
+                public List<clsSpell> EQSpells(string sType = "all")
+                {
+                    return Stats.mySpellsByType(sType);
+                    //"all": //return all
+                    //"combat": //[C]ombat
+                    //"passive": //[P]assive
+                    //"global": //[G]eneral/global / "out of combat castable"
+                    //"battle": //castable spells for the combat screen
+                    //"item": //[I]tem spells
+                    //"mold": //mold-tuned spells, for filtering
+                    //"zest": //ditto, but zest
+                    //"tension": //ditto but tension
+
+                }
+
+
+                public clsEquipment myEquipBySlot(int iSlot)
+                {
+                    try
+                    {
+                        if (Stats.CurrentEquipment().Find(x => x.Slot == iSlot) != null) { return Stats.CurrentEquipment().Find(x => x.Slot == iSlot); }
+                        else { return null; }
+                    }
+                    catch { throw new ArgumentOutOfRangeException("I think you tried to search for a bad equip slot"); };
+
+                }
+
+                public void PrepSaveData()
+                {
+                    mySaveData.stats = Stats;
+                    mySaveData.gameFlags = myGameFlags;
+                }
+                public void LoadSavedData(clsSaveData aSaveFile)
+                {
+                    Stats = mySaveData.stats;
+                    myGameFlags = aSaveFile.gameFlags;
                 }
             }
-            catch { return false; }
-            return false;
-        }
-
-        public bool isStunned()
-        {
-            try
-            {
-                clsMageEffect a = GetStatEffects().Find(x => x.iID == 8);
-                if (a.iValue > 0)
-                {
-                    return true;
-                }
-            }
-            catch  { return false; }
-            return false;
-        }
-
-        //////
-        /// SaveData stuff
-        //////
-        ///
-
-
-
-
-
-        private void SetGameFlags(clsGameFlags loadedFlags)
-        {
-            myGameFlags = loadedFlags;
-        }
-
-
-        private void SetEquipStats()
-        {
-            /* again, more work, am I passing in a lot of differnet info?
-            if(myEquipList != null && myEquipList.Count() > 0)
-            {
-                Stats.SetBuffedStats(myEquipList, myStatEffects);
-            }
-            */
-        }
-
-        public void GetUniqueItem(int anItemID)
-        {
-            if (mySaveData.gottenItems.Contains(anItemID) == false) { mySaveData.gottenItems.Add(anItemID); }
-        }
-
-        
-
-
-        public int EquippedSP()
-        {
-            return Stats.EquippedSP();
-        }
-
-        public clsSaveData GetSaveData()
-        {
-            return mySaveData;
-        }
-
-
-
-
-        public List<int> AllSpells()
-        {
-            return mySaveData.knownSpells;
-        }
-        public List<clsSpell> EQSpells(int iType = 0)
-        {
-            return Stats.mySpellsByType(iType);
-            //0: return all
-            //1: [C]ombat
-            //2: [P]assive
-            //3: [G]eneral (castable in and out of combat)
-            //4: castable spells (C and G)
-        }
-
-
-
-        public void GrantSpell(int aSpellID)
-        {
-            if (mySaveData.knownSpells.Contains(aSpellID) == false)
-            {
-                mySaveData.knownSpells.Add(aSpellID);
-            }
-        }
-        public void GrantSpell(clsSpell aSpell)
-        {
-            if (mySaveData.knownSpells.Contains(aSpell.spellID) == false) { mySaveData.knownSpells.Add(aSpell.spellID); }
-        }
-
-
-        public void EquipSpell(clsSpell s)
-        {
-            if (mySaveData.equippedSpells.Contains(s) == false)
-            {
-                mySaveData.equippedSpells.Add(s);
-                Stats.SetEQSpells(mySaveData.equippedSpells);
-                RefreshStats();
-            }
-        }
-
-        public void UnequipSpell(int i)
-        {
-            clsSpell s = new clsSpell();
-            foreach (clsSpell o in mySaveData.equippedSpells)
-            {
-                if (o.spellID == i) { s = o; }
-            }
-            UnequipSpell(s);
-        }
-        public void UnequipSpell(clsSpell s)
-        {
-            if (mySaveData.equippedSpells.Contains(s))
-            {
-                mySaveData.equippedSpells.Remove(s);
-                Stats.SetEQSpells(mySaveData.equippedSpells);
-                RefreshStats();
-            }
-        }
-
-        public void EquipSpellSet(List<clsSpell> e)
-        {
-            mySaveData.equippedSpells = e;
-            Stats.SetEQSpells(e);
-            RefreshStats();
-        }
-
-
-        public void EquipItem(clsEquipment e)
-        {
-            clsEquipment oldE = mySaveData.equippedMent.Find(x => x.Slot == e.Slot);
-            if (oldE != null && oldE.PassiveEffect() != 0 && EQSpells().Exists(x => x.spellID == oldE.PassiveEffect()))
-            {
-                UnequipSpell(oldE.PassiveEffect());
-                mySaveData.equippedMent.Remove(mySaveData.equippedMent.Find(x => x.Slot == e.Slot));
-            }
-            mySaveData.equippedMent.Add(e);
-            Stats.SetEquipment(mySaveData.equippedMent);
-            RefreshStats();
-        }
-        public void UnequipItem(clsEquipment e)
-        {
-            if (mySaveData.equippedMent.Contains(e))
-            {
-                mySaveData.equippedMent.Remove(e);
-                if (e.PassiveEffect() != 0 && EQSpells().Exists(x => x.spellID == e.PassiveEffect()))
-                {
-                    UnequipSpell(e.PassiveEffect());
-                }
-            }
-            Stats.SetEquipment(mySaveData.equippedMent);
-            RefreshStats();
-        }
-
-        public void EquipItemSet(List<clsEquipment> e)
-        {
-            foreach (clsEquipment o in mySaveData.equippedMent)
-            {
-                if (o.PassiveEffect() != 0 && EQSpells().Exists(x => x.spellID == o.PassiveEffect()) && e.Contains(o) == false)
-                {
-                    UnequipSpell(EQSpells().Find(x => x.spellID == o.PassiveEffect()));
-                }
-            }
-            mySaveData.equippedMent = e;
-            Stats.SetEquipment(mySaveData.equippedMent);
-            RefreshStats();
-        }
-
-        public List<clsEquipment> myEquipment()
-        {
-            return mySaveData.equippedMent;
-        }
-        public clsEquipment myEquipBySlot(int iSlot)
-        {
-            try
-            {
-                if (mySaveData.equippedMent.Find(x => x.Slot == iSlot) != null) { return mySaveData.equippedMent.Find(x => x.Slot == iSlot); }
-                else { return null; }
-            }
-            catch { throw new ArgumentOutOfRangeException("I think you tried to search for a bad equip slot"); };
-
-        }
-
-
-        public void PrepSaveData()
-        {
-            mySaveData.stats = Stats;
-        }
-    }
 
 }
